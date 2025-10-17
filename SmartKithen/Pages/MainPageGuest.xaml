@@ -1,0 +1,501 @@
+﻿<Page x:Class="SmartKithen.Pages.MainPageGuest"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="810" d:DesignWidth="800"
+      Title="MainPageGuest"
+      Background="#FFF8FC">
+
+    <Page.Resources>
+        <!-- Стиль для карточек -->
+        <Style x:Key="CardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="12"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFF0F5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для основных кнопок -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A5D34"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="15" Opacity="0.2" ShadowDepth="3"/>
+                            </Border.Effect>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144528"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#0F351E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <!-- Фон с градиентом -->
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FFF8FC" Offset="0"/>
+                    <GradientStop Color="#FFAC6586" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" Margin="20">
+
+                <!-- Шапка -->
+                <Grid Margin="0,0,0,30">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Логотип и название -->
+                    <Border Grid.Column="0" 
+                            Background="White" 
+                            CornerRadius="15" 
+                            Padding="15,10"
+                            HorizontalAlignment="Left">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🍳" 
+                                       FontSize="20" 
+                                       Margin="0,0,10,0"/>
+                            <TextBlock Text="Smart Kitchen" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#1A5D34"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Правые элементы -->
+                    <StackPanel Grid.Column="2" 
+                                Orientation="Horizontal" 
+                                VerticalAlignment="Center">
+
+                        <!-- Иконки -->
+                        <Border Background="White" 
+                                CornerRadius="10" 
+                                Padding="10"
+                                Margin="0,0,10,0"
+                                Cursor="Hand">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <TextBlock Text="🔍" 
+                                       FontSize="16" 
+                                       Foreground="#1A5D34"/>
+                        </Border>
+
+                        <!-- Гость -->
+                        <Border Background="#1A5D34" 
+                                CornerRadius="12" 
+                                Padding="12,8"
+                                Margin="0,0,10,0">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="👤" 
+                                           FontSize="12"
+                                           Margin="0,0,8,0"
+                                           Foreground="White"/>
+                                <TextBlock Text="Гость" 
+                                           FontSize="12" 
+                                           Foreground="White"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Иконка информации -->
+                        <Border Background="White" 
+                                CornerRadius="10" 
+                                Padding="10"
+                                Margin="0,0,10,0"
+                                Cursor="Hand">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <TextBlock Text="⚙️" 
+                                       FontSize="16" 
+                                       Foreground="#1A5D34"/>
+                        </Border>
+
+                        <!-- Сохранить прогресс -->
+                        <Button x:Name="btnSaveProgress"
+                                Content="Сохранить прогресс" 
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                FontSize="12"
+                                Padding="15,10"
+                                Click="btnSaveProgress_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Приветствие -->
+                <Border Background="White" 
+                        CornerRadius="15" 
+                        Padding="25,20"
+                        Margin="0,0,0,30">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <TextBlock Text="Добро пожаловать на вашу умную кухню!" 
+                               FontSize="18" 
+                               FontWeight="SemiBold" 
+                               Foreground="#1A5D34"
+                               TextAlignment="Center"/>
+                </Border>
+
+                <!-- Основные карточки -->
+                <UniformGrid Columns="4" 
+                             Rows="1" 
+                             Margin="0,0,0,30"
+                             HorizontalAlignment="Stretch">
+
+                    <!-- Рецепты -->
+                    <Border Background="White" 
+                            CornerRadius="15" 
+                            Padding="20"
+                            Margin="5"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Vertical" 
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="Рецепты" 
+                                       FontSize="14" 
+                                       Foreground="#666"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="156" 
+                                       FontSize="28" 
+                                       FontWeight="Bold" 
+                                       Foreground="#CFA1C1"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Список покупок -->
+                    <Border Background="White" 
+                            CornerRadius="15" 
+                            Padding="20"
+                            Margin="5"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                        </Border.Effect>
+                        <Button x:Name="btnShoppingList"
+                                Style="{StaticResource CardButtonStyle}"
+                                Click="btnShoppingList_Click">
+                            <StackPanel Orientation="Vertical" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="🛒" 
+                                           FontSize="28"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Список покупок" 
+                                           FontSize="14" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#1A5D34"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <!-- Продукты на исходе -->
+                    <Border Background="White" 
+                            CornerRadius="15" 
+                            Padding="20"
+                            Margin="5"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                        </Border.Effect>
+                        <Button x:Name="btnLowStock"
+                                Style="{StaticResource CardButtonStyle}"
+                                Click="btnLowStock_Click">
+                            <StackPanel Orientation="Vertical" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="⚠️" 
+                                           FontSize="28"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Продукты на исходе" 
+                                           FontSize="14" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#1A5D34"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <!-- Случайный рецепт -->
+                    <Border Background="White" 
+                            CornerRadius="15" 
+                            Padding="20"
+                            Margin="5"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                        </Border.Effect>
+                        <Button x:Name="btnRandomRecipe"
+                                Style="{StaticResource CardButtonStyle}"
+                                Click="btnRandomRecipe_Click">
+                            <StackPanel Orientation="Vertical" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="🎲" 
+                                           FontSize="28"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Случайный рецепт" 
+                                           FontSize="14" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#1A5D34"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Предупреждение о гостевом режиме -->
+                <Border Background="#FFF8FC" 
+                        CornerRadius="12" 
+                        Padding="20"
+                        Margin="0,0,0,30"
+                        BorderBrush="#CFA1C1"
+                        BorderThickness="1">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="⏱️ Вы в гостевом режиме" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,5"
+                                   TextAlignment="Center"/>
+                        <TextBlock Text="Данные будут временными и не сохранятся после выхода" 
+                                   FontSize="13" 
+                                   Foreground="#666"
+                                   TextAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Недавние рецепты -->
+                <Border Background="White" 
+                        CornerRadius="15" 
+                        Padding="25"
+                        Margin="0,0,0,30"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <!-- Заголовок с кнопкой -->
+                        <Grid Margin="0,0,0,20">
+                            <TextBlock Text="Недавние рецепты" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#1A5D34"
+                                       VerticalAlignment="Center"/>
+
+                            <Border Background="#1A5D34" 
+                                    CornerRadius="8" 
+                                    Padding="12,8"
+                                    HorizontalAlignment="Right"
+                                    Cursor="Hand">
+                                <TextBlock Text="Показать все" 
+                                           FontSize="12"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"/>
+                            </Border>
+                        </Grid>
+
+                        <!-- Список рецептов -->
+                        <UniformGrid Columns="4" 
+                                     Rows="1" 
+                                     HorizontalAlignment="Stretch">
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Пицца" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Торт" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Суп" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Салат" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+                        </UniformGrid>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Рекомендуем приготовить -->
+                <Border Background="White" 
+                        CornerRadius="15" 
+                        Padding="25"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <TextBlock Text="Рекомендуем приготовить" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Рекомендуемые рецепты -->
+                        <UniformGrid Columns="3" 
+                                     Rows="1" 
+                                     HorizontalAlignment="Stretch">
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Паста Карбонара" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Курица с овощами" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <Border Background="#FFF8FC" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="5"
+                                    BorderBrush="#CFA1C1"
+                                    BorderThickness="1"
+                                    Cursor="Hand">
+                                <TextBlock Text="Цезарь" 
+                                           FontSize="14"
+                                           Foreground="#1A5D34"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+                        </UniformGrid>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
