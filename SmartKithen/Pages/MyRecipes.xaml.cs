@@ -24,5 +24,55 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
         }
+
+        private void AddRecipeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CakeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void FilterButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LoadMoreButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PizzaButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SaladButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SortButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SoupButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SushiButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TiramisuButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

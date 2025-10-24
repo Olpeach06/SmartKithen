@@ -126,8 +126,8 @@
                         <Border Background="#1A5D34" 
                                 CornerRadius="12" 
                                 Padding="12,8"
-                                Cursor="Hand"
-                                MouseLeftButtonDown="UserProfile_MouseLeftButtonDown">
+                                Cursor="Hand">
+                                <!--MouseLeftButtonDown="UserProfile_MouseLeftButtonDown"-->
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
                             </Border.Effect>

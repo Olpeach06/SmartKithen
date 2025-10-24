@@ -24,5 +24,20 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
         }
+
+        private void btnAddFirstRecipe_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnAddProduct_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
