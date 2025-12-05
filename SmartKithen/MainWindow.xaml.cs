@@ -26,7 +26,6 @@ namespace SmartKithen
         public MainWindow()
         {
             InitializeComponent();
-            AppFrame.frameMain = mainFrame;
             mainFrame.Navigate(new HomePage());
         }
     }

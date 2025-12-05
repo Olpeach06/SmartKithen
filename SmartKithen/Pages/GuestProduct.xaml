@@ -99,7 +99,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Кнопка назад -->
-                    <Button Grid.Column="0"
+                    <Button
                             x:Name="btnBack"
                             Content="← Назад" 
                             FontSize="14"
@@ -107,9 +107,9 @@
                             BorderThickness="0"
                             Foreground="#1A5D34"
                             Padding="10,8"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Click="btnBack_Click">
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Click="btnBack_Click" Margin="0,7,0,0">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Cursor" Value="Hand"/>

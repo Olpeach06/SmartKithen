@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="497f8fb51aba4d8b93a08689e156f480" Name="Diagram1" ZoomLevel="45">
+        <EntityTypeShape EntityType="SmartKitchenModel.Categories" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.FridgeItems" Width="1.5" PointX="5.25" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.Ingredients" Width="1.5" PointX="8.25" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.MenuPlans" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.NutritionFacts" Width="1.5" PointX="5.25" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.Products" Width="1.5" PointX="3" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.Recipes" Width="1.5" PointX="3" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.RecipeSteps" Width="1.5" PointX="5.25" PointY="19.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SmartKitchenModel.Users" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
+        <AssociationConnector Association="SmartKitchenModel.FK_Products_Categories" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_Recipes_Categories" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_FridgeItems_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_FridgeItems_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_Ingredients_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_Ingredients_Recipes" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_MenuPlans_Recipes" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_MenuPlans_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_NutritionFacts_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="SmartKitchenModel.FK_RecipeSteps_Recipes" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

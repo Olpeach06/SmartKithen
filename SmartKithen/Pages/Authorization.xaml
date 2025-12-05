@@ -78,7 +78,7 @@
                         <StackPanel Orientation="Vertical" Margin="0,0,0,25">
 
                             <!-- Электронная почта -->
-                            <TextBlock Text="Электронная почта" 
+                            <TextBlock Text="Логин" 
                                        FontSize="14" 
                                        Foreground="#666"
                                        Margin="0,0,0,8"/>

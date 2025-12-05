@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartKithen.AppData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,53 @@ namespace SmartKithen.Pages
             InitializeComponent();
         }
 
+        // Кнопка "ВОЙТИ"
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string email = tbEmail.Text.Trim();
+                string password = pbPassword.Password.Trim();
+
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+                {
+                    MessageBox.Show("Пожалуйста, заполните все поля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Проверка пользователя через Entity Framework
+                var user = AppConnect.model01.Users.FirstOrDefault(u => u.Login == email && u.PasswordHash == password);
+
+                if (user != null)
+                {
+                    MessageBox.Show($"Добро пожаловать, {user.Name}!", "Успешный вход", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Пример перехода на главную страницу
+                    // NavigationService.Navigate(new MainPage(user));
+                }
+                else
+                {
+                    MessageBox.Show("Неверный email или пароль.", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка подключения к базе данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Остальные кнопки:
+        private void btnRegister_Click(object sender, RoutedEventArgs e)
+        {
+            // переход на страницу регистрации
+            // NavigationService.Navigate(new Registration());
+        }
+
+        private void btnGuest_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Режим гостя активирован!");
+        }
+
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.GoBack();
@@ -32,27 +80,12 @@ namespace SmartKithen.Pages
 
         private void btnForgotPassword_Click(object sender, RoutedEventArgs e)
         {
-
+            MessageBox.Show("Функция восстановления пароля пока не реализована.");
         }
 
         private void btnShowPass_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new UserInformation());
-        }
-
-        private void btnGuest_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnRegister_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new Registration());
+            MessageBox.Show("Показ пароля добавим чуть позже 😉");
         }
     }
 }
