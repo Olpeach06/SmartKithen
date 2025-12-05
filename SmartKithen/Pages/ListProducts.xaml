@@ -1,0 +1,424 @@
+﻿<Page x:Class="SmartKithen.Pages.ListProducts"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SmartKithen.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="1100" d:DesignWidth="800"
+      Title="ListProducts"
+      Background="#FFF8FC">
+
+    <Grid>
+        <!-- Фоновый градиент -->
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FFF8FC" Offset="0"/>
+                    <GradientStop Color="#FFAC6586" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" 
+                        HorizontalAlignment="Center"
+                        Width="700"
+                        Margin="40,20">
+
+                <!-- Шапка -->
+                <Grid Margin="0,0,0,25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Навигация -->
+                    <StackPanel Grid.Column="0" 
+                                Orientation="Horizontal" 
+                                VerticalAlignment="Center">
+                        <Button x:Name="BackButton"
+                                Content="← Назад" 
+                                FontSize="14"
+                                Background="Transparent" 
+                                BorderThickness="0"
+                                Foreground="#1A5D34"
+                                Padding="10,5"
+                                Click="BackButton_Click"/>
+                        <TextBlock Text="Мои списки > Текущий" 
+                                   FontSize="14" 
+                                   Foreground="#666"
+                                   VerticalAlignment="Center"
+                                   Margin="5,0,0,0"/>
+                    </StackPanel>
+
+                    <!-- Правые элементы -->
+                    <StackPanel Grid.Column="2" 
+                                Orientation="Horizontal" 
+                                VerticalAlignment="Center">
+
+                        <!-- Профиль -->
+                        <Border Background="#1A5D34" 
+                                CornerRadius="15" 
+                                Padding="12,8"
+                                Margin="0,0,15,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🍳" 
+                                           FontSize="14"
+                                           Foreground="White"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock Text="Анна" 
+                                           FontSize="12" 
+                                           Foreground="White"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Экспорт -->
+                        <Border Background="#1A5D34" 
+                                CornerRadius="12"
+                                Padding="0">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <Button x:Name="ExportButton"
+                                    Content="📤 Экспорт" 
+                                    FontSize="13"
+                                    Background="Transparent" 
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Padding="15,10"
+                                    Click="ExportButton_Click"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Секция выбора рецептов -->
+                <Border Background="White" 
+                        CornerRadius="20" 
+                        Padding="30,25" 
+                        Margin="0,0,0,25">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <TextBlock Text="Выберите рецепты" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Список рецептов -->
+                        <StackPanel Orientation="Vertical" 
+                                    Margin="0,0,0,20">
+
+                            <!-- Паста Карбонара -->
+                            <Border BorderBrush="#F0F0F0" 
+                                    BorderThickness="0,0,0,1" 
+                                    Padding="0,0,0,12"
+                                    Margin="0,0,0,12">
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="PastaCheckBox"
+                                              IsChecked="True"
+                                              Margin="0,0,15,0"
+                                              Checked="RecipeCheckBox_Changed"
+                                              Unchecked="RecipeCheckBox_Changed"/>
+                                    <StackPanel>
+                                        <TextBlock Text="Паста Карбонара" 
+                                                   FontSize="14" 
+                                                   FontWeight="Medium" 
+                                                   Foreground="#333"/>
+                                        <TextBlock Text="Итальянская паста с беконом и сыром" 
+                                                   FontSize="12" 
+                                                   Foreground="#888"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Салат Цезарь -->
+                            <Border BorderBrush="#F0F0F0" 
+                                    BorderThickness="0,0,0,1" 
+                                    Padding="0,0,0,12"
+                                    Margin="0,0,0,12">
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="SaladCheckBox"
+                                              IsChecked="True"
+                                              Margin="0,0,15,0"
+                                              Checked="RecipeCheckBox_Changed"
+                                              Unchecked="RecipeCheckBox_Changed"/>
+                                    <StackPanel>
+                                        <TextBlock Text="Салат Цезарь" 
+                                                   FontSize="14" 
+                                                   FontWeight="Medium" 
+                                                   Foreground="#333"/>
+                                        <TextBlock Text="Классический салат с курицей" 
+                                                   FontSize="12" 
+                                                   Foreground="#888"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Тирамису -->
+                            <Border BorderBrush="#F0F0F0" 
+                                    BorderThickness="0,0,0,1" 
+                                    Padding="0,0,0,12"
+                                    Margin="0,0,0,12">
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="TiramisuCheckBox"
+                                              IsChecked="False"
+                                              Margin="0,0,15,0"
+                                              Checked="RecipeCheckBox_Changed"
+                                              Unchecked="RecipeCheckBox_Changed"/>
+                                    <StackPanel>
+                                        <TextBlock Text="Тирамису" 
+                                                   FontSize="14" 
+                                                   FontWeight="Medium" 
+                                                   Foreground="#333"/>
+                                        <TextBlock Text="Итальянский десерт с кофе" 
+                                                   FontSize="12" 
+                                                   Foreground="#888"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Грибной суп -->
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox x:Name="SoupCheckBox"
+                                          IsChecked="False"
+                                          Margin="0,0,15,0"
+                                          Checked="RecipeCheckBox_Changed"
+                                          Unchecked="RecipeCheckBox_Changed"/>
+                                <StackPanel>
+                                    <TextBlock Text="Грибной суп" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="Ароматный суп с грибами" 
+                                               FontSize="12" 
+                                               Foreground="#888"
+                                               Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Кнопка добавления рецепта -->
+                        <Border BorderBrush="#CFA1C1" 
+                                BorderThickness="2" 
+                                CornerRadius="12"
+                                HorizontalAlignment="Left">
+                            <Button x:Name="AddRecipeButton"
+                                    Content="➕ Добавить рецепт" 
+                                    FontSize="13"
+                                    Background="Transparent" 
+                                    Foreground="#1A5D34"
+                                    BorderThickness="0"
+                                    Padding="20,10"
+                                    Click="AddRecipeButton_Click"/>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Секция списка покупок -->
+                <Border Background="White" 
+                        CornerRadius="20" 
+                        Padding="30,25">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="🛒 Список покупок" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#1A5D34"/>
+                            <TextBlock Text="(7 позиций)" 
+                                       FontSize="14" 
+                                       Foreground="#CFA1C1"
+                                       FontWeight="Medium"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Bottom"/>
+                        </StackPanel>
+
+                        <!-- Категория: МЯСО/РЫБА -->
+                        <Border Background="#F8F9FA" 
+                                CornerRadius="15" 
+                                Padding="20,15"
+                                Margin="0,0,0,20">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="🥩 МЯСО/РЫБА" 
+                                           FontSize="14" 
+                                           FontWeight="Bold" 
+                                           Foreground="#1A5D34"
+                                           Margin="0,0,0,15"/>
+
+                                <!-- Бекон -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <CheckBox x:Name="BaconCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Бекон" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="200 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+
+                                <!-- Курица -->
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="ChickenCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Курица" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="300 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Категория: МОЛОЧНЫЕ -->
+                        <Border Background="#F8F9FA" 
+                                CornerRadius="15" 
+                                Padding="20,15"
+                                Margin="0,0,0,20">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="🥛 МОЛОЧНЫЕ" 
+                                           FontSize="14" 
+                                           FontWeight="Bold" 
+                                           Foreground="#1A5D34"
+                                           Margin="0,0,0,15"/>
+
+                                <!-- Сливки -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <CheckBox x:Name="CreamCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Сливки" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="200 мл" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+
+                                <!-- Париезан -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <CheckBox x:Name="ParmesanCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Париезан" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="100 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+
+                                <!-- Сыр -->
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="CheeseCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Сыр" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="150 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Категория: ОВОЩИ/ФРУКТЫ -->
+                        <Border Background="#F8F9FA" 
+                                CornerRadius="15" 
+                                Padding="20,15"
+                                Margin="0,0,0,25">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="🥦 ОВОЩИ/ФРУКТЫ" 
+                                           FontSize="14" 
+                                           FontWeight="Bold" 
+                                           Foreground="#1A5D34"
+                                           Margin="0,0,0,15"/>
+
+                                <!-- Салат -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <CheckBox x:Name="LettuceCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Салат" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="1 шт" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+
+                                <!-- Помидоры -->
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="TomatoesCheckBox" Margin="0,0,15,0"/>
+                                    <TextBlock Text="Помидоры" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"
+                                               Width="120"/>
+                                    <TextBlock Text="2 шт" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Кнопки управления -->
+                        <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Center"
+                                    Margin="0,15,0,0">
+
+                            <Border Background="#1A5D34" 
+                                    CornerRadius="12"
+                                    Margin="0,0,10,0">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
+                                </Border.Effect>
+                                <Button x:Name="GenerateButton"
+                                        Content="🤖 Сгенерировать автоматически" 
+                                        FontSize="13"
+                                        Background="Transparent" 
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Padding="25,12"
+                                        Click="GenerateButton_Click"/>
+                            </Border>
+
+                            <Border BorderBrush="#CFA1C1" 
+                                    BorderThickness="2" 
+                                    CornerRadius="12">
+                                <Button x:Name="ClearCheckedButton"
+                                        Content="🗑️ Очистить отмеченные" 
+                                        FontSize="13"
+                                        Background="Transparent" 
+                                        Foreground="#1A5D34"
+                                        BorderThickness="0"
+                                        Padding="25,12"
+                                        Click="ClearCheckedButton_Click"/>
+                            </Border>
+
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

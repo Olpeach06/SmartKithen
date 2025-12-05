@@ -1,0 +1,123 @@
+﻿<Page x:Class="SmartKithen.Pages.ConfirmTheDeletion"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SmartKithen.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ConfirmTheDeletion">
+
+    <Grid>
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FFF8FC" Offset="0"/>
+                    <GradientStop Color="#FFAC6586" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <!-- Dialog container -->
+        <Border Width="400"
+                Background="White"
+                CornerRadius="12"
+                Padding="32"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="0" 
+                                  BlurRadius="20" 
+                                  Opacity="0.2"/>
+            </Border.Effect>
+
+            <StackPanel>
+
+                <!-- Warning icon -->
+                <Viewbox Width="48" Height="48" HorizontalAlignment="Center">
+                    <Grid>
+                        <!-- Background circle -->
+                        <Ellipse Fill="#FFF2F2" Width="48" Height="48"/>
+
+                        <!-- Exclamation mark icon -->
+                        <Path Data="M24,8 L24,28 M24,32 L24,36" 
+                              Stroke="#E53935"
+                              StrokeThickness="3"/>
+                        <Ellipse Fill="#E53935" Width="4" Height="4"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Top"
+                                 Margin="0,38,0,0"/>
+                    </Grid>
+                </Viewbox>
+
+                <!-- Title -->
+                <TextBlock Text="Подтверждение удаления"
+                           HorizontalAlignment="Center"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="#1A5D34"
+                           TextAlignment="Center"/>
+
+                <!-- Message with dynamic recipe name -->
+                <TextBlock x:Name="MessageText"
+                           Text="Вы уверены, что хотите удалить рецепт &quot;Паста Карбонара&quot;?&#x0a;Это действие нельзя отменить."
+                           HorizontalAlignment="Center"
+                           FontSize="14"
+                           Foreground="#666666"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           LineHeight="20"
+                           LineStackingStrategy="BlockLineHeight"/>
+
+                <!-- Buttons -->
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cancel button -->
+                    <Border Grid.Column="0"
+                            BorderBrush="#CFA1C1" 
+                            BorderThickness="2" 
+                            CornerRadius="8">
+                        <Button x:Name="CancelButton"
+                                Content="Отменить"
+                                HorizontalAlignment="Stretch"
+                                Background="Transparent"
+                                Foreground="#1A5D34"
+                                BorderThickness="0"
+                                FontSize="14"
+                                FontWeight="Medium"
+                                Padding="0,12"
+                                Cursor="Hand"/>
+                    </Border>
+
+                    <!-- Delete button -->
+                    <Border Grid.Column="2"
+                            Background="#E53935"
+                            CornerRadius="8">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0" 
+                                              BlurRadius="8" 
+                                              Opacity="0.15"/>
+                        </Border.Effect>
+                        <Button x:Name="DeleteButton"
+                                Content="Удалить"
+                                HorizontalAlignment="Stretch"
+                                Background="Transparent"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontSize="14"
+                                FontWeight="Medium"
+                                Padding="0,12"
+                                Cursor="Hand"/>
+                    </Border>
+
+                </Grid>
+
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</Page>

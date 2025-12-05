@@ -1,0 +1,441 @@
+﻿<Page x:Class="SmartKithen.Pages.ReciepeDetails"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SmartKithen.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="1330" d:DesignWidth="800"
+      Title="ReciepeDetails"
+      Background="#FFF8FC">
+
+    <Grid>
+        <!-- Фоновый градиент -->
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FFF8FC" Offset="0"/>
+                    <GradientStop Color="#FFAC6586" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+
+                <!-- Шапка с навигацией -->
+                <Grid Margin="20,20,20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Кнопка Назад -->
+                    <Button x:Name="BackButton"
+                            Grid.Column="0"
+                            Content="← Назад" 
+                            FontSize="14"
+                            Background="Transparent" 
+                            BorderThickness="0"
+                            Foreground="#1A5D34"
+                            Padding="10,5"
+                            HorizontalAlignment="Left"
+                            Click="BackButton_Click"/>
+
+                    <!-- Поиск и навигация -->
+                    <StackPanel Grid.Column="2" 
+                                Orientation="Horizontal" 
+                                VerticalAlignment="Center"
+                                Margin="10,0,0,0">
+                        <Button Content="🔍" 
+                                Background="Transparent" 
+                                BorderThickness="0"
+                                FontSize="16"
+                                Padding="5"
+                                Click="SearchButton_Click"/>
+                        <Button Content="→" 
+                                Background="Transparent" 
+                                BorderThickness="0"
+                                FontSize="16"
+                                Padding="5"
+                                Margin="5,0,0,0"
+                                Click="NextButton_Click"/>
+                        <Button Content=":" 
+                                Background="Transparent" 
+                                BorderThickness="0"
+                                FontSize="16"
+                                Padding="5"
+                                Margin="5,0,0,0"
+                                Click="MenuButton_Click"/>
+                    </StackPanel>
+
+                    <!-- Кнопка "В готовку" -->
+                    <Border Grid.Column="4"
+                            Background="#1A5D34" 
+                            CornerRadius="12"
+                            Padding="0">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                        </Border.Effect>
+                        <Button x:Name="StartCookingButton"
+                                Content="В готовку" 
+                                FontSize="12"
+                                Background="Transparent" 
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="15,8"
+                                Margin="10,0,0,0"
+                                Click="StartCookingButton_Click"/>
+                    </Border>
+                </Grid>
+
+                <!-- Изображение рецепта -->
+                <Border Height="250" 
+                        Background="#F8F9FA" 
+                        Margin="20,20,20,0"
+                        CornerRadius="20"
+                        BorderBrush="#E0E0E0" 
+                        BorderThickness="1">
+                    <Grid>
+                        <TextBlock Text="🍝" 
+                                   FontSize="80" 
+                                   Foreground="#999"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Основная информация -->
+                <Border Background="White" 
+                        CornerRadius="20" 
+                        Margin="20,20,20,0"
+                        Padding="30">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <!-- Название рецепта -->
+                        <TextBlock Text="ПАСТА КАРБОНАРА" 
+                                   FontSize="24" 
+                                   FontWeight="Bold" 
+                                   Foreground="#1A5D34"
+                                   TextAlignment="Center"
+                                   Margin="0,0,0,15"/>
+
+                        <!-- Время и порции -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="🕐" 
+                                           FontSize="18"
+                                           Foreground="#666"/>
+                                <TextBlock Text="25 мин" 
+                                           FontSize="14" 
+                                           Foreground="#666"
+                                           FontWeight="Medium"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="🍽️" 
+                                           FontSize="18"
+                                           Foreground="#666"/>
+                                <TextBlock Text="2 порции" 
+                                           FontSize="14" 
+                                           Foreground="#666"
+                                           FontWeight="Medium"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="⚡" 
+                                           FontSize="18"
+                                           Foreground="#666"/>
+                                <TextBlock Text="Средняя" 
+                                           FontSize="14" 
+                                           Foreground="#666"
+                                           FontWeight="Medium"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Сложность и рейтинг -->
+                        <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,15">
+                            <TextBlock Text="★★★★☆" 
+                                       FontSize="18" 
+                                       Foreground="#FFB800"
+                                       Margin="0,0,5,0"/>
+                            <TextBlock Text="4.5" 
+                                       FontSize="14" 
+                                       Foreground="#666"/>
+                        </StackPanel>
+
+                        <!-- Описание рецепта -->
+                        <TextBlock Text="Классическая итальянская паста с беконом и соусом" 
+                                   FontSize="16" 
+                                   Foreground="#555"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   LineHeight="22"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Кнопка добавления в список покупок -->
+                        <Border Background="#FFA500" 
+                                CornerRadius="12"
+                                HorizontalAlignment="Center">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
+                            </Border.Effect>
+                            <Button x:Name="AddToShoppingListButton"
+                                    Content="Добавить в список покупок" 
+                                    FontSize="14" 
+                                    FontWeight="SemiBold"
+                                    Background="Transparent" 
+                                    Foreground="White" 
+                                    BorderThickness="0"
+                                    Padding="25,12"
+                                    HorizontalAlignment="Center"
+                                    Click="AddToShoppingListButton_Click"/>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Ингредиенты -->
+                <Border Background="White" 
+                        CornerRadius="20" 
+                        Margin="20,20,20,0"
+                        Padding="30">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <TextBlock Text="📝 ИНГРЕДИЕНТЫ" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,20"/>
+
+                        <Border Background="#F8F9FA" 
+                                CornerRadius="15" 
+                                Padding="20,15">
+                            <StackPanel Orientation="Vertical">
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,12">
+                                    <CheckBox x:Name="SpaghettiCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Спагетти" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="400 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,12">
+                                    <CheckBox x:Name="BaconCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Бекон" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="200 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,12">
+                                    <CheckBox x:Name="CreamCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Сливки" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="200 мл" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,12">
+                                    <CheckBox x:Name="ParmesanCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Пармезан" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="100 г" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,12">
+                                    <CheckBox x:Name="EggsCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Яйца" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="2 шт" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0,0,0,12">
+                                    <CheckBox x:Name="GarlicCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Чеснок" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="2 зубчика" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="SaltCheckBox"
+                                              Margin="0,0,15,0"/>
+                                    <TextBlock Text="Соль" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="#333"/>
+                                    <TextBlock Text="по вкусу" 
+                                               FontSize="13" 
+                                               Foreground="#666"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Шаги приготовления -->
+                <Border Background="White" 
+                        CornerRadius="20" 
+                        Margin="20,20,20,20"
+                        Padding="30">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <TextBlock Text="👩‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,20"/>
+
+                        <Border Background="#F0F9FF" 
+                                CornerRadius="15" 
+                                Padding="20,15"
+                                Margin="0,0,0,15"
+                                BorderBrush="#E1F5FE" 
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="1." 
+                                           FontSize="16" 
+                                           FontWeight="Bold"
+                                           Foreground="#1A5D34"
+                                           Margin="0,0,10,0"
+                                           VerticalAlignment="Top"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="Поставить воду для пасты на огонь" 
+                                           FontSize="14" 
+                                           Foreground="#333"
+                                           TextWrapping="Wrap"
+                                           LineHeight="22"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Background="#F0F9FF" 
+                                CornerRadius="15" 
+                                Padding="20,15"
+                                Margin="0,0,0,15"
+                                BorderBrush="#E1F5FE" 
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="2." 
+                                           FontSize="16" 
+                                           FontWeight="Bold"
+                                           Foreground="#1A5D34"
+                                           Margin="0,0,10,0"
+                                           VerticalAlignment="Top"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="Обжарить бекон до хрустящей корочки" 
+                                           FontSize="14" 
+                                           Foreground="#333"
+                                           TextWrapping="Wrap"
+                                           LineHeight="22"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Background="#F0F9FF" 
+                                CornerRadius="15" 
+                                Padding="20,15"
+                                BorderBrush="#E1F5FE" 
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="3." 
+                                           FontSize="16" 
+                                           FontWeight="Bold"
+                                           Foreground="#1A5D34"
+                                           Margin="0,0,10,0"
+                                           VerticalAlignment="Top"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="Взбить яйца с сыром" 
+                                           FontSize="14" 
+                                           Foreground="#333"
+                                           TextWrapping="Wrap"
+                                           LineHeight="22"/>
+                            </Grid>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -72,6 +72,34 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\ConfirmTheDeletion.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CookingMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CreatingGuestReciepe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CreatingReciepe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\EmptyGroceryList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\EmptyReciepeList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\GuestMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\GuestProduct.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -81,6 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ListProducts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,7 +128,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\ReciepeDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Registration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SearchAndFilters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -109,6 +149,27 @@
     <Compile Include="Pages\Authorization.xaml.cs">
       <DependentUpon>Authorization.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ConfirmTheDeletion.xaml.cs">
+      <DependentUpon>ConfirmTheDeletion.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CookingMode.xaml.cs">
+      <DependentUpon>CookingMode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CreatingGuestReciepe.xaml.cs">
+      <DependentUpon>CreatingGuestReciepe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CreatingReciepe.xaml.cs">
+      <DependentUpon>CreatingReciepe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\EmptyGroceryList.xaml.cs">
+      <DependentUpon>EmptyGroceryList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\EmptyReciepeList.xaml.cs">
+      <DependentUpon>EmptyReciepeList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\GuestMode.xaml.cs">
+      <DependentUpon>GuestMode.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\GuestProduct.xaml.cs">
       <DependentUpon>GuestProduct.xaml</DependentUpon>
     </Compile>
@@ -117,6 +178,9 @@
     </Compile>
     <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ListProducts.xaml.cs">
+      <DependentUpon>ListProducts.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MainPageGuest.xaml.cs">
       <DependentUpon>MainPageGuest.xaml</DependentUpon>
@@ -127,8 +191,14 @@
     <Compile Include="Pages\MyRecipes.xaml.cs">
       <DependentUpon>MyRecipes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ReciepeDetails.xaml.cs">
+      <DependentUpon>ReciepeDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SearchAndFilters.xaml.cs">
+      <DependentUpon>SearchAndFilters.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\UserInformation.xaml.cs">
       <DependentUpon>UserInformation.xaml</DependentUpon>
