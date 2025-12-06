@@ -170,7 +170,8 @@
                                 CornerRadius="10" 
                                 Padding="10"
                                 Margin="0,0,10,0"
-                                Cursor="Hand">
+                                Cursor="Hand"
+                                MouseLeftButtonUp="RefreshIcon_Click">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                             </Border.Effect>

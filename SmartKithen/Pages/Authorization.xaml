@@ -114,19 +114,38 @@
                             </Grid>
 
                             <!-- Поле пароля с глазом -->
-                            <Grid>
+                            <Grid x:Name="passwordContainer">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="0">
+                                <!-- PasswordBox (скрытый пароль) -->
+                                <Border x:Name="passwordBorder" 
+                                        BorderBrush="#E0E0E0" 
+                                        BorderThickness="1" 
+                                        CornerRadius="10" 
+                                        Grid.Column="0">
                                     <PasswordBox x:Name="pbPassword"
                                                  FontSize="14" 
                                                  Padding="15,12"
                                                  BorderThickness="0"
                                                  Background="Transparent"
                                                  PasswordChar="●"/>
+                                </Border>
+
+                                <!-- TextBox (видимый пароль) -->
+                                <Border x:Name="textPasswordBorder" 
+                                        BorderBrush="#E0E0E0" 
+                                        BorderThickness="1" 
+                                        CornerRadius="10" 
+                                        Grid.Column="0"
+                                        Visibility="Collapsed">
+                                    <TextBox x:Name="tbVisiblePassword"
+                                             FontSize="14" 
+                                             Padding="15,12"
+                                             BorderThickness="0"
+                                             Background="Transparent"/>
                                 </Border>
 
                                 <!-- Кнопка показать пароль -->
@@ -160,6 +179,7 @@
                                 Padding="20,15"
                                 Click="btnLogin_Click"/>
                         </Border>
+
                         <!-- Разделитель -->
                         <TextBlock Text="Или продолжить как:" 
                                    FontSize="12" 

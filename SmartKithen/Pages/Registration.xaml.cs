@@ -1,111 +1,395 @@
-﻿using SmartKithen.AppData;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using SmartKithen.AppData;
 
 namespace SmartKithen.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для Registration.xaml
-    /// </summary>
     public partial class Registration : Page
     {
+        private bool _isPasswordVisible = false;
+        private bool _isConfirmPasswordVisible = false;
+
         public Registration()
         {
             InitializeComponent();
+            Loaded += Registration_Loaded;
+
+            // Обработчики нажатия клавиш
+            tbFirstName.KeyDown += TbFirstName_KeyDown;
+            tbLastName.KeyDown += TbLastName_KeyDown;
+            tbEmail.KeyDown += TbEmail_KeyDown;
+            pbPassword.KeyDown += PbPassword_KeyDown;
+            pbConfirmPassword.KeyDown += PbConfirmPassword_KeyDown;
+            tbVisiblePassword.KeyDown += TbVisiblePassword_KeyDown;
+            tbVisibleConfirmPassword.KeyDown += TbVisibleConfirmPassword_KeyDown;
+
+            // Обработчики изменения текста
+            pbPassword.PasswordChanged += PbPassword_PasswordChanged;
+            tbVisiblePassword.TextChanged += TbVisiblePassword_TextChanged;
+            pbConfirmPassword.PasswordChanged += PbConfirmPassword_PasswordChanged;
+            tbVisibleConfirmPassword.TextChanged += TbVisibleConfirmPassword_TextChanged;
+        }
+
+        private void Registration_Loaded(object sender, RoutedEventArgs e)
+        {
+            tbFirstName.Focus();
+        }
+
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.GoBack();
+        }
+
+        private void btnShowPass_Click(object sender, RoutedEventArgs e)
+        {
+            _isPasswordVisible = !_isPasswordVisible;
+
+            if (_isPasswordVisible)
+            {
+                passwordBorder.Visibility = Visibility.Collapsed;
+                textPasswordBorder.Visibility = Visibility.Visible;
+                tbVisiblePassword.Text = pbPassword.Password;
+                btnShowPassword.Content = "🙈";
+                tbVisiblePassword.Focus();
+                tbVisiblePassword.CaretIndex = tbVisiblePassword.Text.Length;
+            }
+            else
+            {
+                passwordBorder.Visibility = Visibility.Visible;
+                textPasswordBorder.Visibility = Visibility.Collapsed;
+                pbPassword.Password = tbVisiblePassword.Text;
+                btnShowPassword.Content = "👁️";
+                pbPassword.Focus();
+            }
+        }
+
+        private void btnShowConfirmPass_Click(object sender, RoutedEventArgs e)
+        {
+            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+
+            if (_isConfirmPasswordVisible)
+            {
+                confirmPasswordBorder.Visibility = Visibility.Collapsed;
+                textConfirmPasswordBorder.Visibility = Visibility.Visible;
+                tbVisibleConfirmPassword.Text = pbConfirmPassword.Password;
+                btnShowConfirmPassword.Content = "🙈";
+                tbVisibleConfirmPassword.Focus();
+                tbVisibleConfirmPassword.CaretIndex = tbVisibleConfirmPassword.Text.Length;
+            }
+            else
+            {
+                confirmPasswordBorder.Visibility = Visibility.Visible;
+                textConfirmPasswordBorder.Visibility = Visibility.Collapsed;
+                pbConfirmPassword.Password = tbVisibleConfirmPassword.Text;
+                btnShowConfirmPassword.Content = "👁️";
+                pbConfirmPassword.Focus();
+            }
+        }
+
+        private void PbPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isPasswordVisible)
+            {
+                tbVisiblePassword.Text = pbPassword.Password;
+            }
+        }
+
+        private void TbVisiblePassword_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isPasswordVisible)
+            {
+                pbPassword.Password = tbVisiblePassword.Text;
+            }
+        }
+
+        private void PbConfirmPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isConfirmPasswordVisible)
+            {
+                tbVisibleConfirmPassword.Text = pbConfirmPassword.Password;
+            }
+        }
+
+        private void TbVisibleConfirmPassword_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isConfirmPasswordVisible)
+            {
+                pbConfirmPassword.Password = tbVisibleConfirmPassword.Text;
+            }
         }
 
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string firstName = tbFirstName.Text.Trim();
-                string lastName = tbLastName.Text.Trim();
-                string email = tbEmail.Text.Trim();
-                string password = pbPassword.Password.Trim();
-                string confirmPassword = pbConfirmPassword.Password.Trim();
+                if (!ValidateRegistration())
+                    return;
 
-                // Проверка заполненности
-                if (string.IsNullOrWhiteSpace(firstName) ||
-                    string.IsNullOrWhiteSpace(lastName) ||
-                    string.IsNullOrWhiteSpace(email) ||
-                    string.IsNullOrWhiteSpace(password) ||
-                    string.IsNullOrWhiteSpace(confirmPassword))
+                if (!IsLoginUnique(tbEmail.Text))
                 {
-                    MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Этот логин уже занят. Пожалуйста, выберите другой.",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    tbEmail.Focus();
+                    tbEmail.SelectAll();
                     return;
                 }
 
-                // Проверка паролей
-                if (password != confirmPassword)
+                Users newUser = CreateNewUser();
+
+                if (SaveUserToDatabase(newUser))
                 {
-                    MessageBox.Show("Пароли не совпадают!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    App.CurrentUser = newUser;
+                    NavigationService?.Navigate(new MainPageUser());
+
+                    MessageBox.Show($"Регистрация успешна! Добро пожаловать, {newUser.Name}!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                // Проверка, существует ли уже пользователь с таким email
-                var existingUser = AppConnect.model01.Users.FirstOrDefault(u => u.Login == email);
-                if (existingUser != null)
+                else
                 {
-                    MessageBox.Show("Пользователь с таким email уже зарегистрирован.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    MessageBox.Show("Ошибка при сохранении пользователя. Попробуйте позже.",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
-                // Объединяем имя и фамилию в одно поле
-                string fullName = $"{firstName} {lastName}";
-
-                // Создаём нового пользователя
-                var newUser = new Users
-                {
-                    Name = fullName,
-                    Login = email,
-                    PasswordHash = password
-                };
-
-                // Добавляем и сохраняем
-                AppConnect.model01.Users.Add(newUser);
-                AppConnect.model01.SaveChanges();
-
-                MessageBox.Show("Регистрация успешно завершена! 🎉", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Переход на страницу авторизации
-                NavigationService.Navigate(new Authorization());
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при регистрации: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка регистрации: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void btnBack_Click(object sender, RoutedEventArgs e)
+        private bool ValidateRegistration()
         {
-            NavigationService.GoBack();
+            if (string.IsNullOrWhiteSpace(tbFirstName.Text))
+            {
+                MessageBox.Show("Введите имя", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbFirstName.Focus();
+                return false;
+            }
+
+            if (tbFirstName.Text.Length < 2)
+            {
+                MessageBox.Show("Имя должно содержать минимум 2 символа", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbFirstName.Focus();
+                tbFirstName.SelectAll();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(tbLastName.Text))
+            {
+                MessageBox.Show("Введите фамилию", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbLastName.Focus();
+                return false;
+            }
+
+            if (tbLastName.Text.Length < 2)
+            {
+                MessageBox.Show("Фамилия должна содержать минимум 2 символа", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbLastName.Focus();
+                tbLastName.SelectAll();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(tbEmail.Text))
+            {
+                MessageBox.Show("Введите логин", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbEmail.Focus();
+                return false;
+            }
+
+            if (tbEmail.Text.Length < 3)
+            {
+                MessageBox.Show("Логин должен содержать минимум 3 символа", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbEmail.Focus();
+                tbEmail.SelectAll();
+                return false;
+            }
+
+            string password = _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
+            string confirmPassword = _isConfirmPasswordVisible ? tbVisibleConfirmPassword.Text : pbConfirmPassword.Password;
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Введите пароль", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (_isPasswordVisible)
+                    tbVisiblePassword.Focus();
+                else
+                    pbPassword.Focus();
+                return false;
+            }
+
+            if (password.Length < 6)
+            {
+                MessageBox.Show("Пароль должен содержать минимум 6 символов", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (_isPasswordVisible)
+                {
+                    tbVisiblePassword.Focus();
+                    tbVisiblePassword.SelectAll();
+                }
+                else
+                {
+                    pbPassword.Focus();
+                }
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(confirmPassword))
+            {
+                MessageBox.Show("Подтвердите пароль", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (_isConfirmPasswordVisible)
+                    tbVisibleConfirmPassword.Focus();
+                else
+                    pbConfirmPassword.Focus();
+                return false;
+            }
+
+            if (password != confirmPassword)
+            {
+                MessageBox.Show("Пароли не совпадают", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (_isConfirmPasswordVisible)
+                {
+                    tbVisibleConfirmPassword.Focus();
+                    tbVisibleConfirmPassword.SelectAll();
+                }
+                else
+                {
+                    pbConfirmPassword.Focus();
+                    pbConfirmPassword.Password = "";
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsLoginUnique(string login)
+        {
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    return !context.Users.Any(u => u.Login == login);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка проверки логина: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
+        private Users CreateNewUser()
+        {
+            string password = _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
+
+            return new Users
+            {
+                Login = tbEmail.Text.Trim(),
+                PasswordHash = password,
+                Name = $"{tbFirstName.Text.Trim()} {tbLastName.Text.Trim()}".Trim()
+            };
+        }
+
+        private bool SaveUserToDatabase(Users newUser)
+        {
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    context.Users.Add(newUser);
+                    int result = context.SaveChanges();
+                    return result > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Authorization());
+            NavigationService?.Navigate(new Authorization());
         }
 
-        private void btnShowPass_Click(object sender, RoutedEventArgs e)
+        private void TbFirstName_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show("Функция показа пароля будет добавлена позже 😉");
+            if (e.Key == Key.Enter)
+            {
+                tbLastName.Focus();
+            }
         }
 
-        private void btnShowConfirmPass_Click(object sender, RoutedEventArgs e)
+        private void TbLastName_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show("Функция показа подтверждения пароля будет добавлена позже 😉");
+            if (e.Key == Key.Enter)
+            {
+                tbEmail.Focus();
+            }
+        }
+
+        private void TbEmail_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (_isPasswordVisible)
+                    tbVisiblePassword.Focus();
+                else
+                    pbPassword.Focus();
+            }
+        }
+
+        private void PbPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (_isConfirmPasswordVisible)
+                    tbVisibleConfirmPassword.Focus();
+                else
+                    pbConfirmPassword.Focus();
+            }
+        }
+
+        private void TbVisiblePassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (_isConfirmPasswordVisible)
+                    tbVisibleConfirmPassword.Focus();
+                else
+                    pbConfirmPassword.Focus();
+            }
+        }
+
+        private void PbConfirmPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnRegister_Click(sender, e);
+            }
+        }
+
+        private void TbVisibleConfirmPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnRegister_Click(sender, e);
+            }
         }
     }
 }

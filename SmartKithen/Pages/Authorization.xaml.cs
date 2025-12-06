@@ -16,14 +16,94 @@ using System.Windows.Shapes;
 
 namespace SmartKithen.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для Authorization.xaml
-    /// </summary>
     public partial class Authorization : Page
     {
+        private bool _isPasswordVisible = false;
+
         public Authorization()
         {
             InitializeComponent();
+            Loaded += Authorization_Loaded;
+
+            // Обработчики нажатия клавиш
+            tbEmail.KeyDown += TbEmail_KeyDown;
+            pbPassword.KeyDown += PbPassword_KeyDown;
+            tbVisiblePassword.KeyDown += TbVisiblePassword_KeyDown;
+
+            // Обработчики изменения текста
+            pbPassword.PasswordChanged += PbPassword_PasswordChanged;
+            tbVisiblePassword.TextChanged += TbVisiblePassword_TextChanged;
+        }
+
+        private void Authorization_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Устанавливаем фокус на поле логина
+            tbEmail.Focus();
+        }
+
+        // Кнопка "Назад"
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.GoBack();
+        }
+
+        // Кнопка "Забыли пароль?"
+        private void btnForgotPassword_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Функция восстановления пароля временно недоступна.\nОбратитесь к администратору.",
+                "Восстановление пароля", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        // Кнопка "Показать/скрыть пароль"
+        private void btnShowPass_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _isPasswordVisible = !_isPasswordVisible;
+
+                if (_isPasswordVisible)
+                {
+                    // Показываем пароль
+                    passwordBorder.Visibility = Visibility.Collapsed;
+                    textPasswordBorder.Visibility = Visibility.Visible;
+                    tbVisiblePassword.Text = pbPassword.Password;
+                    btnShowPassword.Content = "🙈";
+                    tbVisiblePassword.Focus();
+                    tbVisiblePassword.CaretIndex = tbVisiblePassword.Text.Length;
+                }
+                else
+                {
+                    // Скрываем пароль
+                    passwordBorder.Visibility = Visibility.Visible;
+                    textPasswordBorder.Visibility = Visibility.Collapsed;
+                    pbPassword.Password = tbVisiblePassword.Text;
+                    btnShowPassword.Content = "👁️";
+                    pbPassword.Focus();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // При изменении пароля в PasswordBox обновляем TextBox если он видимый
+        private void PbPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isPasswordVisible)
+            {
+                tbVisiblePassword.Text = pbPassword.Password;
+            }
+        }
+
+        // При изменении текста в TextBox обновляем PasswordBox
+        private void TbVisiblePassword_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isPasswordVisible)
+            {
+                pbPassword.Password = tbVisiblePassword.Text;
+            }
         }
 
         // Кнопка "ВОЙТИ"
@@ -31,61 +111,143 @@ namespace SmartKithen.Pages
         {
             try
             {
-                string email = tbEmail.Text.Trim();
-                string password = pbPassword.Password.Trim();
-
-                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+                // Проверяем заполнение полей
+                if (string.IsNullOrWhiteSpace(tbEmail.Text))
                 {
-                    MessageBox.Show("Пожалуйста, заполните все поля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Введите логин", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    tbEmail.Focus();
                     return;
                 }
 
-                // Проверка пользователя через Entity Framework
-                var user = AppConnect.model01.Users.FirstOrDefault(u => u.Login == email && u.PasswordHash == password);
+                // Получаем пароль в зависимости от того, какое поле видимо
+                string password = _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
 
-                if (user != null)
+                if (string.IsNullOrWhiteSpace(password))
                 {
-                    MessageBox.Show($"Добро пожаловать, {user.Name}!", "Успешный вход", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Введите пароль", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    if (_isPasswordVisible)
+                        tbVisiblePassword.Focus();
+                    else
+                        pbPassword.Focus();
+                    return;
+                }
 
-                    // Пример перехода на главную страницу
-                    // NavigationService.Navigate(new MainPage(user));
+                // Аутентификация пользователя
+                Users authenticatedUser = AuthenticateUser(tbEmail.Text, password);
+
+                if (authenticatedUser != null)
+                {
+                    // Сохраняем текущего пользователя
+                    App.CurrentUser = authenticatedUser;
+
+                    // Переходим на главную страницу пользователя
+                    NavigationService?.Navigate(new MainPageUser());
+
+                    // Показываем приветствие
+                    MessageBox.Show($"Добро пожаловать, {authenticatedUser.Name}!",
+                        "Авторизация успешна", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Неверный email или пароль.", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Неверный логин или пароль", "Ошибка авторизации",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    pbPassword.Password = "";
+                    tbVisiblePassword.Text = "";
+                    tbEmail.Focus();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка подключения к базе данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка авторизации: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Остальные кнопки:
-        private void btnRegister_Click(object sender, RoutedEventArgs e)
+        // Метод аутентификации пользователя
+        private Users AuthenticateUser(string login, string password)
         {
-            // переход на страницу регистрации
-            // NavigationService.Navigate(new Registration());
+            using (var context = new SmartKitchenEntities())
+            {
+                // Ищем пользователя по логину
+                var user = context.Users.FirstOrDefault(u => u.Login == login);
+
+                if (user != null)
+                {
+                    // ВНИМАНИЕ: В реальном проекте используйте хэширование паролей!
+                    // Здесь простое сравнение для демонстрации
+                    if (user.PasswordHash == password)
+                    {
+                        return user;
+                    }
+                }
+
+                return null;
+            }
         }
 
+        // Кнопка "Продолжить как гость"
         private void btnGuest_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Режим гостя активирован!");
+            try
+            {
+                // Устанавливаем пользователя как гостя
+                App.CurrentUser = new Users
+                {
+                    Id = 0,
+                    Login = "guest",
+                    Name = "Гость",
+                    PasswordHash = ""
+                };
+
+                // Переходим на главную страницу гостя
+                NavigationService?.Navigate(new MainPageGuest());
+
+                MessageBox.Show("Вы вошли как гость. Некоторые функции могут быть ограничены.",
+                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void btnBack_Click(object sender, RoutedEventArgs e)
+        // Кнопка "Зарегистрироваться"
+        private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            NavigationService?.Navigate(new Registration());
         }
 
-        private void btnForgotPassword_Click(object sender, RoutedEventArgs e)
+        // Обработка нажатия Enter в поле логина
+        private void TbEmail_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show("Функция восстановления пароля пока не реализована.");
+            if (e.Key == Key.Enter)
+            {
+                if (_isPasswordVisible)
+                    tbVisiblePassword.Focus();
+                else
+                    pbPassword.Focus();
+            }
         }
 
-        private void btnShowPass_Click(object sender, RoutedEventArgs e)
+        // Обработка нажатия Enter в поле пароля (PasswordBox)
+        private void PbPassword_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show("Показ пароля добавим чуть позже 😉");
+            if (e.Key == Key.Enter)
+            {
+                btnLogin_Click(sender, e);
+            }
+        }
+
+        // Обработка нажатия Enter в видимом поле пароля (TextBox)
+        private void TbVisiblePassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnLogin_Click(sender, e);
+            }
         }
     }
 }
