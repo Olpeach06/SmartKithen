@@ -17,7 +17,7 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
 
-            // Инициализация контекста БД
+            // Инициализация контекста БД8
             db = new SmartKitchenEntities();
 
             // Подписываемся на события
@@ -100,7 +100,8 @@ namespace SmartKithen.Pages
         }
 
         // Показать меню для гостя (при клике на статус "Гость")
-        private void ShowGuestMenu()
+        private void ShowGuestMenu() 
+
         {
             var menu = new ContextMenu
             {

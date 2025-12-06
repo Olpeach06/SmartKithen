@@ -22,6 +22,10 @@ namespace SmartKithen.Pages
     {
         public ListProducts()
         {
+
+
+
+
             InitializeComponent();
         }
     }
