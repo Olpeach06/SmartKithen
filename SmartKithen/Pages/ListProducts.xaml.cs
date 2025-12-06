@@ -26,6 +26,8 @@ namespace SmartKithen.Pages
 
 
 
+
+
             InitializeComponent();
         }
     }
