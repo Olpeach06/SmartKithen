@@ -24,5 +24,35 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
         }
+
+        private void ShowMoreButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ApplyFiltersButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ResetFiltersButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

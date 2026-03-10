@@ -10,8 +10,15 @@
       Background="#FFF8FC">
 
     <Grid>
+        <!-- Определения строк должны быть сразу после открывающего тега Grid -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
         <!-- Фон с градиентом -->
-        <Rectangle>
+        <Rectangle Grid.RowSpan="2">
+            <!-- Добавлено Grid.RowSpan чтобы фон покрывал все строки -->
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#FFF8FC" Offset="0"/>
@@ -19,11 +26,6 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
         <!-- Header -->
         <Border Grid.Row="0" 
@@ -50,15 +52,15 @@
 
                 <!-- Title -->
                 <StackPanel Grid.Column="1"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center">
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                     <TextBlock Text="📦"
-                               FontSize="18"
-                               HorizontalAlignment="Center"/>
+                                FontSize="18"
+                                HorizontalAlignment="Center"/>
                     <TextBlock Text="Мои продукты"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="#1A5D34" Width="115"/>
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="#1A5D34" Width="115"/>
                 </StackPanel>
 
                 <!-- Add button -->
@@ -169,9 +171,7 @@
                             BorderThickness="0"
                             Cursor="Hand"/>
                 </Border>
-
             </StackPanel>
         </ScrollViewer>
-
     </Grid>
 </Page>
