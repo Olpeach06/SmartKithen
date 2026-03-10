@@ -29,5 +29,30 @@ namespace SmartKithen.Pages
         {
 
         }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddToShoppingListButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

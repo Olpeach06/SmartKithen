@@ -54,5 +54,25 @@ namespace SmartKithen.Pages
         {
 
         }
+
+        private void PastaSeafoodButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PastaMushroomButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PastaCarbonaraButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PastaBologneseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

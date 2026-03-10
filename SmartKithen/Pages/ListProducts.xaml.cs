@@ -30,5 +30,35 @@ namespace SmartKithen.Pages
 
             InitializeComponent();
         }
+
+        private void RecipeCheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddRecipeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GenerateButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearCheckedButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -24,5 +24,15 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
         }
+
+        private void ContinueGuestButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SaveProgressButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

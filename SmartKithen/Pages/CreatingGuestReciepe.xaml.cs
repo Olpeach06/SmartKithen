@@ -24,5 +24,35 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
         }
+
+        private void AddPhotoButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddStepButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddIngredientButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GuestModeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -24,5 +24,35 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
         }
+
+        private void StartTimerButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PauseTimerButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
