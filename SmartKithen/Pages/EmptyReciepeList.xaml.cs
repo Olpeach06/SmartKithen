@@ -27,12 +27,12 @@ namespace SmartKithen.Pages
 
         private void AddRecipeButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new CreatingReciepe()); ;
         }
 
         private void AddFirstRecipeButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new CreatingReciepe());
         }
     }
 }

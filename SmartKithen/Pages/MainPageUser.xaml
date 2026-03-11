@@ -145,18 +145,19 @@
                         </Border>
 
                         <!-- Настройки -->
-                        <Border Background="White" 
-                                CornerRadius="10" 
+                        <Button x:Name="btnSettingUser"
+                                Background="White" 
                                 Padding="10"
                                 Margin="10,0,10,0"
+                                Click="btnSettingUser_Click"
                                 Cursor="Hand">
-                            <Border.Effect>
+                            <Button.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                            </Border.Effect>
+                            </Button.Effect>
                             <TextBlock Text="⚙️" 
                                        FontSize="16" 
                                        Foreground="#1A5D34"/>
-                        </Border>
+                        </Button>
 
                         <!-- Синхронизация -->
                         <Border Background="White" 
@@ -196,7 +197,7 @@
                              Margin="0,0,0,30"
                              HorizontalAlignment="Stretch">
 
-                    <!-- Рецепты -->
+                    <!-- Рецепты надо сделать кнопкой с переходом на страницу рецептов-->
                     <Border Background="White" 
                             CornerRadius="15" 
                             Padding="20"
@@ -410,7 +411,7 @@
                     </Border>
                 </Grid>
 
-                <!-- Недавние рецепты -->
+                <!-- Недавние рецепты, для них нужна таблица с историей просмотра рецептов пользователем-->
                 <Border Background="White" 
                         CornerRadius="15" 
                         Padding="25"
@@ -507,7 +508,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Рекомендуем приготовить -->
+                <!-- Рекомендуем приготовить вызывать рандомом -->
                 <Border Background="White" 
                         CornerRadius="15" 
                         Padding="25"

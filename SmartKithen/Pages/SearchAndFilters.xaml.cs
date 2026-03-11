@@ -52,7 +52,7 @@ namespace SmartKithen.Pages
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.GoBack();
         }
 
         private void PastaSeafoodButton_Click(object sender, RoutedEventArgs e)

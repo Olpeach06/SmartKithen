@@ -118,18 +118,20 @@
                                 VerticalAlignment="Center">
 
                         <!-- Иконки -->
-                        <Border Background="White" 
-                                CornerRadius="10" 
+                        <Button x:Name="btnSearch"
+                                Background="White"
                                 Padding="10"
                                 Margin="0,0,10,0"
+                                Click="btnSearch_Click"
+                                Style="{StaticResource PrimaryButtonStyle}"
                                 Cursor="Hand">
-                            <Border.Effect>
+                            <Button.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                            </Border.Effect>
+                            </Button.Effect>
                             <TextBlock Text="🔍" 
                                        FontSize="16" 
                                        Foreground="#1A5D34"/>
-                        </Border>
+                        </Button>
 
                         <!-- Гость -->
                         <Border Background="#1A5D34" 
@@ -152,18 +154,20 @@
                         </Border>
 
                         <!-- Иконка информации -->
-                        <Border Background="White" 
-                                CornerRadius="10" 
+                        <Button x:Name="btnSetting"
+                                Background="White" 
                                 Padding="10"
+                                Style="{StaticResource PrimaryButtonStyle}"
                                 Margin="0,0,10,0"
+                                Click="btnSetting_Click"
                                 Cursor="Hand">
-                            <Border.Effect>
+                            <Button.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                            </Border.Effect>
+                            </Button.Effect>
                             <TextBlock Text="⚙️" 
                                        FontSize="16" 
                                        Foreground="#1A5D34"/>
-                        </Border>
+                        </Button>
 
                         <!-- Сохранить прогресс -->
                         <Button x:Name="btnSaveProgress"
@@ -196,7 +200,7 @@
                              Margin="0,0,0,30"
                              HorizontalAlignment="Stretch">
 
-                    <!-- Рецепты -->
+                    <!-- Рецепты я бы сделала тоже кнопкой с переходом на страницу со всеми рецептами -->
                     <Border Background="White" 
                             CornerRadius="15" 
                             Padding="20"
@@ -249,7 +253,7 @@
                         </Button>
                     </Border>
 
-                    <!-- Продукты на исходе -->
+                    <!-- Продукты на исходе убрать или заменить-->
                     <Border Background="White" 
                             CornerRadius="15" 
                             Padding="20"
@@ -330,7 +334,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Недавние рецепты -->
+                <!-- Недавние рецепты убрать в гост. режиме -->
                 <Border Background="White" 
                         CornerRadius="15" 
                         Padding="25"
@@ -427,7 +431,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Рекомендуем приготовить -->
+                <!-- Рекомендуем приготовить добавить рандом появление рецептов-->
                 <Border Background="White" 
                         CornerRadius="15" 
                         Padding="25"

@@ -27,7 +27,7 @@ namespace SmartKithen.Pages
 
         private void ContinueGuestButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.GoBack();
         }
 
         private void SaveProgressButton_Click(object sender, RoutedEventArgs e)

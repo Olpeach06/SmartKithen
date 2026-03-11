@@ -224,5 +224,15 @@ namespace SmartKithen.Pages
                 NavigationService?.Navigate(new HomePage());
             }
         }
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new SearchAndFilters());
+        }
+
+        private void btnSetting_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new GuestMode());
+        }
     }
 }

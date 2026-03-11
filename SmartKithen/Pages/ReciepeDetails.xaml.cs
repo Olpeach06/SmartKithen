@@ -27,7 +27,7 @@ namespace SmartKithen.Pages
 
         private void StartCookingButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new CookingMode());
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -47,7 +47,7 @@ namespace SmartKithen.Pages
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.GoBack();
         }
 
         private void AddToShoppingListButton_Click(object sender, RoutedEventArgs e)

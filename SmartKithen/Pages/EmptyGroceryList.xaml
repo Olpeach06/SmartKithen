@@ -48,7 +48,7 @@
                         Foreground="#1A5D34"
                         Background="Transparent"
                         BorderThickness="0"
-                        Cursor="Hand"/>
+                        Cursor="Hand" Click="Button_Click"/>
 
                 <!-- Title -->
                 <StackPanel Grid.Column="1"

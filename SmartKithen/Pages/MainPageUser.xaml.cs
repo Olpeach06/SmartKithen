@@ -27,7 +27,7 @@ namespace SmartKithen.Pages
 
         private void btnMyProducts_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new EmptyGroceryList());
         }
 
         private void btnRandomRecipe_Click(object sender, RoutedEventArgs e)
@@ -42,7 +42,7 @@ namespace SmartKithen.Pages
 
         private void btnShoppingList_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
     }
 }

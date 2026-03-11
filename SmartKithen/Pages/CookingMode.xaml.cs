@@ -52,7 +52,7 @@ namespace SmartKithen.Pages
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new ReciepeDetails());
         }
     }
 }

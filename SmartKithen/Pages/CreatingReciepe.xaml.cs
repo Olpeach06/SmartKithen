@@ -37,7 +37,7 @@ namespace SmartKithen.Pages
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.GoBack();
         }
 
         private void AddPhotoButton_Click(object sender, RoutedEventArgs e)
