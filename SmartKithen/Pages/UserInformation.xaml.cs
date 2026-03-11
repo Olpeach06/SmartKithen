@@ -28,7 +28,7 @@ namespace SmartKithen.Pages
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            NavigationService.GoBack();  
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
