@@ -44,5 +44,10 @@ namespace SmartKithen.Pages
         {
             
         }
+
+        private void btnSettingUser_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
