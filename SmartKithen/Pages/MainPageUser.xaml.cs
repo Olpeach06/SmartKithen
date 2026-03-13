@@ -49,10 +49,5 @@ namespace SmartKithen.Pages
         {
             NavigationService.Navigate(new UserInformation());
         }
-
-        private void btnSettingUser_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

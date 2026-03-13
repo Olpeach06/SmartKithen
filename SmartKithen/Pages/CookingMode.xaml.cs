@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartKithen.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,7 +53,7 @@ namespace SmartKithen.Pages
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ReciepeDetails());
+            NavigationService.GoBack();
         }
     }
 }

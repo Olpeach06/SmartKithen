@@ -12,48 +12,99 @@ namespace SmartKithen.Pages
         {
             InitializeComponent();
             Loaded += MainPageGuest_Loaded;
-
-            // Добавляем обработчики для рецептов (если они есть в XAML)
-            AddEventHandlers();
-        }
-
-        private void AddEventHandlers()
-        {
-            // Добавляем обработчики кликов по рецептам
-            // Если у вас есть Border'ы с рецептами, добавьте им MouseLeftButtonUp="Recipe_Click"
         }
 
         private void MainPageGuest_Loaded(object sender, RoutedEventArgs e)
         {
             LoadGuestData();
+            LoadRecommendedRecipes();
         }
 
+        // Загрузка данных для гостя
         private void LoadGuestData()
         {
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
+                    // Загружаем общее количество рецептов
                     var totalRecipes = context.Recipes.Count();
-                    // Можно обновить UI с количеством рецептов
 
-                    var recentRecipes = context.Recipes
-                        .OrderByDescending(r => r.Id)
-                        .Take(4)
-                        .ToList();
-
-                    var recommendedRecipes = context.Recipes
-                        .OrderBy(r => Guid.NewGuid())
-                        .Take(3)
-                        .ToList();
+                    // Обновляем счетчик рецептов на кнопке
+                    if (txtRecipeCount != null)
+                    {
+                        txtRecipeCount.Text = totalRecipes.ToString();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка загрузки данных: {ex.Message}");
+                if (txtRecipeCount != null)
+                {
+                    txtRecipeCount.Text = "0";
+                }
             }
         }
 
+        // Загрузка случайных рекомендуемых рецептов
+        private void LoadRecommendedRecipes()
+        {
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    var recommendedRecipes = context.Recipes
+                        .OrderBy(r => Guid.NewGuid())
+                        .Take(3)
+                        .ToList();
+
+                    // Очищаем Grid с рекомендациями
+                    if (RecommendedRecipesGrid != null)
+                    {
+                        RecommendedRecipesGrid.Children.Clear();
+
+                        // Добавляем каждый рецепт как кнопку
+                        foreach (var recipe in recommendedRecipes)
+                        {
+                            var border = new Border
+                            {
+                                Background = System.Windows.Media.Brushes.White,
+                                CornerRadius = new CornerRadius(10),
+                                Padding = new Thickness(15, 12, 15, 12),
+                                Margin = new Thickness(5),
+                                BorderBrush = System.Windows.Media.Brushes.LightGray,
+                                BorderThickness = new Thickness(1),
+                                Cursor = System.Windows.Input.Cursors.Hand,
+                                Tag = recipe.Id
+                            };
+
+                            border.MouseLeftButtonUp += RecommendedRecipe_Click;
+
+                            var textBlock = new TextBlock
+                            {
+                                Text = recipe.Title,
+                                FontSize = 14,
+                                Foreground = System.Windows.Media.Brushes.Green,
+                                FontWeight = FontWeights.Medium,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                TextWrapping = TextWrapping.Wrap,
+                                TextAlignment = TextAlignment.Center
+                            };
+
+                            border.Child = textBlock;
+                            RecommendedRecipesGrid.Children.Add(border);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка загрузки рекомендаций: {ex.Message}");
+            }
+        }
+
+        // Кнопка "Сохранить прогресс"
         private void btnSaveProgress_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -68,33 +119,19 @@ namespace SmartKithen.Pages
             }
         }
 
+        // Кнопка "Список покупок"
         private void btnShoppingList_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Эта функция доступна только зарегистрированным пользователям.\n" +
-                          "Зарегистрируйтесь, чтобы получить доступ ко всем возможностям!",
-                          "Доступ ограничен",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
-
-            ShowRegistrationPrompt();
+            NavigationService?.Navigate(new GuestProduct());
         }
 
-        private void btnLowStock_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Эта функция доступна только зарегистрированным пользователям.\n" +
-                          "Зарегистрируйтесь, чтобы отслеживать продукты в холодильнике!",
-                          "Доступ ограничен",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
-
-            ShowRegistrationPrompt();
-        }
-
+        // Кнопка "Случайный рецепт"
         private void btnRandomRecipe_Click(object sender, RoutedEventArgs e)
         {
             ShowRandomRecipeDetail();
         }
 
+        // Показать предложение регистрации
         private void ShowRegistrationPrompt()
         {
             var result = MessageBox.Show(
@@ -109,6 +146,7 @@ namespace SmartKithen.Pages
             }
         }
 
+        // Показать детали случайного рецепта
         private void ShowRandomRecipeDetail()
         {
             try
@@ -121,20 +159,8 @@ namespace SmartKithen.Pages
 
                     if (randomRecipe != null)
                     {
-                        var result = MessageBox.Show(
-                            $"🎲 Случайный рецепт:\n\n" +
-                            $"🍽️ {randomRecipe.Title}\n" +
-                            $"⏱️ Время приготовления: {randomRecipe.CookingTime ?? 0} мин.\n\n" +
-                            $"Хотите посмотреть подробнее?",
-                            "Случайный рецепт",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Information);
-
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            // ИСПРАВЛЕНО: Используем правильное название класса GuestReciepe
-                            NavigationService?.Navigate(new GuestReciepe(randomRecipe.Id));
-                        }
+                        // ИСПРАВЛЕНО: Переход на RecipeDetails вместо MessageBox
+                        NavigationService?.Navigate(new RecipeDetails(randomRecipe.Id));
                     }
                     else
                     {
@@ -150,71 +176,46 @@ namespace SmartKithen.Pages
             }
         }
 
-        // Обработчики кликов по рецептам (если добавите в XAML)
-        private void Recipe_Click(object sender, RoutedEventArgs e)
+        // Клик по рекомендуемому рецепту
+        private void RecommendedRecipe_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ShowRandomRecipeDetail();
-        }
-
-        private void SearchIcon_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Поиск доступен в полной версии приложения",
-                "Поиск", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            ShowRegistrationPrompt();
-        }
-
-        private void SettingsIcon_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Настройки доступны зарегистрированным пользователям",
-                "Настройки", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            ShowRegistrationPrompt();
-        }
-
-        private void GuestStatus_Click(object sender, RoutedEventArgs e)
-        {
-            var menu = new ContextMenu();
-
-            var registerItem = new MenuItem
+            if (sender is Border border && border.Tag is int recipeId)
             {
-                Header = "🆕 Зарегистрироваться",
-                FontSize = 14
-            };
-            registerItem.Click += (s, args) => NavigationService?.Navigate(new Registration());
-
-            var loginItem = new MenuItem
-            {
-                Header = "🔑 Войти",
-                FontSize = 14
-            };
-            loginItem.Click += (s, args) => NavigationService?.Navigate(new Authorization());
-
-            var exitItem = new MenuItem
-            {
-                Header = "🚪 Выйти",
-                FontSize = 14
-            };
-            exitItem.Click += (s, args) => ExitGuestMode();
-
-            menu.Items.Add(registerItem);
-            menu.Items.Add(loginItem);
-            menu.Items.Add(new Separator());
-            menu.Items.Add(exitItem);
-
-            if (sender is FrameworkElement element)
-            {
-                menu.PlacementTarget = element;
-                menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-                menu.IsOpen = true;
+                // ИСПРАВЛЕНО: Переход на RecipeDetails
+                NavigationService?.Navigate(new RecipeDetails(recipeId));
             }
         }
 
-        private void ExitGuestMode()
+        // Кнопка поиска
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new SearchAndFilters());
+        }
+
+        // Кнопка настроек
+        private void btnSetting_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new GuestMode());
+        }
+
+        // Кнопка "Рецепты" (переход к списку всех рецептов)
+        private void btnRecipes_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new GuestReciepe());
+        }
+
+        // Кнопка "Добавить рецепт"
+        private void btnAddRecipe_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new CreatingGuestReciepe());
+        }
+
+        // Кнопка "Выйти из гостевого режима"
+        private void btnExitGuest_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
                 "Вы уверены, что хотите выйти из гостевого режима?\nВесь прогресс будет потерян.",
-                "Выход",
+                "Выход из гостевого режима",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -225,19 +226,50 @@ namespace SmartKithen.Pages
             }
         }
 
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        // Клик по статусу "Гость" (контекстное меню)
+        private void GuestStatus_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            NavigationService.Navigate(new SearchAndFilters());
+            if (sender is FrameworkElement element)
+            {
+                var menu = new ContextMenu();
+
+                var registerItem = new MenuItem
+                {
+                    Header = "🆕 Зарегистрироваться",
+                    FontSize = 14
+                };
+                registerItem.Click += (s, args) => NavigationService?.Navigate(new Registration());
+
+                var loginItem = new MenuItem
+                {
+                    Header = "🔑 Войти",
+                    FontSize = 14
+                };
+                loginItem.Click += (s, args) => NavigationService?.Navigate(new Authorization());
+
+                var exitItem = new MenuItem
+                {
+                    Header = "🚪 Выйти",
+                    FontSize = 14
+                };
+                exitItem.Click += (s, args) => btnExitGuest_Click(s, args);
+
+                menu.Items.Add(registerItem);
+                menu.Items.Add(loginItem);
+                menu.Items.Add(new Separator());
+                menu.Items.Add(exitItem);
+
+                menu.PlacementTarget = element;
+                menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                menu.IsOpen = true;
+            }
         }
 
-        private void btnSetting_Click(object sender, RoutedEventArgs e)
+        // Дополнительный метод для обновления данных (если нужно)
+        public void RefreshData()
         {
-            NavigationService.Navigate(new GuestMode());
-        }
-
-        private void btnRecipes_Click(object sender, RoutedEventArgs e)
-        {
-
+            LoadGuestData();
+            LoadRecommendedRecipes();
         }
     }
 }

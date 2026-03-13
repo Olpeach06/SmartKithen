@@ -67,6 +67,38 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Стиль для кнопки выхода -->
+        <Style x:Key="ExitButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1A5D34"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#CFA1C1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFF0F5"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#AC6586"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -175,7 +207,17 @@
                                 Style="{StaticResource PrimaryButtonStyle}"
                                 FontSize="12"
                                 Padding="15,10"
-                                Click="btnSaveProgress_Click"/>
+                                Click="btnSaveProgress_Click"
+                                Margin="0,0,10,0"/>
+
+                        <!-- НОВАЯ КНОПКА: Выйти из гостевого режима -->
+                        <Button x:Name="btnExitGuest"
+                                Content="🚪 Выйти" 
+                                Style="{StaticResource ExitButtonStyle}"
+                                FontSize="12"
+                                Padding="15,10"
+                                Click="btnExitGuest_Click"
+                                ToolTip="Выйти из гостевого режима"/>
                     </StackPanel>
                 </Grid>
 
@@ -200,7 +242,7 @@
                              Margin="0,0,0,30"
                              HorizontalAlignment="Stretch">
 
-                    <!-- Рецепты я бы сделала тоже кнопкой с переходом на страницу со всеми рецептами -->
+                    <!-- Рецепты (счетчик загружается из БД) -->
                     <Button x:Name="btnRecipes"
                             Style="{StaticResource CardButtonStyle}"
                             Click="btnRecipes_Click"
@@ -219,7 +261,8 @@
                                        Foreground="#666"
                                        HorizontalAlignment="Center"
                                        Margin="0,0,0,8"/>
-                            <TextBlock Text="156" 
+                            <TextBlock x:Name="txtRecipeCount" 
+                                       Text="156" 
                                        FontSize="28" 
                                        FontWeight="Bold" 
                                        Foreground="#CFA1C1"
@@ -255,7 +298,7 @@
                         </Button>
                     </Border>
 
-                    <!-- Продукты на исходе убрать или заменить-->
+                    <!-- ИЗМЕНЕНО: Вместо "Продукты на исходе" теперь "Добавить рецепт" -->
                     <Border Background="White" 
                             CornerRadius="15" 
                             Padding="20"
@@ -265,16 +308,16 @@
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
-                        <Button x:Name="btnLowStock"
+                        <Button x:Name="btnAddRecipe"
                                 Style="{StaticResource CardButtonStyle}"
-                                Click="btnLowStock_Click">
+                                Click="btnAddRecipe_Click">
                             <StackPanel Orientation="Vertical" 
                                         HorizontalAlignment="Center">
-                                <TextBlock Text="⚠️" 
+                                <TextBlock Text="📝" 
                                            FontSize="28"
                                            HorizontalAlignment="Center"
                                            Margin="0,0,0,8"/>
-                                <TextBlock Text="Продукты на исходе" 
+                                <TextBlock Text="Добавить рецепт" 
                                            FontSize="14" 
                                            FontWeight="SemiBold" 
                                            Foreground="#1A5D34"
@@ -336,104 +379,9 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Недавние рецепты убрать в гост. режиме -->
-                <Border Background="White" 
-                        CornerRadius="15" 
-                        Padding="25"
-                        Margin="0,0,0,30"
-                        BorderBrush="#E0E0E0"
-                        BorderThickness="1">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
-                    </Border.Effect>
-                    <StackPanel Orientation="Vertical">
+                <!-- УДАЛЕН блок "Недавние рецепты" полностью -->
 
-                        <!-- Заголовок с кнопкой -->
-                        <Grid Margin="0,0,0,20">
-                            <TextBlock Text="Недавние рецепты" 
-                                       FontSize="18" 
-                                       FontWeight="Bold" 
-                                       Foreground="#1A5D34"
-                                       VerticalAlignment="Center"/>
-
-                            <Border Background="#1A5D34" 
-                                    CornerRadius="8" 
-                                    Padding="12,8"
-                                    HorizontalAlignment="Right"
-                                    Cursor="Hand">
-                                <TextBlock Text="Показать все" 
-                                           FontSize="12"
-                                           Foreground="White"
-                                           FontWeight="SemiBold"/>
-                            </Border>
-                        </Grid>
-
-                        <!-- Список рецептов -->
-                        <UniformGrid Columns="4" 
-                                     Rows="1" 
-                                     HorizontalAlignment="Stretch">
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Пицца" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Торт" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Суп" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Салат" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
-                        </UniformGrid>
-
-                    </StackPanel>
-                </Border>
-
-                <!-- Рекомендуем приготовить добавить рандом появление рецептов-->
+                <!-- Рекомендуем приготовить -->
                 <Border Background="White" 
                         CornerRadius="15" 
                         Padding="25"
@@ -450,52 +398,12 @@
                                    Foreground="#1A5D34"
                                    Margin="0,0,0,20"/>
 
-                        <!-- Рекомендуемые рецепты -->
+                        <!-- Рекомендуемые рецепты - будут загружаться случайно из БД -->
                         <UniformGrid Columns="3" 
                                      Rows="1" 
-                                     HorizontalAlignment="Stretch">
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Паста Карбонара" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Курица с овощами" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
-
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15,12"
-                                    Margin="5"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1"
-                                    Cursor="Hand">
-                                <TextBlock Text="Цезарь" 
-                                           FontSize="14"
-                                           Foreground="#1A5D34"
-                                           FontWeight="Medium"
-                                           HorizontalAlignment="Center"/>
-                            </Border>
+                                     HorizontalAlignment="Stretch"
+                                     x:Name="RecommendedRecipesGrid">
+                            <!-- Сюда будут динамически добавляться рецепты из БД -->
                         </UniformGrid>
 
                     </StackPanel>
