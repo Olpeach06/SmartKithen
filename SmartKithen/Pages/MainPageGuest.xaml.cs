@@ -234,5 +234,10 @@ namespace SmartKithen.Pages
         {
             NavigationService.Navigate(new GuestMode());
         }
+
+        private void btnRecipes_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

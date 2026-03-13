@@ -42,7 +42,12 @@ namespace SmartKithen.Pages
 
         private void btnShoppingList_Click(object sender, RoutedEventArgs e)
         {
-            
+            NavigationService.Navigate(new ListProducts());
+        }
+
+        private void btnSettingUser_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new UserInformation());
         }
 
         private void btnSettingUser_Click(object sender, RoutedEventArgs e)

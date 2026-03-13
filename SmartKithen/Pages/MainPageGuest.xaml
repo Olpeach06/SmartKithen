@@ -201,15 +201,17 @@
                              HorizontalAlignment="Stretch">
 
                     <!-- Рецепты я бы сделала тоже кнопкой с переходом на страницу со всеми рецептами -->
-                    <Border Background="White" 
-                            CornerRadius="15" 
+                    <Button x:Name="btnRecipes"
+                            Style="{StaticResource CardButtonStyle}"
+                            Click="btnRecipes_Click"
+                            Background="White" 
                             Padding="20"
                             Margin="5"
                             BorderBrush="#E0E0E0"
                             BorderThickness="1">
-                        <Border.Effect>
+                        <Button.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
-                        </Border.Effect>
+                        </Button.Effect>
                         <StackPanel Orientation="Vertical" 
                                     HorizontalAlignment="Center">
                             <TextBlock Text="Рецепты" 
@@ -223,7 +225,7 @@
                                        Foreground="#CFA1C1"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
-                    </Border>
+                    </Button>
 
                     <!-- Список покупок -->
                     <Border Background="White" 
