@@ -146,17 +146,17 @@
 
                         <!-- Настройки -->
                         <Button x:Name="btnSettingUser"
-                                Background="White" 
-                                Padding="10"
-                                Margin="10,0,10,0"
-                                Click="btnSettingUser_Click"
-                                Cursor="Hand">
-                            <Button.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                            </Button.Effect>
+                            Style="{StaticResource MainButtonStyle}"
+                            Background="White"
+                            Padding="10"
+                            Margin="10,0,10,0"
+                            Click="btnSettingUser_Click">
+                                <Button.Effect>
+                                    <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                                </Button.Effect>
                             <TextBlock Text="⚙️" 
-                                       FontSize="16" 
-                                       Foreground="#1A5D34"/>
+                                   FontSize="16" 
+                                   Foreground="#1A5D34"/>
                         </Button>
 
                         <!-- Синхронизация -->
