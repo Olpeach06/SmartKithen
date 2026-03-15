@@ -4,13 +4,22 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище SmartKitchenModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище SmartKitchenModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Categories">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FavoriteRecipes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="RecipeId" Type="int" Nullable="false" />
+          <Property Name="AddedDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="FridgeItems">
           <Key>
@@ -61,6 +70,15 @@
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="DefaultUnit" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="RecipeHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="RecipeId" Type="int" Nullable="false" />
+          <Property Name="ViewedAt" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Recipes">
           <Key>
             <PropertyRef Name="Id" />
@@ -82,6 +100,16 @@
           <Property Name="StepNumber" Type="int" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="Id" />
@@ -91,6 +119,30 @@
           <Property Name="PasswordHash" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
         </EntityType>
+        <Association Name="FK_FavoriteRecipes_Recipes">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="FavoriteRecipes" Type="Self.FavoriteRecipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FavoriteRecipes">
+              <PropertyRef Name="RecipeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FavoriteRecipes_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="FavoriteRecipes" Type="Self.FavoriteRecipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FavoriteRecipes">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_FridgeItems_Products">
           <End Role="Products" Type="Self.Products" Multiplicity="1" />
           <End Role="FridgeItems" Type="Self.FridgeItems" Multiplicity="*" />
@@ -187,6 +239,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_RecipeHistory_Recipes">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="RecipeHistory" Type="Self.RecipeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RecipeHistory">
+              <PropertyRef Name="RecipeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RecipeHistory_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="RecipeHistory" Type="Self.RecipeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RecipeHistory">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Recipes_Categories">
           <End Role="Categories" Type="Self.Categories" Multiplicity="0..1" />
           <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
@@ -213,14 +289,25 @@
         </Association>
         <EntityContainer Name="Хранилище SmartKitchenModelContainer">
           <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FavoriteRecipes" EntityType="Self.FavoriteRecipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FridgeItems" EntityType="Self.FridgeItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MenuPlans" EntityType="Self.MenuPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NutritionFacts" EntityType="Self.NutritionFacts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RecipeHistory" EntityType="Self.RecipeHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Recipes" EntityType="Self.Recipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecipeSteps" EntityType="Self.RecipeSteps" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_FavoriteRecipes_Recipes" Association="Self.FK_FavoriteRecipes_Recipes">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="FavoriteRecipes" EntitySet="FavoriteRecipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FavoriteRecipes_Users" Association="Self.FK_FavoriteRecipes_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FavoriteRecipes" EntitySet="FavoriteRecipes" />
+          </AssociationSet>
           <AssociationSet Name="FK_FridgeItems_Products" Association="Self.FK_FridgeItems_Products">
             <End Role="Products" EntitySet="Products" />
             <End Role="FridgeItems" EntitySet="FridgeItems" />
@@ -253,6 +340,14 @@
             <End Role="Categories" EntitySet="Categories" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
+          <AssociationSet Name="FK_RecipeHistory_Recipes" Association="Self.FK_RecipeHistory_Recipes">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="RecipeHistory" EntitySet="RecipeHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RecipeHistory_Users" Association="Self.FK_RecipeHistory_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="RecipeHistory" EntitySet="RecipeHistory" />
+          </AssociationSet>
           <AssociationSet Name="FK_Recipes_Categories" Association="Self.FK_Recipes_Categories">
             <End Role="Categories" EntitySet="Categories" />
             <End Role="Recipes" EntitySet="Recipes" />
@@ -262,8 +357,7 @@
             <End Role="RecipeSteps" EntitySet="RecipeSteps" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SmartKitchenModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -351,6 +445,8 @@
           <NavigationProperty Name="Ingredients" Relationship="Self.FK_Ingredients_Recipes" FromRole="Recipes" ToRole="Ingredients" />
           <NavigationProperty Name="MenuPlans" Relationship="Self.FK_MenuPlans_Recipes" FromRole="Recipes" ToRole="MenuPlans" />
           <NavigationProperty Name="RecipeSteps" Relationship="Self.FK_RecipeSteps_Recipes" FromRole="Recipes" ToRole="RecipeSteps" />
+          <NavigationProperty Name="FavoriteRecipes" Relationship="SmartKitchenModel.FK_FavoriteRecipes_Recipes" FromRole="Recipes" ToRole="FavoriteRecipes" />
+          <NavigationProperty Name="RecipeHistory" Relationship="SmartKitchenModel.FK_RecipeHistory_Recipes" FromRole="Recipes" ToRole="RecipeHistory" />
         </EntityType>
         <EntityType Name="RecipeSteps">
           <Key>
@@ -372,6 +468,8 @@
           <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="FridgeItems" Relationship="Self.FK_FridgeItems_Users" FromRole="Users" ToRole="FridgeItems" />
           <NavigationProperty Name="MenuPlans" Relationship="Self.FK_MenuPlans_Users" FromRole="Users" ToRole="MenuPlans" />
+          <NavigationProperty Name="FavoriteRecipes" Relationship="SmartKitchenModel.FK_FavoriteRecipes_Users" FromRole="Users" ToRole="FavoriteRecipes" />
+          <NavigationProperty Name="RecipeHistory" Relationship="SmartKitchenModel.FK_RecipeHistory_Users" FromRole="Users" ToRole="RecipeHistory" />
         </EntityType>
         <Association Name="FK_Products_Categories">
           <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
@@ -543,7 +641,106 @@
             <End Role="Recipes" EntitySet="Recipes" />
             <End Role="RecipeSteps" EntitySet="RecipeSteps" />
           </AssociationSet>
+          <EntitySet Name="FavoriteRecipes" EntityType="SmartKitchenModel.FavoriteRecipes" />
+          <EntitySet Name="RecipeHistory" EntityType="SmartKitchenModel.RecipeHistory" />
+          <EntitySet Name="sysdiagrams" EntityType="SmartKitchenModel.sysdiagrams" />
+          <AssociationSet Name="FK_FavoriteRecipes_Recipes" Association="SmartKitchenModel.FK_FavoriteRecipes_Recipes">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="FavoriteRecipes" EntitySet="FavoriteRecipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FavoriteRecipes_Users" Association="SmartKitchenModel.FK_FavoriteRecipes_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FavoriteRecipes" EntitySet="FavoriteRecipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RecipeHistory_Recipes" Association="SmartKitchenModel.FK_RecipeHistory_Recipes">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="RecipeHistory" EntitySet="RecipeHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RecipeHistory_Users" Association="SmartKitchenModel.FK_RecipeHistory_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="RecipeHistory" EntitySet="RecipeHistory" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="FavoriteRecipes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="RecipeId" Type="Int32" Nullable="false" />
+          <Property Name="AddedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Recipes" Relationship="SmartKitchenModel.FK_FavoriteRecipes_Recipes" FromRole="FavoriteRecipes" ToRole="Recipes" />
+          <NavigationProperty Name="Users" Relationship="SmartKitchenModel.FK_FavoriteRecipes_Users" FromRole="FavoriteRecipes" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="RecipeHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="RecipeId" Type="Int32" Nullable="false" />
+          <Property Name="ViewedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Recipes" Relationship="SmartKitchenModel.FK_RecipeHistory_Recipes" FromRole="RecipeHistory" ToRole="Recipes" />
+          <NavigationProperty Name="Users" Relationship="SmartKitchenModel.FK_RecipeHistory_Users" FromRole="RecipeHistory" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK_FavoriteRecipes_Recipes">
+          <End Type="SmartKitchenModel.Recipes" Role="Recipes" Multiplicity="1" />
+          <End Type="SmartKitchenModel.FavoriteRecipes" Role="FavoriteRecipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FavoriteRecipes">
+              <PropertyRef Name="RecipeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FavoriteRecipes_Users">
+          <End Type="SmartKitchenModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="SmartKitchenModel.FavoriteRecipes" Role="FavoriteRecipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FavoriteRecipes">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RecipeHistory_Recipes">
+          <End Type="SmartKitchenModel.Recipes" Role="Recipes" Multiplicity="1" />
+          <End Type="SmartKitchenModel.RecipeHistory" Role="RecipeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RecipeHistory">
+              <PropertyRef Name="RecipeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RecipeHistory_Users">
+          <End Type="SmartKitchenModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="SmartKitchenModel.RecipeHistory" Role="RecipeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RecipeHistory">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -642,6 +839,37 @@
                 <ScalarProperty Name="Login" ColumnName="Login" />
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FavoriteRecipes">
+            <EntityTypeMapping TypeName="SmartKitchenModel.FavoriteRecipes">
+              <MappingFragment StoreEntitySet="FavoriteRecipes">
+                <ScalarProperty Name="AddedDate" ColumnName="AddedDate" />
+                <ScalarProperty Name="RecipeId" ColumnName="RecipeId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecipeHistory">
+            <EntityTypeMapping TypeName="SmartKitchenModel.RecipeHistory">
+              <MappingFragment StoreEntitySet="RecipeHistory">
+                <ScalarProperty Name="ViewedAt" ColumnName="ViewedAt" />
+                <ScalarProperty Name="RecipeId" ColumnName="RecipeId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="SmartKitchenModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

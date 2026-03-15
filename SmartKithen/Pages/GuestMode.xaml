@@ -86,8 +86,11 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
+                    
+                    
 
                     <!-- Логотип и название -->
                     <Border Grid.Column="0" 
@@ -99,6 +102,14 @@
                             <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Grid.Column="0"
+                                    Content="← Назад"
+                                    FontSize="14"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="#1A5D34"
+                                    Padding="10,5"
+                                    Click="btnBack_Click"/>
                             <TextBlock Text="👑" 
                                        FontSize="20" 
                                        Margin="0,0,10,0"/>

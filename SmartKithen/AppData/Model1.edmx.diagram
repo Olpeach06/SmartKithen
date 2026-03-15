@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="497f8fb51aba4d8b93a08689e156f480" Name="Diagram1" ZoomLevel="45">
+      <Diagram DiagramId="497f8fb51aba4d8b93a08689e156f480" Name="Diagram1" ZoomLevel="66">
         <EntityTypeShape EntityType="SmartKitchenModel.Categories" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SmartKitchenModel.FridgeItems" Width="1.5" PointX="5.25" PointY="5.5" IsExpanded="true" />
         <EntityTypeShape EntityType="SmartKitchenModel.Ingredients" Width="1.5" PointX="8.25" PointY="11" IsExpanded="true" />
@@ -24,6 +24,13 @@
         <AssociationConnector Association="SmartKitchenModel.FK_MenuPlans_Users" ManuallyRouted="false" />
         <AssociationConnector Association="SmartKitchenModel.FK_NutritionFacts_Products" ManuallyRouted="false" />
         <AssociationConnector Association="SmartKitchenModel.FK_RecipeSteps_Recipes" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="SmartKitchenModel.FavoriteRecipes" Width="1.5" PointX="8.25" PointY="4.375" />
+        <EntityTypeShape EntityType="SmartKitchenModel.RecipeHistory" Width="1.5" PointX="8.25" PointY="7.375" />
+        <EntityTypeShape EntityType="SmartKitchenModel.sysdiagrams" Width="1.5" PointX="5.375" PointY="0.75" />
+        <AssociationConnector Association="SmartKitchenModel.FK_FavoriteRecipes_Recipes" />
+        <AssociationConnector Association="SmartKitchenModel.FK_FavoriteRecipes_Users" />
+        <AssociationConnector Association="SmartKitchenModel.FK_RecipeHistory_Recipes" />
+        <AssociationConnector Association="SmartKitchenModel.FK_RecipeHistory_Users" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

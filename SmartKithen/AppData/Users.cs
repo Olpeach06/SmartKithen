@@ -19,6 +19,8 @@ namespace SmartKithen.AppData
         {
             this.FridgeItems = new HashSet<FridgeItems>();
             this.MenuPlans = new HashSet<MenuPlans>();
+            this.FavoriteRecipes = new HashSet<FavoriteRecipes>();
+            this.RecipeHistory = new HashSet<RecipeHistory>();
         }
     
         public int Id { get; set; }
@@ -30,5 +32,9 @@ namespace SmartKithen.AppData
         public virtual ICollection<FridgeItems> FridgeItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MenuPlans> MenuPlans { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FavoriteRecipes> FavoriteRecipes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RecipeHistory> RecipeHistory { get; set; }
     }
 }

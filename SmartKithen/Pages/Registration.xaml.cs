@@ -142,6 +142,11 @@ namespace SmartKithen.Pages
                 if (SaveUserToDatabase(newUser))
                 {
                     App.CurrentUser = newUser;
+
+                    // Переносим рецепт из гостевой сессии если есть
+                    if (GuestSession.HasPendingRecipe)
+                        TransferGuestRecipe(newUser.Id);
+
                     NavigationService?.Navigate(new MainPageUser());
 
                     MessageBox.Show($"Регистрация успешна! Добро пожаловать, {newUser.Name}!",
@@ -159,7 +164,79 @@ namespace SmartKithen.Pages
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void TransferGuestRecipe(int userId)
+        {
+            try
+            {
+                var data = GuestSession.PendingRecipe;
 
+                using (var context = new SmartKitchenEntities())
+                {
+                    var recipe = new Recipes
+                    {
+                        Title = data.Title,
+                        Description = data.Description,
+                        CookingTime = data.CookingTime,
+                        CategoryId = data.CategoryId,
+                        Instructions = ""
+                    };
+
+                    context.Recipes.Add(recipe);
+                    context.SaveChanges();
+
+                    foreach (var ing in data.Ingredients)
+                    {
+                        var product = context.Products
+                            .FirstOrDefault(p => p.Name.ToLower() == ing.Name.ToLower());
+
+                        if (product == null)
+                        {
+                            product = new Products
+                            {
+                                Name = ing.Name,
+                                CategoryId = 6,
+                                DefaultUnit = ing.Unit
+                            };
+                            context.Products.Add(product);
+                            context.SaveChanges();
+                        }
+
+                        context.Ingredients.Add(new Ingredients
+                        {
+                            RecipeId = recipe.Id,
+                            ProductId = product.Id,
+                            Quantity = ing.Quantity,
+                            Unit = ing.Unit
+                        });
+                    }
+
+                    for (int i = 0; i < data.Steps.Count; i++)
+                    {
+                        context.RecipeSteps.Add(new RecipeSteps
+                        {
+                            RecipeId = recipe.Id,
+                            StepNumber = i + 1,
+                            Description = data.Steps[i]
+                        });
+                    }
+
+                    context.SaveChanges();
+                }
+
+                GuestSession.Clear();
+
+                MessageBox.Show(
+                    $"Рецепт «{data.Title}» из гостевой сессии успешно сохранён в ваш аккаунт!",
+                    "Рецепт перенесён",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось перенести рецепт: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private bool ValidateRegistration()
         {
             if (string.IsNullOrWhiteSpace(tbFirstName.Text))

@@ -1,211 +1,262 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Data.Entity;
-using SmartKithen.AppData;
+using System.Windows.Media;
 
 namespace SmartKithen.Pages
 {
     public partial class GuestReciepe : Page
     {
-        private int _recipeId;
-        private Recipes _currentRecipe;
-
-        // Конструктор без параметров
         public GuestReciepe()
         {
             InitializeComponent();
             Loaded += GuestReciepe_Loaded;
         }
 
-        // Конструктор с параметром ID рецепта - ИСПРАВЛЕНИЕ
-        public GuestReciepe(int recipeId) : this()
-        {
-            _recipeId = recipeId;
-        }
-
         private void GuestReciepe_Loaded(object sender, RoutedEventArgs e)
         {
-            if (_recipeId > 0)
-            {
-                LoadRecipeData(_recipeId);
-            }
-            else
-            {
-                ShowEmptyState();
-            }
+            if (GuestSession.HasPendingRecipe)
+                ShowRecipe();
+            // Если рецепта нет — заглушка уже отображается по умолчанию
         }
 
-        // Загрузка данных рецепта
-        private void LoadRecipeData(int recipeId)
+        private void ShowRecipe()
         {
-            try
-            {
-                using (var context = new SmartKitchenEntities())
-                {
-                    _currentRecipe = context.Recipes
-                        .Include(r => r.Categories)
-                        .Include(r => r.Ingredients)
-                        .Include(r => r.RecipeSteps)
-                        .FirstOrDefault(r => r.Id == recipeId);
+            var recipe = GuestSession.PendingRecipe;
 
-                    if (_currentRecipe != null)
+            // Прячем заглушку и блок с подсказкой
+            // Добавляем карточку с данными рецепта динамически
+
+            // Находим StackPanel — главный контейнер страницы
+            var mainPanel = Content as Grid;
+            if (mainPanel == null) return;
+
+            var outerStack = mainPanel.Children[1] as StackPanel;
+            if (outerStack == null) return;
+
+            // Убираем блок-заглушку (индекс 1 — второй элемент после шапки)
+            // и заменяем на карточку рецепта
+            if (outerStack.Children.Count > 1)
+                outerStack.Children.RemoveAt(1);
+
+            var recipeCard = BuildRecipeCard(recipe);
+            outerStack.Children.Insert(1, recipeCard);
+        }
+
+        private Border BuildRecipeCard(GuestRecipeData recipe)
+        {
+            var card = new Border
+            {
+                Background = System.Windows.Media.Brushes.White,
+                CornerRadius = new CornerRadius(20),
+                Padding = new Thickness(35, 30, 35, 30),
+                Margin = new Thickness(40, 30, 40, 20)
+            };
+
+            card.Effect = new System.Windows.Media.Effects.DropShadowEffect
+            {
+                BlurRadius = 25,
+                Opacity = 0.12,
+                ShadowDepth = 5
+            };
+
+            var stack = new StackPanel { Orientation = Orientation.Vertical };
+
+            // Заголовок + время
+            var titleRow = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 15)
+            };
+
+            titleRow.Children.Add(new TextBlock
+            {
+                Text = recipe.Title,
+                FontSize = 22,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+            if (recipe.CookingTime.HasValue)
+            {
+                titleRow.Children.Add(new Border
+                {
+                    Background = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#FFF8FC")),
+                    CornerRadius = new CornerRadius(8),
+                    Padding = new Thickness(10, 5, 10, 5),
+                    Margin = new Thickness(15, 0, 0, 0),
+                    BorderBrush = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#CFA1C1")),
+                    BorderThickness = new Thickness(1),
+                    Child = new TextBlock
                     {
-                        DisplayRecipeData();
+                        Text = $"⏱️ {recipe.CookingTime} мин",
+                        FontSize = 13,
+                        Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#666"))
                     }
-                    else
+                });
+            }
+
+            stack.Children.Add(titleRow);
+
+            // Описание
+            if (!string.IsNullOrEmpty(recipe.Description))
+            {
+                stack.Children.Add(new TextBlock
+                {
+                    Text = recipe.Description,
+                    FontSize = 14,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#666")),
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 0, 0, 20)
+                });
+            }
+
+            // Разделитель
+            stack.Children.Add(new System.Windows.Shapes.Rectangle
+            {
+                Height = 1,
+                Fill = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#E0E0E0")),
+                Margin = new Thickness(0, 0, 0, 20)
+            });
+
+            // Ингредиенты
+            if (recipe.Ingredients != null && recipe.Ingredients.Count > 0)
+            {
+                stack.Children.Add(new TextBlock
+                {
+                    Text = "🥦 Ингредиенты",
+                    FontSize = 16,
+                    FontWeight = FontWeights.SemiBold,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                    Margin = new Thickness(0, 0, 0, 12)
+                });
+
+                foreach (var ing in recipe.Ingredients)
+                {
+                    var row = new StackPanel
                     {
-                        MessageBox.Show("Рецепт не найден", "Ошибка",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                        NavigationService?.GoBack();
-                    }
+                        Orientation = Orientation.Horizontal,
+                        Margin = new Thickness(0, 0, 0, 8)
+                    };
+
+                    row.Children.Add(new TextBlock
+                    {
+                        Text = "•",
+                        FontSize = 14,
+                        Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#CFA1C1")),
+                        Margin = new Thickness(0, 0, 10, 0)
+                    });
+
+                    row.Children.Add(new TextBlock
+                    {
+                        Text = ing.Name,
+                        FontSize = 14,
+                        FontWeight = FontWeights.Medium,
+                        Foreground = System.Windows.Media.Brushes.Black
+                    });
+
+                    row.Children.Add(new TextBlock
+                    {
+                        Text = $" — {ing.Quantity} {ing.Unit}",
+                        FontSize = 14,
+                        Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#666"))
+                    });
+
+                    stack.Children.Add(row);
+                }
+
+                stack.Children.Add(new System.Windows.Shapes.Rectangle
+                {
+                    Height = 1,
+                    Fill = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#E0E0E0")),
+                    Margin = new Thickness(0, 15, 0, 20)
+                });
+            }
+
+            // Шаги
+            if (recipe.Steps != null && recipe.Steps.Count > 0)
+            {
+                stack.Children.Add(new TextBlock
+                {
+                    Text = "👨‍🍳 Шаги приготовления",
+                    FontSize = 16,
+                    FontWeight = FontWeights.SemiBold,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                    Margin = new Thickness(0, 0, 0, 12)
+                });
+
+                for (int i = 0; i < recipe.Steps.Count; i++)
+                {
+                    var stepRow = new Grid { Margin = new Thickness(0, 0, 0, 12) };
+                    stepRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                    stepRow.ColumnDefinitions.Add(new ColumnDefinition
+                    {
+                        Width = new GridLength(1, GridUnitType.Star)
+                    });
+
+                    var numberBorder = new Border
+                    {
+                        Background = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                        CornerRadius = new CornerRadius(15),
+                        Width = 30,
+                        Height = 30,
+                        Margin = new Thickness(0, 0, 12, 0),
+                        VerticalAlignment = VerticalAlignment.Top
+                    };
+                    numberBorder.Child = new TextBlock
+                    {
+                        Text = (i + 1).ToString(),
+                        FontSize = 13,
+                        FontWeight = FontWeights.Bold,
+                        Foreground = System.Windows.Media.Brushes.White,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    Grid.SetColumn(numberBorder, 0);
+
+                    var stepText = new TextBlock
+                    {
+                        Text = recipe.Steps[i],
+                        FontSize = 14,
+                        Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#333")),
+                        TextWrapping = TextWrapping.Wrap,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    Grid.SetColumn(stepText, 1);
+
+                    stepRow.Children.Add(numberBorder);
+                    stepRow.Children.Add(stepText);
+                    stack.Children.Add(stepRow);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки рецепта: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                NavigationService?.GoBack();
-            }
+
+            card.Child = stack;
+            return card;
         }
 
-        // Отображение данных рецепта
-        private void DisplayRecipeData()
-        {
-            try
-            {
-                // Показываем информацию о рецепте в MessageBox
-                ShowRecipeInfoInMessage();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка отображения рецепта: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        // Показ информации о рецепте в MessageBox
-        private void ShowRecipeInfoInMessage()
-        {
-            try
-            {
-                string ingredients = "";
-                string steps = "";
-
-                // Получаем ингредиенты
-                using (var context = new SmartKitchenEntities())
-                {
-                    var recipeIngredients = context.Ingredients
-                        .Where(i => i.RecipeId == _currentRecipe.Id)
-                        .Include(i => i.Products)
-                        .ToList();
-
-                    if (recipeIngredients.Any())
-                    {
-                        ingredients = "\n\nИнгредиенты:\n" + string.Join("\n",
-                            recipeIngredients.Select(i =>
-                                $"• {i.Products?.Name ?? "Неизвестно"}: {i.Quantity} {i.Unit ?? "шт."}"));
-                    }
-
-                    var recipeSteps = context.RecipeSteps
-                        .Where(s => s.RecipeId == _currentRecipe.Id)
-                        .OrderBy(s => s.StepNumber)
-                        .ToList();
-
-                    if (recipeSteps.Any())
-                    {
-                        steps = "\n\nШаги приготовления:\n" + string.Join("\n",
-                            recipeSteps.Select(s => $"{s.StepNumber}. {s.Description}"));
-                    }
-                }
-
-                // Категория
-                string category = "Без категории";
-                if (_currentRecipe.CategoryId.HasValue)
-                {
-                    using (var context = new SmartKitchenEntities())
-                    {
-                        var cat = context.Categories.FirstOrDefault(c => c.Id == _currentRecipe.CategoryId.Value);
-                        if (cat != null)
-                        {
-                            category = cat.Name;
-                        }
-                    }
-                }
-
-                MessageBox.Show(
-                    $"🍽️ {_currentRecipe.Title}\n\n" +
-                    $"📂 Категория: {category}\n" +
-                    $"⏱️ Время приготовления: {_currentRecipe.CookingTime ?? 0} мин.\n" +
-                    $"📝 Описание: {_currentRecipe.Description ?? "Нет описания"}\n" +
-                    ingredients + steps,
-                    "Просмотр рецепта",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка отображения информации: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        // Показ пустого состояния
-        private void ShowEmptyState()
-        {
-            // Используем существующий XAML для пустого состояния
-        }
-
-        // Кнопка "Назад"
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
+        private void btnBack_Click(object sender, RoutedEventArgs e) =>
             NavigationService?.GoBack();
-        }
 
-        // Кнопка "+ Добавить"
-        private void btnAddProduct_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Эта функция доступна только зарегистрированным пользователям.\n" +
-                          "Зарегистрируйтесь, чтобы добавлять рецепты!",
-                          "Доступ ограничен",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
+        private void btnAddProduct_Click(object sender, RoutedEventArgs e) =>
+            NavigationService?.Navigate(new CreatingGuestReciepe());
 
-            ShowRegistrationPrompt();
-        }
+        private void btnAddFirstRecipe_Click(object sender, RoutedEventArgs e) =>
+            NavigationService?.Navigate(new CreatingGuestReciepe());
 
-        // Кнопка "Добавить рецепт"
-        private void btnAddFirstRecipe_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Добавление рецептов доступно только зарегистрированным пользователям.\n" +
-                          "Создайте аккаунт, чтобы сохранять свои рецепты!",
-                          "Регистрация",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
-
-            ShowRegistrationPrompt();
-        }
-
-        // Показать предложение регистрации
-        private void ShowRegistrationPrompt()
-        {
-            var result = MessageBox.Show(
-                "Хотите зарегистрироваться и получить полный доступ ко всем функциям?",
-                "Регистрация",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                NavigationService?.Navigate(new Registration());
-            }
-        }
-
-        // Кнопка "Войти в аккаунт" (добавьте в XAML Click="btnLogin_Click")
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
+        private void btnLogin_Click(object sender, RoutedEventArgs e) =>
             NavigationService?.Navigate(new Authorization());
-        }
     }
 }

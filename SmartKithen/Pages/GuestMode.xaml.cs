@@ -34,5 +34,9 @@ namespace SmartKithen.Pages
         {
 
         }
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.GoBack();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using SmartKithen.AppData;
 
 namespace SmartKithen.Pages
@@ -11,14 +12,12 @@ namespace SmartKithen.Pages
         private int _recipeId;
         private Recipes _currentRecipe;
 
-        // Конструктор без параметров
         public RecipeDetails()
         {
             InitializeComponent();
             Loaded += RecipeDetails_Loaded;
         }
 
-        // Конструктор с параметром ID рецепта
         public RecipeDetails(int recipeId) : this()
         {
             _recipeId = recipeId;
@@ -38,7 +37,6 @@ namespace SmartKithen.Pages
             }
         }
 
-        // Загрузка данных рецепта из БД
         private void LoadRecipeData(int recipeId)
         {
             try
@@ -49,12 +47,16 @@ namespace SmartKithen.Pages
                         .Include("Categories")
                         .Include("Ingredients")
                         .Include("Ingredients.Products")
-                        .Include("Recipesteps")
+                        .Include("RecipeSteps")
                         .FirstOrDefault(r => r.Id == recipeId);
 
                     if (_currentRecipe != null)
                     {
                         DisplayRecipeData();
+
+                        // Записываем в историю только для авторизованного пользователя
+                        if (SessionManager.IsLoggedIn)
+                            AddToHistory(recipeId);
                     }
                     else
                     {
@@ -72,218 +74,341 @@ namespace SmartKithen.Pages
             }
         }
 
-        // Отображение данных рецепта
         private void DisplayRecipeData()
+        {
+            // Название
+            RecipeTitleText.Text = _currentRecipe.Title.ToUpper();
+
+            // Описание
+            RecipeDescriptionText.Text = !string.IsNullOrEmpty(_currentRecipe.Description)
+                ? _currentRecipe.Description
+                : "Описание отсутствует";
+
+            // Время приготовления
+            CookingTimeText.Text = _currentRecipe.CookingTime.HasValue
+                ? $"{_currentRecipe.CookingTime.Value} мин"
+                : "Не указано";
+
+            // Категория вместо сложности
+            DifficultyText.Text = _currentRecipe.Categories != null
+                ? _currentRecipe.Categories.Name
+                : "Не указана";
+
+            LoadIngredients();
+            LoadSteps();
+        }
+
+        private void LoadIngredients()
+        {
+            IngredientsPanel.Children.Clear();
+
+            if (_currentRecipe.Ingredients == null || !_currentRecipe.Ingredients.Any())
+            {
+                IngredientsPanel.Children.Add(new TextBlock
+                {
+                    Text = "Список ингредиентов отсутствует",
+                    FontSize = 14,
+                    Foreground = Brushes.Gray
+                });
+                return;
+            }
+
+            foreach (var ingredient in _currentRecipe.Ingredients.OrderBy(i => i.Id))
+            {
+                var row = new Grid();
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                row.Margin = new Thickness(0, 0, 0, 12);
+
+                var checkBox = new CheckBox
+                {
+                    Margin = new Thickness(0, 0, 15, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var nameText = new TextBlock
+                {
+                    Text = ingredient.Products?.Name ?? "Неизвестный продукт",
+                    FontSize = 14,
+                    FontWeight = FontWeights.Medium,
+                    Foreground = Brushes.Black,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var quantityText = new TextBlock
+                {
+                    Text = $"{ingredient.Quantity} {ingredient.Unit ?? "шт."}",
+                    FontSize = 13,
+                    Foreground = Brushes.Gray,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                Grid.SetColumn(checkBox, 0);
+                Grid.SetColumn(nameText, 1);
+                Grid.SetColumn(quantityText, 2);
+
+                row.Children.Add(checkBox);
+                row.Children.Add(nameText);
+                row.Children.Add(quantityText);
+
+                IngredientsPanel.Children.Add(row);
+            }
+        }
+
+        private void LoadSteps()
+        {
+            StepsPanel.Children.Clear();
+
+            if (_currentRecipe.RecipeSteps == null || !_currentRecipe.RecipeSteps.Any())
+            {
+                StepsPanel.Children.Add(new TextBlock
+                {
+                    Text = "Шаги приготовления отсутствуют",
+                    FontSize = 14,
+                    Foreground = Brushes.Gray
+                });
+                return;
+            }
+
+            foreach (var step in _currentRecipe.RecipeSteps.OrderBy(s => s.StepNumber))
+            {
+                var border = new Border
+                {
+                    CornerRadius = new CornerRadius(15),
+                    Padding = new Thickness(20, 15, 20, 15),
+                    Margin = new Thickness(0, 0, 0, 15),
+                    Background = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#F5FFF9")),
+                    BorderBrush = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#C8E6C9")),
+                    BorderThickness = new Thickness(1)
+                };
+
+                var grid = new Grid();
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                grid.ColumnDefinitions.Add(new ColumnDefinition
+                {
+                    Width = new GridLength(1, GridUnitType.Star)
+                });
+
+                // Номер шага в круглом badge
+                var numberBorder = new Border
+                {
+                    Background = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                    CornerRadius = new CornerRadius(15),
+                    Width = 30,
+                    Height = 30,
+                    Margin = new Thickness(0, 0, 15, 0),
+                    VerticalAlignment = VerticalAlignment.Top
+                };
+
+                var numberText = new TextBlock
+                {
+                    Text = step.StepNumber.ToString(),
+                    FontSize = 13,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                numberBorder.Child = numberText;
+
+                var descriptionText = new TextBlock
+                {
+                    Text = step.Description,
+                    FontSize = 14,
+                    Foreground = Brushes.Black,
+                    TextWrapping = TextWrapping.Wrap,
+                    LineHeight = 22,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                Grid.SetColumn(numberBorder, 0);
+                Grid.SetColumn(descriptionText, 1);
+                grid.Children.Add(numberBorder);
+                grid.Children.Add(descriptionText);
+
+                border.Child = grid;
+                StepsPanel.Children.Add(border);
+            }
+        }
+
+        // Запись в историю просмотра
+        private void AddToHistory(int recipeId)
         {
             try
             {
-                // Название рецепта
-                RecipeTitleText.Text = _currentRecipe.Title.ToUpper();
-
-                // Описание
-                if (!string.IsNullOrEmpty(_currentRecipe.Description))
+                using (var context = new SmartKitchenEntities())
                 {
-                    RecipeDescriptionText.Text = _currentRecipe.Description;
+                    // Проверяем, есть ли уже запись за сегодня — не дублируем
+                    var today = DateTime.Today;
+                    var alreadyViewed = context.RecipeHistory.Any(
+                        h => h.UserId == SessionManager.CurrentUserId
+                          && h.RecipeId == recipeId
+                          && h.ViewedAt >= today);
+
+                    if (!alreadyViewed)
+                    {
+                        var history = new RecipeHistory
+                        {
+                            UserId = SessionManager.CurrentUserId,
+                            RecipeId = recipeId,
+                            ViewedAt = DateTime.Now
+                        };
+                        context.RecipeHistory.Add(history);
+                        context.SaveChanges();
+                    }
+                }
+            }
+            catch
+            {
+                // История не критична — молча игнорируем
+            }
+        }
+
+        private void AddToFavorites()
+        {
+            if (!SessionManager.IsLoggedIn)
+            {
+                ShowRegistrationPrompt();
+                return;
+            }
+
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    // Проверяем, не добавлен ли уже
+                    var alreadyFavorite = context.FavoriteRecipes.Any(
+                        f => f.UserId == SessionManager.CurrentUserId
+                          && f.RecipeId == _recipeId);
+
+                    if (alreadyFavorite)
+                    {
+                        MessageBox.Show("Рецепт уже в избранном.", "Избранное",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    var favorite = new FavoriteRecipes
+                    {
+                        UserId = SessionManager.CurrentUserId,
+                        RecipeId = _recipeId,
+                        AddedDate = DateTime.Now
+                    };
+                    context.FavoriteRecipes.Add(favorite);
+                    context.SaveChanges();
                 }
 
-                // Время приготовления
-                CookingTimeText.Text = $"{_currentRecipe.CookingTime ?? 0} мин";
-
-                // Категория (сложность)
-                if (_currentRecipe.Categories != null)
-                {
-                    DifficultyText.Text = _currentRecipe.Categories.Name;
-                }
-
-                // Количество порций (если есть в БД, иначе ставим значение по умолчанию)
-                // В вашей БД может не быть поля для порций, тогда оставляем как есть
-                // ServingsText.Text = _currentRecipe.Servings?.ToString() ?? "2 порции";
-
-                // Рейтинг (если есть в БД)
-                // RatingStars.Text = GetRatingStars(_currentRecipe.Rating ?? 4.5m);
-                // RatingValueText.Text = _currentRecipe.Rating?.ToString("F1") ?? "4.5";
-
-                // Загрузка ингредиентов
-                LoadIngredients();
-
-                // Загрузка шагов приготовления
-                /*LoadSteps();*/
+                MessageBox.Show("Рецепт добавлен в избранное!", "Избранное",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка отображения рецепта: {ex.Message}",
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AddIngredientsToShoppingList()
+        {
+            if (_currentRecipe.Ingredients == null || !_currentRecipe.Ingredients.Any())
+            {
+                MessageBox.Show("У этого рецепта нет ингредиентов.", "Список покупок",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    int added = 0;
+
+                    foreach (var ingredient in _currentRecipe.Ingredients)
+                    {
+                        // Проверяем, есть ли уже этот продукт в холодильнике у пользователя
+                        var inFridge = context.FridgeItems.Any(
+                            f => f.UserId == SessionManager.CurrentUserId
+                              && f.ProductId == ingredient.ProductId);
+
+                        if (!inFridge)
+                        {
+                            // Добавляем в холодильник как "нужно купить"
+                            // ExpiryDate ставим через месяц как заглушку
+                            var item = new FridgeItems
+                            {
+                                UserId = SessionManager.CurrentUserId,
+                                ProductId = ingredient.ProductId,
+                                Quantity = ingredient.Quantity,
+                                ExpiryDate = DateTime.Today.AddMonths(1)
+                            };
+                            context.FridgeItems.Add(item);
+                            added++;
+                        }
+                    }
+
+                    context.SaveChanges();
+
+                    var message = added > 0
+                        ? $"Добавлено {added} ингредиент(ов) в список.\nУже имеющиеся пропущены."
+                        : "Все ингредиенты уже есть в вашем списке продуктов.";
+
+                    MessageBox.Show(message, "Список покупок",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка добавления в список: {ex.Message}",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Загрузка ингредиентов
-        private void LoadIngredients()
-        {
-            try
-            {
-                if (_currentRecipe.Ingredients != null && _currentRecipe.Ingredients.Any())
-                {
-                    IngredientsPanel.Children.Clear();
-
-                    foreach (var ingredient in _currentRecipe.Ingredients.OrderBy(i => i.Id))
-                    {
-                        var stackPanel = new StackPanel
-                        {
-                            Orientation = Orientation.Horizontal,
-                            Margin = new Thickness(0, 0, 0, 12)
-                        };
-
-                        var checkBox = new CheckBox
-                        {
-                            Margin = new Thickness(0, 0, 15, 0),
-                            Tag = ingredient.Id
-                        };
-
-                        var nameText = new TextBlock
-                        {
-                            Text = ingredient.Products?.Name ?? "Неизвестный продукт",
-                            FontSize = 14,
-                            FontWeight = FontWeights.Medium,
-                            Foreground = System.Windows.Media.Brushes.Black
-                        };
-
-                        var quantityText = new TextBlock
-                        {
-                            Text = $"{ingredient.Quantity} {ingredient.Unit ?? "шт."}",
-                            FontSize = 13,
-                            Foreground = System.Windows.Media.Brushes.Gray,
-                            Margin = new Thickness(10, 0, 0, 0)
-                        };
-
-                        stackPanel.Children.Add(checkBox);
-                        stackPanel.Children.Add(nameText);
-                        stackPanel.Children.Add(quantityText);
-
-                        IngredientsPanel.Children.Add(stackPanel);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка загрузки ингредиентов: {ex.Message}");
-            }
-        }
-
-        // Загрузка шагов приготовления
-        /*private void LoadSteps()
-        {
-            try
-            {
-                if (_currentRecipe.Recipesteps != null && _currentRecipe.Recipesteps.Any())
-                {
-                    StepsPanel.Children.Clear();
-
-                    foreach (var step in _currentRecipe.Recipesteps.OrderBy(s => s.StepNumber))
-                    {
-                        var border = new Border
-                        {
-                            Background = System.Windows.Media.Brushes.LightBlue,
-                            CornerRadius = new CornerRadius(15),
-                            Padding = new Thickness(20, 15),
-                            Margin = new Thickness(0, 0, 0, 15),
-                            BorderBrush = System.Windows.Media.Brushes.LightBlue,
-                            BorderThickness = new Thickness(1)
-                        };
-
-                        var grid = new Grid();
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-                        var stepNumber = new TextBlock
-                        {
-                            Text = $"{step.StepNumber}.",
-                            FontSize = 16,
-                            FontWeight = FontWeights.Bold,
-                            Foreground = System.Windows.Media.Brushes.Green,
-                            Margin = new Thickness(0, 0, 10, 0),
-                            VerticalAlignment = VerticalAlignment.Top
-                        };
-
-                        var stepDescription = new TextBlock
-                        {
-                            Text = step.Description,
-                            FontSize = 14,
-                            Foreground = System.Windows.Media.Brushes.Black,
-                            TextWrapping = TextWrapping.Wrap
-                        };
-
-                        Grid.SetColumn(stepNumber, 0);
-                        Grid.SetColumn(stepDescription, 1);
-                        grid.Children.Add(stepNumber);
-                        grid.Children.Add(stepDescription);
-
-                        border.Child = grid;
-                        StepsPanel.Children.Add(border);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка загрузки шагов: {ex.Message}");
-            }
-        }*/
-
-        // Кнопка "В готовку"
         private void StartCookingButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new CookingMode());
         }
 
-        // Кнопка поиска
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new SearchAndFilters());
         }
 
-        // Кнопка "Далее" (следующий рецепт)
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    var nextRecipe = context.Recipes
+                    var next = context.Recipes
                         .Where(r => r.Id > _recipeId)
                         .OrderBy(r => r.Id)
                         .FirstOrDefault();
 
-                    if (nextRecipe != null)
-                    {
-                        NavigationService?.Navigate(new RecipeDetails(nextRecipe.Id));
-                    }
-                    else
-                    {
-                        // Если следующего нет, показываем первый
-                        var firstRecipe = context.Recipes
-                            .OrderBy(r => r.Id)
-                            .FirstOrDefault();
+                    if (next == null)
+                        next = context.Recipes.OrderBy(r => r.Id).FirstOrDefault();
 
-                        if (firstRecipe != null)
-                        {
-                            NavigationService?.Navigate(new RecipeDetails(firstRecipe.Id));
-                        }
-                    }
+                    if (next != null)
+                        NavigationService?.Navigate(new RecipeDetails(next.Id));
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка перехода к следующему рецепту: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Кнопка меню
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
             var menu = new ContextMenu();
 
-            var addToFavorites = new MenuItem { Header = "❤️ Добавить в избранное" };
-            addToFavorites.Click += (s, args) => AddToFavorites();
+            var addToFav = new MenuItem { Header = "❤️ Добавить в избранное" };
+            addToFav.Click += (s, args) => AddToFavorites();
 
             var share = new MenuItem { Header = "📤 Поделиться" };
             share.Click += (s, args) => ShareRecipe();
@@ -291,7 +416,7 @@ namespace SmartKithen.Pages
             var print = new MenuItem { Header = "🖨️ Распечатать" };
             print.Click += (s, args) => PrintRecipe();
 
-            menu.Items.Add(addToFavorites);
+            menu.Items.Add(addToFav);
             menu.Items.Add(share);
             menu.Items.Add(print);
 
@@ -303,13 +428,11 @@ namespace SmartKithen.Pages
             }
         }
 
-        // Кнопка "Назад"
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.GoBack();
         }
 
-        // Кнопка "Добавить в список покупок"
         private void AddToShoppingListButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -318,105 +441,59 @@ namespace SmartKithen.Pages
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
-            if (result == MessageBoxResult.Yes)
-            {
-                // Проверяем, авторизован ли пользователь
-                if (App.CurrentUser != null && App.CurrentUser.Id > 0)
-                {
-                    // Для авторизованного пользователя - добавляем в его список
-                    AddIngredientsToShoppingList();
-                }
-                else
-                {
-                    // Для гостя - предложение зарегистрироваться
-                    ShowRegistrationPrompt();
-                }
-            }
+            if (result != MessageBoxResult.Yes) return;
+
+            if (SessionManager.IsLoggedIn)
+                AddIngredientsToShoppingList();
+            else
+                ShowRegistrationPrompt();
         }
 
-        // Добавление ингредиентов в список покупок (для авторизованных)
-        private void AddIngredientsToShoppingList()
-        {
-            try
-            {
-                // Здесь будет логика добавления в список покупок
-                MessageBox.Show("Ингредиенты добавлены в список покупок!",
-                    "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка добавления в список: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        // Предложение регистрации для гостя
         private void ShowRegistrationPrompt()
         {
             var result = MessageBox.Show(
-                "Для сохранения списка покупок необходимо зарегистрироваться.\nХотите создать аккаунт?",
-                "Регистрация",
+                "Для этой функции нужен аккаунт. Зарегистрироваться?",
+                "Требуется регистрация",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
-            {
                 NavigationService?.Navigate(new Registration());
-            }
         }
 
-        // Добавление в избранное
-        private void AddToFavorites()
-        {
-            if (App.CurrentUser != null && App.CurrentUser.Id > 0)
-            {
-                MessageBox.Show("Рецепт добавлен в избранное!",
-                    "Избранное", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                ShowRegistrationPrompt();
-            }
-        }
-
-        // Поделиться рецептом
         private void ShareRecipe()
         {
-            Clipboard.SetText(_currentRecipe.Title + "\n\n" + _currentRecipe.Description);
-            MessageBox.Show("Ссылка на рецепт скопирована в буфер обмена",
-                "Поделиться", MessageBoxButton.OK, MessageBoxImage.Information);
+            var text = $"{_currentRecipe.Title}\n\n{_currentRecipe.Description}";
+            Clipboard.SetText(text);
+            MessageBox.Show("Название и описание скопированы в буфер обмена.", "Поделиться",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // Распечатать рецепт
         private void PrintRecipe()
         {
             try
             {
-                PrintDialog printDialog = new PrintDialog();
+                var printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
-                    // Здесь логика печати
-                    MessageBox.Show("Рецепт отправлен на печать",
-                        "Печать", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Рецепт отправлен на печать.", "Печать",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка печати: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка печати: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Вспомогательный метод для получения звезд рейтинга
         private string GetRatingStars(decimal rating)
         {
-            int fullStars = (int)rating;
-            bool halfStar = (rating - fullStars) >= 0.5m;
-
-            string stars = new string('★', fullStars);
-            if (halfStar) stars += "½";
-            stars += new string('☆', 5 - fullStars - (halfStar ? 1 : 0));
-
+            int full = (int)rating;
+            bool half = (rating - full) >= 0.5m;
+            string stars = new string('★', full);
+            if (half) stars += "½";
+            stars += new string('☆', 5 - full - (half ? 1 : 0));
             return stars;
         }
     }

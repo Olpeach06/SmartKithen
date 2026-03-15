@@ -10,7 +10,6 @@
       Background="#FFF8FC">
 
     <Page.Resources>
-        <!-- Стиль для основных кнопок -->
         <Style x:Key="MainButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -35,7 +34,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для навигационных кнопок -->
         <Style x:Key="NavigationButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1A5D34"/>
             <Setter Property="Foreground" Value="White"/>
@@ -66,7 +64,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для полей ввода -->
         <Style x:Key="InputFieldStyle" TargetType="TextBox">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="12,10"/>
@@ -77,7 +74,6 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
-        <!-- Стиль для комбобоксов -->
         <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="12,10"/>
@@ -88,7 +84,6 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
-        <!-- Стиль для заголовков разделов -->
         <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -98,7 +93,6 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Фон с градиентом -->
         <Rectangle>
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -119,88 +113,53 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка назад -->
                     <Button x:Name="BackButton"
                             Grid.Column="0"
                             Style="{StaticResource MainButtonStyle}"
                             Click="BackButton_Click">
-                        <Border Background="White" 
-                                CornerRadius="10" 
-                                Padding="15,10">
+                        <Border Background="White" CornerRadius="10" Padding="15,10">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                             </Border.Effect>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="←" 
-                                           FontSize="18" 
-                                           Margin="0,0,8,0"/>
-                                <TextBlock Text="Назад" 
-                                           FontSize="14" 
-                                           FontWeight="SemiBold" 
-                                           Foreground="#1A5D34"/>
+                                <TextBlock Text="←" FontSize="18" Margin="0,0,8,0"/>
+                                <TextBlock Text="Назад" FontSize="14" FontWeight="SemiBold" Foreground="#1A5D34"/>
                             </StackPanel>
                         </Border>
                     </Button>
 
-                    <!-- Заголовок -->
                     <Border Grid.Column="1"
-                            Background="White" 
-                            CornerRadius="15" 
-                            Padding="20,15"
-                            HorizontalAlignment="Center"
-                            Width="300">
+                            Background="White" CornerRadius="15" Padding="20,15"
+                            HorizontalAlignment="Center" Width="300">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
-                        <StackPanel Orientation="Horizontal" 
-                                    HorizontalAlignment="Center" 
-                                    VerticalAlignment="Center">
-                            <TextBlock Text="🍳" 
-                                       FontSize="20" 
-                                       Margin="0,0,10,0"/>
-                            <TextBlock Text="Новый рецепт (Гость)" 
-                                       FontSize="16" 
-                                       FontWeight="Bold" 
-                                       Foreground="#1A5D34"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="🍳" FontSize="20" Margin="0,0,10,0"/>
+                            <TextBlock Text="Новый рецепт (Гость)" FontSize="16" FontWeight="Bold" Foreground="#1A5D34"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Правые кнопки -->
-                    <StackPanel Grid.Column="2" 
-                                Orientation="Horizontal" 
-                                VerticalAlignment="Center">
-
-                        <!-- Кнопка гостя -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                         <Button x:Name="GuestModeButton"
                                 Style="{StaticResource MainButtonStyle}"
                                 Click="GuestModeButton_Click"
-                                ToolTip="Войти или зарегистрироваться"
                                 Margin="0,0,15,0">
-                            <Border Background="#CFA1C1" 
-                                    CornerRadius="10" 
-                                    Padding="15,10">
+                            <Border Background="#CFA1C1" CornerRadius="10" Padding="15,10">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
                                 </Border.Effect>
-                                <StackPanel Orientation="Horizontal" 
-                                            VerticalAlignment="Center">
-                                    <TextBlock Text="👤" 
-                                               FontSize="16" 
-                                               Margin="0,0,8,0"/>
-                                    <TextBlock Text="Гость" 
-                                               FontSize="14" 
-                                               FontWeight="SemiBold" 
-                                               Foreground="White"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="👤" FontSize="16" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Гость" FontSize="14" FontWeight="SemiBold" Foreground="White"/>
                                 </StackPanel>
                             </Border>
                         </Button>
 
-                        <!-- Сохранить -->
                         <Button x:Name="SaveButton"
                                 Style="{StaticResource NavigationButtonStyle}"
                                 Content="💾 Сохранить"
                                 Click="SaveButton_Click"/>
-
                     </StackPanel>
                 </Grid>
 
@@ -212,66 +171,48 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- ЛЕВАЯ КОЛОНКА: Основная информация -->
+                    <!-- ЛЕВАЯ КОЛОНКА -->
                     <Border Grid.Column="0"
-                            Background="White" 
-                            CornerRadius="15" 
-                            Padding="25"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
+                            Background="White" CornerRadius="15" Padding="25"
+                            BorderBrush="#E0E0E0" BorderThickness="1">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
                         <StackPanel Orientation="Vertical">
 
-                            <!-- Добавить фото -->
-                            <Border Background="#FFF8FC" 
-                                    CornerRadius="12" 
-                                    Height="180"
-                                    Margin="0,0,0,25"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1">
+                            <!-- Фото -->
+                            <Border Background="#FFF8FC" CornerRadius="12" Height="180"
+                                    Margin="0,0,0,25" BorderBrush="#CFA1C1" BorderThickness="1">
                                 <Button x:Name="AddPhotoButton"
                                         Style="{StaticResource MainButtonStyle}"
                                         Click="AddPhotoButton_Click">
-                                    <StackPanel Orientation="Vertical" 
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center">
-                                        <TextBlock Text="📷" 
-                                                   FontSize="40" 
-                                                   Foreground="#CFA1C1"
+                                    <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="📷" FontSize="40" Foreground="#CFA1C1"
                                                    Margin="0,0,0,10" Width="55"/>
-                                        <TextBlock Text="Добавить фото рецепта" 
-                                                   FontSize="16" 
-                                                   FontWeight="SemiBold" 
-                                                   Foreground="#1A5D34"/>
+                                        <TextBlock Text="Добавить фото рецепта"
+                                                   FontSize="16" FontWeight="SemiBold" Foreground="#1A5D34"/>
                                     </StackPanel>
                                 </Button>
                             </Border>
 
-                            <!-- Название рецепта -->
-                            <TextBlock Text="📝 Название рецепта:" 
-                                       Style="{StaticResource SectionHeaderStyle}"/>
+                            <!-- Название -->
+                            <TextBlock Text="📝 Название рецепта:" Style="{StaticResource SectionHeaderStyle}"/>
                             <TextBox x:Name="RecipeNameTextBox"
-                                     Text="Паста Карбонара" 
                                      Style="{StaticResource InputFieldStyle}"
                                      Margin="0,0,0,20"/>
 
                             <!-- Описание -->
-                            <TextBlock Text="📄 Описание:" 
-                                       Style="{StaticResource SectionHeaderStyle}"/>
+                            <TextBlock Text="📄 Описание:" Style="{StaticResource SectionHeaderStyle}"/>
                             <TextBox x:Name="DescriptionTextBox"
-                                     Text="Классическая итальянская паста с беконом и сливочным соусом..." 
                                      Style="{StaticResource InputFieldStyle}"
-                                     Height="80"
-                                     TextWrapping="Wrap"
+                                     Height="80" TextWrapping="Wrap"
                                      AcceptsReturn="True"
                                      VerticalScrollBarVisibility="Auto"
                                      Margin="0,0,0,20"/>
 
-                            <!-- Детали рецепта -->
-                            <TextBlock Text="⏱ Детали рецепта:" 
-                                       Style="{StaticResource SectionHeaderStyle}"/>
+                            <!-- Детали -->
+                            <TextBlock Text="⏱ Детали рецепта:" Style="{StaticResource SectionHeaderStyle}"/>
                             <Grid Margin="0,0,0,20">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -280,74 +221,45 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Время -->
-                                <Border Grid.Column="0"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="15"
-                                        Margin="0,0,10,0"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
+                                <Border Grid.Column="0" Background="#FFF8FC" CornerRadius="10"
+                                        Padding="15" Margin="0,0,10,0"
+                                        BorderBrush="#CFA1C1" BorderThickness="1">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="⏰ Время" 
-                                                   FontSize="13" 
-                                                   Foreground="#666"
-                                                   Margin="0,0,0,8"/>
+                                        <TextBlock Text="⏰ Время" FontSize="13" Foreground="#666" Margin="0,0,0,8"/>
                                         <Grid>
-                                            <TextBox 
-                                                     FontSize="14" 
-                                                     Padding="8"
-                                                     BorderBrush="#E0E0E0" 
-                                                     BorderThickness="1"
-                                                     Width="60"
-                                                     HorizontalAlignment="Left"/>
-                                            <TextBlock Text="мин" 
-                                                       FontSize="14" 
-                                                       Foreground="#1A5D34"
-                                                       HorizontalAlignment="Right"
-                                                       VerticalAlignment="Center"
+                                            <TextBox x:Name="TimeTextBox"
+                                                     FontSize="14" Padding="8"
+                                                     BorderBrush="#E0E0E0" BorderThickness="1"
+                                                     Width="60" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="мин" FontSize="14" Foreground="#1A5D34"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"
                                                        Margin="0,0,30,0"/>
                                         </Grid>
                                     </StackPanel>
                                 </Border>
 
                                 <!-- Порции -->
-                                <Border Grid.Column="1"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="15"
-                                        Margin="10,0,10,0"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
+                                <Border Grid.Column="1" Background="#FFF8FC" CornerRadius="10"
+                                        Padding="15" Margin="10,0,10,0"
+                                        BorderBrush="#CFA1C1" BorderThickness="1">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="👥 Порции" 
-                                                   FontSize="13" 
-                                                   Foreground="#666"
-                                                   Margin="0,0,0,8"/>
-                                        <TextBox Text="2" 
-                                                 FontSize="14" 
-                                                 Padding="8"
-                                                 BorderBrush="#E0E0E0" 
-                                                 BorderThickness="1"
-                                                 Width="48"/>
+                                        <TextBlock Text="👥 Порции" FontSize="13" Foreground="#666" Margin="0,0,0,8"/>
+                                        <TextBox x:Name="ServingsTextBox"
+                                                 Text="2" FontSize="14" Padding="8"
+                                                 BorderBrush="#E0E0E0" BorderThickness="1" Width="48"/>
                                     </StackPanel>
                                 </Border>
 
                                 <!-- Сложность -->
-                                <Border Grid.Column="2"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="15"
-                                        Margin="10,0,0,0"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
+                                <Border Grid.Column="2" Background="#FFF8FC" CornerRadius="10"
+                                        Padding="15" Margin="10,0,0,0"
+                                        BorderBrush="#CFA1C1" BorderThickness="1">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="📈 Сложность" 
-                                                   FontSize="13" 
-                                                   Foreground="#666"
-                                                   Margin="0,0,0,8"/>
-                                        <ComboBox SelectedIndex="1"
-                                                  Style="{StaticResource ComboBoxStyle}" Width="61">
-                                            <ComboBoxItem Content="★ Легкая"/>
+                                        <TextBlock Text="📈 Сложность" FontSize="13" Foreground="#666" Margin="0,0,0,8"/>
+                                        <ComboBox x:Name="DifficultyComboBox"
+                                                  SelectedIndex="1"
+                                                  Style="{StaticResource ComboBoxStyle}">
+                                            <ComboBoxItem Content="★ Лёгкая"/>
                                             <ComboBoxItem Content="★ Средняя"/>
                                             <ComboBoxItem Content="★★ Сложная"/>
                                         </ComboBox>
@@ -362,43 +274,23 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Категория -->
-                                <Border Grid.Column="0"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="15"
-                                        Margin="0,0,10,0"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
+                                <Border Grid.Column="0" Background="#FFF8FC" CornerRadius="10"
+                                        Padding="15" Margin="0,0,10,0"
+                                        BorderBrush="#CFA1C1" BorderThickness="1">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="📂 Категория" 
-                                                   FontSize="13" 
-                                                   Foreground="#666"
-                                                   Margin="0,0,0,8"/>
-                                        <ComboBox SelectedIndex="0"
-                                                  Style="{StaticResource ComboBoxStyle}" FontSize="9">
-                                            <ComboBoxItem Content="Основные блюда"/>
-                                            <ComboBoxItem Content="Закуски"/>
-                                            <ComboBoxItem Content="Десерты"/>
-                                            <ComboBoxItem Content="Напитки"/>
-                                        </ComboBox>
+                                        <TextBlock Text="📂 Категория" FontSize="13" Foreground="#666" Margin="0,0,0,8"/>
+                                        <!-- x:Name добавлен — теперь можно грузить из БД -->
+                                        <ComboBox x:Name="CategoryComboBox"
+                                                  Style="{StaticResource ComboBoxStyle}"/>
                                     </StackPanel>
                                 </Border>
 
-                                <!-- Теги -->
-                                <Border Grid.Column="1"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="15"
-                                        Margin="10,0,0,0"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
+                                <Border Grid.Column="1" Background="#FFF8FC" CornerRadius="10"
+                                        Padding="15" Margin="10,0,0,0"
+                                        BorderBrush="#CFA1C1" BorderThickness="1">
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="🏷 Теги" 
-                                                   FontSize="13" 
-                                                   Foreground="#666"
-                                                   Margin="0,0,0,8"/>
-                                        <TextBox Text="паста, итальянская, сливочный" 
+                                        <TextBlock Text="🏷 Теги" FontSize="13" Foreground="#666" Margin="0,0,0,8"/>
+                                        <TextBox x:Name="TagsTextBox"
                                                  Style="{StaticResource InputFieldStyle}" FontSize="9"/>
                                     </StackPanel>
                                 </Border>
@@ -407,30 +299,24 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ПРАВАЯ КОЛОНКА: Ингредиенты и шаги -->
-                    <StackPanel Grid.Column="2" 
-                                Orientation="Vertical">
+                    <!-- ПРАВАЯ КОЛОНКА -->
+                    <StackPanel Grid.Column="2" Orientation="Vertical">
 
                         <!-- ИНГРЕДИЕНТЫ -->
-                        <Border Background="White" 
-                                CornerRadius="15" 
-                                Padding="25"
-                                Margin="0,0,0,20"
-                                BorderBrush="#E0E0E0"
-                                BorderThickness="1">
+                        <Border Background="White" CornerRadius="15" Padding="25"
+                                Margin="0,0,0,20" BorderBrush="#E0E0E0" BorderThickness="1">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                             </Border.Effect>
                             <StackPanel Orientation="Vertical">
 
-                                <TextBlock Text="🥦 ИНГРЕДИЕНТЫ:" 
-                                           FontSize="16" 
-                                           FontWeight="Bold" 
-                                           Foreground="#1A5D34"
-                                           Margin="0,0,0,20"/>
+                                <TextBlock Text="🥦 ИНГРЕДИЕНТЫ:"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="#1A5D34" Margin="0,0,0,20"/>
 
-                                <!-- Список ингредиентов -->
-                                <StackPanel Orientation="Vertical"
+                                <!-- x:Name добавлен сюда -->
+                                <StackPanel x:Name="IngredientsListPanel"
+                                            Orientation="Vertical"
                                             Margin="0,0,0,20">
 
                                     <!-- Ингредиент 1 -->
@@ -440,41 +326,21 @@
                                             <ColumnDefinition Width="80"/>
                                             <ColumnDefinition Width="60"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="0">
-                                            <TextBox Text="Спагетти" 
-                                                     FontSize="14" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"/>
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1" Grid.Column="0">
+                                            <TextBox Text="Спагетти" FontSize="14" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="1"
-                                                Margin="10,0,10,0">
-                                            <TextBox Text="400" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"/>
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1"
+                                                Grid.Column="1" Margin="10,0,10,0">
+                                            <TextBox Text="400" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="2">
-                                            <ComboBox SelectedIndex="0"
-                                                      FontSize="14" 
-                                                      Padding="8"
-                                                      BorderThickness="0"
-                                                      Background="Transparent">
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1" Grid.Column="2">
+                                            <ComboBox SelectedIndex="0" FontSize="14" Padding="8"
+                                                      BorderThickness="0" Background="Transparent">
                                                 <ComboBoxItem Content="г"/>
                                                 <ComboBoxItem Content="мл"/>
                                                 <ComboBoxItem Content="шт"/>
@@ -489,41 +355,21 @@
                                             <ColumnDefinition Width="80"/>
                                             <ColumnDefinition Width="60"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="0">
-                                            <TextBox Text="Бекон" 
-                                                     FontSize="14" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"/>
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1" Grid.Column="0">
+                                            <TextBox Text="Бекон" FontSize="14" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="1"
-                                                Margin="10,0,10,0">
-                                            <TextBox Text="200" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"/>
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1"
+                                                Grid.Column="1" Margin="10,0,10,0">
+                                            <TextBox Text="200" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="2">
-                                            <ComboBox SelectedIndex="0"
-                                                      FontSize="14" 
-                                                      Padding="8"
-                                                      BorderThickness="0"
-                                                      Background="Transparent">
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1" Grid.Column="2">
+                                            <ComboBox SelectedIndex="0" FontSize="14" Padding="8"
+                                                      BorderThickness="0" Background="Transparent">
                                                 <ComboBoxItem Content="г"/>
                                                 <ComboBoxItem Content="мл"/>
                                                 <ComboBoxItem Content="шт"/>
@@ -538,41 +384,21 @@
                                             <ColumnDefinition Width="80"/>
                                             <ColumnDefinition Width="60"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="0">
-                                            <TextBox Text="Сливки" 
-                                                     FontSize="14" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"/>
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1" Grid.Column="0">
+                                            <TextBox Text="Сливки" FontSize="14" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="1"
-                                                Margin="10,0,10,0">
-                                            <TextBox Text="200" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"/>
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1"
+                                                Grid.Column="1" Margin="10,0,10,0">
+                                            <TextBox Text="200" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="2">
-                                            <ComboBox SelectedIndex="1"
-                                                      FontSize="14" 
-                                                      Padding="8"
-                                                      BorderThickness="0"
-                                                      Background="Transparent" Margin="0,0,-11,0">
+                                        <Border Background="#FFF8FC" CornerRadius="8" Padding="10"
+                                                BorderBrush="#E0E0E0" BorderThickness="1" Grid.Column="2">
+                                            <ComboBox SelectedIndex="1" FontSize="14" Padding="8"
+                                                      BorderThickness="0" Background="Transparent">
                                                 <ComboBoxItem Content="г"/>
                                                 <ComboBoxItem Content="мл"/>
                                                 <ComboBoxItem Content="шт"/>
@@ -582,7 +408,6 @@
 
                                 </StackPanel>
 
-                                <!-- Добавить ингредиент -->
                                 <Button x:Name="AddIngredientButton"
                                         Style="{StaticResource NavigationButtonStyle}"
                                         Content="➕ Добавить ингредиент"
@@ -594,25 +419,21 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- ШАГИ ПРИГОТОВЛЕНИЯ -->
-                        <Border Background="White" 
-                                CornerRadius="15" 
-                                Padding="25"
-                                BorderBrush="#E0E0E0"
-                                BorderThickness="1">
+                        <!-- ШАГИ -->
+                        <Border Background="White" CornerRadius="15" Padding="25"
+                                BorderBrush="#E0E0E0" BorderThickness="1">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                             </Border.Effect>
                             <StackPanel Orientation="Vertical">
 
-                                <TextBlock Text="👨‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ:" 
-                                           FontSize="16" 
-                                           FontWeight="Bold" 
-                                           Foreground="#1A5D34"
-                                           Margin="0,0,0,20"/>
+                                <TextBlock Text="👨‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ:"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="#1A5D34" Margin="0,0,0,20"/>
 
-                                <!-- Список шагов -->
-                                <StackPanel Orientation="Vertical"
+                                <!-- x:Name добавлен сюда -->
+                                <StackPanel x:Name="StepsListPanel"
+                                            Orientation="Vertical"
                                             Margin="0,0,0,20">
 
                                     <!-- Шаг 1 -->
@@ -621,33 +442,19 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Background="#1A5D34" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                Width="35"
-                                                Height="35"
-                                                Grid.Column="0">
-                                            <TextBlock Text="1" 
-                                                       FontSize="16" 
-                                                       FontWeight="Bold"
+                                        <Border Background="#1A5D34" CornerRadius="8" Padding="10"
+                                                Width="35" Height="35" Grid.Column="0">
+                                            <TextBlock Text="1" FontSize="16" FontWeight="Bold"
                                                        Foreground="White"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="10" 
-                                                Padding="15"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="1"
-                                                Margin="10,0,0,0">
-                                            <TextBox Text="Поставить воду для пасты на огонь, посолить и довести до кипения..." 
-                                                     FontSize="14" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"
-                                                     Height="80"
-                                                     TextWrapping="Wrap"
+                                        <Border Background="#FFF8FC" CornerRadius="10" Padding="15"
+                                                BorderBrush="#E0E0E0" BorderThickness="1"
+                                                Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBox FontSize="14" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"
+                                                     Height="80" TextWrapping="Wrap"
                                                      AcceptsReturn="True"
                                                      VerticalScrollBarVisibility="Auto"/>
                                         </Border>
@@ -659,33 +466,19 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Background="#1A5D34" 
-                                                CornerRadius="8" 
-                                                Padding="10"
-                                                Width="35"
-                                                Height="35"
-                                                Grid.Column="0">
-                                            <TextBlock Text="2" 
-                                                       FontSize="16" 
-                                                       FontWeight="Bold"
+                                        <Border Background="#1A5D34" CornerRadius="8" Padding="10"
+                                                Width="35" Height="35" Grid.Column="0">
+                                            <TextBlock Text="2" FontSize="16" FontWeight="Bold"
                                                        Foreground="White"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"/>
                                         </Border>
-                                        <Border Background="#FFF8FC" 
-                                                CornerRadius="10" 
-                                                Padding="15"
-                                                BorderBrush="#E0E0E0"
-                                                BorderThickness="1"
-                                                Grid.Column="1"
-                                                Margin="10,0,0,0">
-                                            <TextBox Text="Обжарить бекон на среднем огне до хрустящей корочки, затем добавить сливки..." 
-                                                     FontSize="14" 
-                                                     Padding="8"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"
-                                                     Height="80"
-                                                     TextWrapping="Wrap"
+                                        <Border Background="#FFF8FC" CornerRadius="10" Padding="15"
+                                                BorderBrush="#E0E0E0" BorderThickness="1"
+                                                Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBox FontSize="14" Padding="8"
+                                                     BorderThickness="0" Background="Transparent"
+                                                     Height="80" TextWrapping="Wrap"
                                                      AcceptsReturn="True"
                                                      VerticalScrollBarVisibility="Auto"/>
                                         </Border>
@@ -693,7 +486,6 @@
 
                                 </StackPanel>
 
-                                <!-- Добавить шаг -->
                                 <Button x:Name="AddStepButton"
                                         Style="{StaticResource NavigationButtonStyle}"
                                         Content="➕ Добавить шаг"
@@ -706,36 +498,23 @@
                         </Border>
 
                     </StackPanel>
-
                 </Grid>
 
                 <!-- Примечание для гостя -->
-                <Border Background="#FFF8FC" 
-                        CornerRadius="15" 
-                        Padding="20"
-                        Margin="0,30,0,0"
-                        BorderBrush="#CFA1C1"
-                        BorderThickness="1">
+                <Border Background="#FFF8FC" CornerRadius="15" Padding="20"
+                        Margin="0,30,0,0" BorderBrush="#CFA1C1" BorderThickness="1">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                     </Border.Effect>
-                    <StackPanel Orientation="Horizontal" 
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-                        <TextBlock Text="👤" 
-                                   FontSize="20"
-                                   Margin="0,0,15,0"
-                                   Foreground="#1A5D34"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="👤" FontSize="20" Margin="0,0,15,0" Foreground="#1A5D34"/>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Вы работаете в гостевом режиме" 
-                                       FontSize="16" 
-                                       FontWeight="SemiBold"
-                                       Foreground="#1A5D34"
-                                       Margin="0,0,0,5"/>
-                            <TextBlock Text="Сохраните прогресс, чтобы не потерять созданные рецепты" 
-                                       FontSize="14" 
-                                       Foreground="#666"
-                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="Вы работаете в гостевом режиме"
+                                       FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#1A5D34" Margin="0,0,0,5"/>
+                            <TextBlock Text="Сохраните прогресс, чтобы не потерять созданные рецепты"
+                                       FontSize="14" Foreground="#666" TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>

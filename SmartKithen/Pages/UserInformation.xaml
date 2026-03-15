@@ -3,14 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:SmartKithen.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="800"
       Title="UserInformation"
       Background="#FFF8FC">
 
     <Grid>
-        <!-- Фон с градиентом -->
         <Rectangle>
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -23,19 +21,17 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical" 
                         HorizontalAlignment="Center" 
-                        VerticalAlignment="Top"
                         Width="500"
                         Margin="40">
 
-                <!-- Шапка с навигацией -->
-                <Grid Margin="0,0,0,30">    
+                <!-- Шапка -->
+                <Grid Margin="0,0,0,30">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка Назад -->
                     <Button x:Name="btnBack"
                             Grid.Column="0"
                             Content="← Назад" 
@@ -44,23 +40,20 @@
                             BorderThickness="0"
                             Foreground="#1A5D34"
                             Padding="10,5"
-                            HorizontalAlignment="Left"
                             Click="btnBack_Click"/>
 
-                    <!-- Заголовок -->
                     <TextBlock Grid.Column="1"
                                Text="Настройки" 
-                               FontSize="20" 
-                               FontWeight="Bold" 
+                               FontSize="20" FontWeight="Bold" 
                                Foreground="#1A5D34"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
 
-                    <!-- Кнопка Сохранить -->
+                    <!-- Кнопка сохранить — показывается только на вкладке Профиль -->
                     <Border Grid.Column="2"
+                            x:Name="SaveButtonBorder"
                             Background="#1A5D34" 
-                            CornerRadius="10"
-                            Padding="0">
+                            CornerRadius="10">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
                         </Border.Effect>
@@ -75,21 +68,110 @@
                     </Border>
                 </Grid>
 
-                <!-- Раздел ПРОФИЛЬ -->
-                <Border Background="White" 
-                        CornerRadius="20" 
-                        Padding="30,25" 
-                        Margin="0,0,0,25">
+                <!-- Аватар + имя с popup выхода -->
+                <Border Background="White" CornerRadius="20" Padding="25,20" Margin="0,0,0,25">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+
+                        <!-- Иконка -->
+                        <Border Background="#1A5D34" CornerRadius="40" Width="80" Height="80"
+                                HorizontalAlignment="Center" Margin="0,0,0,12">
+                            <TextBlock Text="👤" FontSize="36"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Имя с popup -->
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <Border x:Name="UserNameBorder"
+                                    Padding="12,6"
+                                    CornerRadius="8"
+                                    Cursor="Hand"
+                                    MouseEnter="UserNameBorder_MouseEnter"
+                                    MouseLeave="UserNameBorder_MouseLeave">
+                                <TextBlock x:Name="UserNameDisplay"
+                                           Text="..." 
+                                           FontSize="18" FontWeight="Bold"
+                                           Foreground="#1A5D34"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Popup с кнопкой выхода -->
+                            <Border x:Name="LogoutPopup"
+                                    Background="White"
+                                    CornerRadius="10"
+                                    Padding="5"
+                                    Visibility="Collapsed"
+                                    MouseEnter="LogoutPopup_MouseEnter"
+                                    MouseLeave="LogoutPopup_MouseLeave">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="3"/>
+                                </Border.Effect>
+                                <Button Content="🚪  Выйти из аккаунта"
+                                        FontSize="13"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="#666"
+                                        Padding="12,8"
+                                        Cursor="Hand"
+                                        Click="btnLogout_Click"/>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock x:Name="UserLoginDisplay"
+                                   Text="..." 
+                                   FontSize="13"
+                                   Foreground="#999"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Вкладки -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="TabProfileBorder"
+                            Grid.Column="0"
+                            Background="#1A5D34"
+                            CornerRadius="12,0,0,12"
+                            Cursor="Hand"
+                            MouseLeftButtonDown="TabProfile_Click">
+                        <TextBlock Text="Профиль"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   Padding="0,12"/>
+                    </Border>
+
+                    <Border x:Name="TabPasswordBorder"
+                            Grid.Column="1"
+                            Background="#E8F5EE"
+                            CornerRadius="0,12,12,0"
+                            Cursor="Hand"
+                            MouseLeftButtonDown="TabPassword_Click">
+                        <TextBlock Text="Смена пароля"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   Foreground="#1A5D34"
+                                   HorizontalAlignment="Center"
+                                   Padding="0,12"/>
+                    </Border>
+                </Grid>
+
+                <!-- ВКЛАДКА: ПРОФИЛЬ -->
+                <Border x:Name="ProfileTab"
+                        Background="White" CornerRadius="20" Padding="30,25" Margin="0,0,0,25">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
                     </Border.Effect>
                     <StackPanel Orientation="Vertical">
 
-                        <TextBlock Text="ПРОФИЛЬ" 
-                                   FontSize="16" 
-                                   FontWeight="Bold" 
-                                   Foreground="#1A5D34"
-                                   Margin="0,0,0,20"/>
+                        <TextBlock Text="ПРОФИЛЬ" FontSize="16" FontWeight="Bold" 
+                                   Foreground="#1A5D34" Margin="0,0,0,20"/>
 
                         <!-- Имя -->
                         <Grid Margin="0,0,0,15">
@@ -97,300 +179,163 @@
                                 <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Имя:" 
-                                       FontSize="14" 
-                                       Foreground="#666"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="0"/>
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="1">
+                            <TextBlock Text="Имя:" FontSize="14" Foreground="#666"
+                                       VerticalAlignment="Center" Grid.Column="0"/>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" 
+                                    CornerRadius="10" Grid.Column="1">
                                 <TextBox x:Name="tbName"
-                                         Text="Анна" 
-                                         FontSize="14" 
-                                         Padding="12,10"
-                                         BorderThickness="0"
-                                         Background="Transparent"/>
+                                         FontSize="14" Padding="12,10"
+                                         BorderThickness="0" Background="Transparent"/>
                             </Border>
                         </Grid>
 
-                        <!-- Email -->
+                        <!-- Логин -->
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Логин:" FontSize="14" Foreground="#666"
+                                       VerticalAlignment="Center" Grid.Column="0"/>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" 
+                                    CornerRadius="10" Grid.Column="1">
+                                <TextBox x:Name="tbLogin"
+                                         FontSize="14" Padding="12,10"
+                                         BorderThickness="0" Background="Transparent"/>
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="* Логин используется для входа в систему"
+                                   FontSize="11" Foreground="#999" Margin="120,4,0,0"/>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- ВКЛАДКА: СМЕНА ПАРОЛЯ -->
+                <Border x:Name="PasswordTab"
+                        Background="White" CornerRadius="20" Padding="30,25" Margin="0,0,0,25"
+                        Visibility="Collapsed">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <TextBlock Text="СМЕНА ПАРОЛЯ" FontSize="16" FontWeight="Bold" 
+                                   Foreground="#1A5D34" Margin="0,0,0,20"/>
+
+                        <!-- Текущий пароль -->
                         <Grid Margin="0,0,0,15">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="160"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Email:" 
-                                       FontSize="14" 
-                                       Foreground="#666"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="0"/>
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="1">
-                                <TextBox x:Name="tbEmail"
-                                         Text="anna@email.com" 
-                                         FontSize="14" 
-                                         Padding="12,10"
-                                         BorderThickness="0"
-                                         Background="Transparent"/>
-                            </Border>
-                        </Grid>
-
-                        <!-- Сменить пароль -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Сменить пароль:" 
-                                       FontSize="14" 
-                                       Foreground="#666"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="0"/>
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="1">
-                                <PasswordBox x:Name="pbPassword"
-                                             PasswordChar="●" 
-                                             FontSize="14" 
-                                             Padding="12,10"
-                                             BorderThickness="0"
+                            <TextBlock Text="Текущий пароль:" FontSize="14" Foreground="#666"
+                                       VerticalAlignment="Center" Grid.Column="0"/>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" 
+                                    CornerRadius="10" Grid.Column="1">
+                                <PasswordBox x:Name="pbCurrentPassword"
+                                             PasswordChar="●" FontSize="14" 
+                                             Padding="12,10" BorderThickness="0"
                                              Background="Transparent"/>
                             </Border>
-                            <Border Grid.Column="2"
-                                    BorderBrush="#CFA1C1" 
-                                    BorderThickness="2" 
-                                    CornerRadius="10"
-                                    Margin="10,0,0,0">
-                                <Button x:Name="btnChangePassword"
-                                        Content="Изменить" 
-                                        FontSize="12"
-                                        Background="Transparent" 
-                                        Foreground="#1A5D34"
-                                        BorderThickness="0"
-                                        Padding="15,8"
-                                        Click="btnChangePassword_Click"/>
+                        </Grid>
+
+                        <!-- Новый пароль -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Новый пароль:" FontSize="14" Foreground="#666"
+                                       VerticalAlignment="Center" Grid.Column="0"/>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" 
+                                    CornerRadius="10" Grid.Column="1">
+                                <PasswordBox x:Name="pbNewPassword"
+                                             PasswordChar="●" FontSize="14" 
+                                             Padding="12,10" BorderThickness="0"
+                                             Background="Transparent"/>
                             </Border>
                         </Grid>
+
+                        <!-- Повтор пароля -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Повторите пароль:" FontSize="14" Foreground="#666"
+                                       VerticalAlignment="Center" Grid.Column="0"/>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" 
+                                    CornerRadius="10" Grid.Column="1">
+                                <PasswordBox x:Name="pbConfirmPassword"
+                                             PasswordChar="●" FontSize="14" 
+                                             Padding="12,10" BorderThickness="0"
+                                             Background="Transparent"/>
+                            </Border>
+                        </Grid>
+
+                        <!-- Требования к паролю -->
+                        <Border Background="#F5FFF9" CornerRadius="10" Padding="15,12" Margin="0,0,0,20">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Требования к паролю:" FontSize="12" 
+                                           FontWeight="Bold" Foreground="#1A5D34" Margin="0,0,0,6"/>
+                                <TextBlock Text="• Минимум 6 символов" FontSize="12" Foreground="#666"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Кнопка сохранить пароль -->
+                        <Border Background="#1A5D34" CornerRadius="12">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <Button Content="Сохранить новый пароль"
+                                    FontSize="14" Background="Transparent"
+                                    Foreground="White" BorderThickness="0"
+                                    Padding="15,12"
+                                    Click="btnSavePassword_Click"/>
+                        </Border>
 
                     </StackPanel>
                 </Border>
 
-                <!-- Раздел ОСНОВНЫЕ НАСТРОЙКИ -->
-                <Border Background="White" 
-        CornerRadius="20" 
-        Padding="30,25" 
-        Margin="0,0,0,25">
+                <!-- ДАННЫЕ И УДАЛЕНИЕ -->
+                <Border Background="White" CornerRadius="20" Padding="30,25" Margin="0,0,0,25">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
                     </Border.Effect>
                     <StackPanel Orientation="Vertical">
 
-                        <TextBlock Text="ОСНОВНЫЕ НАСТРОЙКИ" 
-                   FontSize="16" 
-                   FontWeight="Bold" 
-                   Foreground="#1A5D34"
-                   Margin="0,0,0,20"/>
+                        <TextBlock Text="ДАННЫЕ" FontSize="16" FontWeight="Bold" 
+                                   Foreground="#1A5D34" Margin="0,0,0,20"/>
 
-                        <!-- Единицы измерения -->
-                        <Grid Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="150"/>
-                            </Grid.ColumnDefinitions>
+                        <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12" Margin="0,0,0,10">
+                            <Button x:Name="btnBackup"
+                                    Content="Создать резервную копию" 
+                                    FontSize="14" Background="Transparent" 
+                                    Foreground="#1A5D34" BorderThickness="0"
+                                    Padding="15,10" Click="btnBackup_Click"/>
+                        </Border>
 
-                            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
-                                <CheckBox x:Name="chbUnits"
-                          IsChecked="True"
-                          Margin="0,0,10,0"/>
-                                <TextBlock Text="Единицы измерения:" 
-                           FontSize="14" 
-                           Foreground="#666"
-                           VerticalAlignment="Center"/>
-                            </StackPanel>
+                        <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12" Margin="0,0,0,10">
+                            <Button x:Name="btnExport"
+                                    Content="Экспорт всех рецептов" 
+                                    FontSize="14" Background="Transparent" 
+                                    Foreground="#1A5D34" BorderThickness="0"
+                                    Padding="15,10" Click="btnExport_Click"/>
+                        </Border>
 
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="1">
-                                <ComboBox x:Name="cobUnits"
-                          SelectedIndex="0"
-                          FontSize="14" 
-                          Padding="12,8"
-                          BorderThickness="0"
-                          Background="Transparent">
-                                    <ComboBoxItem Content="Метрические (г, мл)"/>
-                                    <ComboBoxItem Content="Имперские (oz, cup)"/>
-                                </ComboBox>
-                            </Border>
-                        </Grid>
+                        <Rectangle Height="1" Fill="#E0E0E0" Margin="0,10,0,15"/>
 
-                        <!-- Язык интерфейса -->
-                        <Grid Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="150"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
-                                <CheckBox x:Name="chbLanguage"
-                          IsChecked="True"
-                          Margin="0,0,10,0"/>
-                                <TextBlock Text="Язык интерфейса:" 
-                           FontSize="14" 
-                           Foreground="#666"
-                           VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="1">
-                                <ComboBox x:Name="cobLanguage"
-                          SelectedIndex="0"
-                          FontSize="14" 
-                          Padding="12,8"
-                          BorderThickness="0"
-                          Background="Transparent">
-                                    <ComboBoxItem Content="Русский"/>
-                                    <ComboBoxItem Content="English"/>
-                                </ComboBox>
-                            </Border>
-                        </Grid>
-
-                        <!-- Темная тема -->
-                        <Grid Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="150"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
-                                <CheckBox x:Name="chbTheme"
-                          IsChecked="False"
-                          Margin="0,0,10,0"/>
-                                <TextBlock Text="Темная тема:" 
-                           FontSize="14" 
-                           Foreground="#666"
-                           VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="10" Grid.Column="2">
-                                <ToggleButton x:Name="btnThemeToggle"
-                              Content="Переключить"
-                              FontSize="12"
-                              Background="Transparent" 
-                              Foreground="#1A5D34"
-                              BorderThickness="0"
-                              Padding="12,8"
-                              Checked="btnThemeToggle_Checked"
-                              Unchecked="btnThemeToggle_Unchecked"/>
-                            </Border>
-                        </Grid>
-
-                        <!-- Уведомления -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="150"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
-                                <CheckBox x:Name="chbNotifications"
-                          IsChecked="True"
-                          Margin="0,0,10,0"/>
-                                <TextBlock Text="Уведомления:" 
-                           FontSize="14" 
-                           Foreground="#666"
-                           VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="10" Grid.Column="1">
-                                <ComboBox x:Name="cobNotifications"
-                          SelectedIndex="0"
-                          FontSize="14" 
-                          Padding="12,8"
-                          BorderThickness="0"
-                          Background="Transparent">
-                                    <ComboBoxItem Content="Включены"/>
-                                    <ComboBoxItem Content="Выключены"/>
-                                </ComboBox>
-                            </Border>
-                        </Grid>
-
-                    </StackPanel>
-                </Border>
-
-                <!-- Раздел ДАННЫЕ -->
-                <Border Background="White" 
-                        CornerRadius="20" 
-                        Padding="30,25" 
-                        Margin="0,0,0,25">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
-                    </Border.Effect>
-                    <StackPanel Orientation="Vertical">
-
-                        <TextBlock Text="ДАННЫЕ" 
-                                   FontSize="16" 
-                                   FontWeight="Bold" 
-                                   Foreground="#1A5D34"
-                                   Margin="0,0,0,20"/>
-
-                        <!-- Кнопки управления данными -->
-                        <StackPanel Orientation="Vertical" 
-                                    Margin="0,0,0,20">
-
-                            <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12" Margin="0,0,0,10">
-                                <Button x:Name="btnBackup"
-                                        Content="Создать резервную копию" 
-                                        FontSize="14"
-                                        Background="Transparent" 
-                                        Foreground="#1A5D34"
-                                        BorderThickness="0"
-                                        Padding="15,10"
-                                        Click="btnBackup_Click"/>
-                            </Border>
-
-                            <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12" Margin="0,0,0,10">
-                                <Button x:Name="btnRestore"
-                                        Content="Восстановить из копии" 
-                                        FontSize="14"
-                                        Background="Transparent" 
-                                        Foreground="#1A5D34"
-                                        BorderThickness="0"
-                                        Padding="15,10"
-                                        Click="btnRestore_Click"/>
-                            </Border>
-
-                            <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12" Margin="0,0,0,15">
-                                <Button x:Name="btnExport"
-                                        Content="Экспорт всех рецептов" 
-                                        FontSize="14"
-                                        Background="Transparent" 
-                                        Foreground="#1A5D34"
-                                        BorderThickness="0"
-                                        Padding="15,10"
-                                        Click="btnExport_Click"/>
-                            </Border>
-                        </StackPanel>
-
-                        <!-- Разделитель -->
-                        <Rectangle Height="1" 
-                                   Fill="#E0E0E0" 
-                                   Margin="0,0,0,15"/>
-
-                        <!-- Кнопка удаления аккаунта -->
-                        <Border Background="#FF6B6B" 
-                                CornerRadius="12" 
-                                Padding="0">
+                        <Border Background="#FF6B6B" CornerRadius="12">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
                             </Border.Effect>
                             <Button x:Name="btnDeleteAccount"
                                     Content="🗑️ Удалить аккаунт" 
-                                    FontSize="14"
-                                    Background="Transparent" 
-                                    BorderThickness="0"
-                                    Foreground="White"
+                                    FontSize="14" Background="Transparent" 
+                                    BorderThickness="0" Foreground="White"
                                     Padding="15,10"
-                                    Click="btnDeleteAccount_Click">
-                                <Button.ToolTip>
-                                    <ToolTip Content="Необратимо!" 
-                                             Background="#FF4444" 
-                                             Foreground="White"/>
-                                </Button.ToolTip>
-                            </Button>
+                                    Click="btnDeleteAccount_Click"/>
                         </Border>
 
                     </StackPanel>

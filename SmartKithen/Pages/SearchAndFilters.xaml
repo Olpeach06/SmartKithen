@@ -3,14 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:SmartKithen.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="760" d:DesignWidth="800"
+      d:DesignHeight="800" d:DesignWidth="1200"
       Title="SearchAndFilters"
       Background="#FFF8FC">
 
     <Grid>
-        <!-- Фоновый градиент -->
         <Rectangle>
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -20,476 +18,241 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical" 
-                        HorizontalAlignment="Center"
-                        Width="750"
-                        Margin="20">
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <!-- Шапка -->
-                <Grid Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <!-- Шапка -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                    <!-- Навигация -->
-                    <StackPanel Grid.Column="0" 
-                                Orientation="Horizontal" 
-                                VerticalAlignment="Center">
-                        <Button x:Name="BackButton"
-                                Content="← Назад" 
-                                FontSize="14"
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                Foreground="#1A5D34"
-                                Padding="10,5"
-                                Click="BackButton_Click"/>
-                    </StackPanel>
+                <Button Grid.Column="0"
+                        Content="← Назад"
+                        FontSize="14"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="#1A5D34"
+                        Padding="10,5"
+                        Click="BackButton_Click"/>
 
-                    <!-- Название страницы -->
-                    <TextBlock Grid.Column="1"
-                               Text="Поиск рецептов" 
-                               FontSize="18" 
-                               FontWeight="Medium"
-                               Foreground="#1A5D34"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1"
+                           Text="Поиск рецептов"
+                           FontSize="20" FontWeight="Bold"
+                           Foreground="#1A5D34"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Grid>
 
-                    <!-- Действия -->
-                    <StackPanel Grid.Column="2" 
-                                Orientation="Horizontal" 
-                                VerticalAlignment="Center">
-                        <Button Content="⋮"
-                                FontSize="18"
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                Foreground="#1A5D34"
-                                Padding="5" Click="Button_Click"/>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Поле поиска -->
-                <Border Background="White" 
-                        CornerRadius="15" 
-                        Margin="0,0,0,25"
-                        Padding="5"
-                        BorderThickness="1"
-                        BorderBrush="#E0E0E0">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                    </Border.Effect>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="🔍" 
-                                   FontSize="16"
-                                   Foreground="#666"
-                                   VerticalAlignment="Center"
-                                   Grid.Column="0"
-                                   Margin="15,0,10,0"/>
-
-                        <TextBox x:Name="SearchTextBox"
-                                 Text="Введите название рецепта..." 
-                                 FontSize="14" 
-                                 BorderThickness="0"
-                                 VerticalAlignment="Center"
-                                 Grid.Column="1"
-                                 Foreground="#333"/>
-
-                        <Button x:Name="ClearSearchButton"
-                                Content="×" 
-                                FontSize="18"
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                Foreground="#999"
-                                Padding="10"
-                                Grid.Column="2"
-                                Click="ClearSearchButton_Click" HorizontalAlignment="Left" Width="32"/>
-                    </Grid>
-                </Border>
-
-                <!-- Основной контент с фильтрами и результатами -->
+            <!-- Строка поиска -->
+            <Border Grid.Row="1"
+                    Background="White"
+                    CornerRadius="15"
+                    Margin="0,0,0,20"
+                    Padding="5"
+                    BorderThickness="1"
+                    BorderBrush="#E0E0E0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                </Border.Effect>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="250"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Панель фильтров -->
-                    <Border Grid.Column="0"
-                            Background="White" 
-                            CornerRadius="20" 
-                            Padding="25"
-                            BorderThickness="1"
-                            BorderBrush="#E0E0E0">
+                    <TextBlock Grid.Column="0"
+                               Text="🔍"
+                               FontSize="16" Foreground="#666"
+                               VerticalAlignment="Center"
+                               Margin="15,0,10,0"/>
+
+                    <TextBox x:Name="SearchTextBox"
+                             Grid.Column="1"
+                             FontSize="14"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             VerticalAlignment="Center"
+                             Padding="0,10"
+                             Foreground="#333"
+                             TextChanged="SearchTextBox_TextChanged"/>
+
+                    <Button x:Name="ClearSearchButton"
+                            Grid.Column="2"
+                            Content="×"
+                            FontSize="20"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="#999"
+                            Padding="12,5"
+                            Visibility="Collapsed"
+                            Click="ClearSearchButton_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Основной контент -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="280"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Панель фильтров -->
+                <Border Grid.Column="0"
+                        Background="White"
+                        CornerRadius="20"
+                        Padding="25"
+                        BorderThickness="1"
+                        BorderBrush="#E0E0E0"
+                        VerticalAlignment="Top">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+
+                        <TextBlock Text="Фильтры"
+                                   FontSize="18" FontWeight="Bold"
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Время приготовления -->
+                        <TextBlock Text="⏱️ Время приготовления"
+                                   FontSize="14" FontWeight="Medium"
+                                   Foreground="#333"
+                                   Margin="0,0,0,12"/>
+
+                        <CheckBox x:Name="Time30CheckBox"
+                                  Content="До 30 мин"
+                                  FontSize="13" Foreground="#555"
+                                  Margin="0,0,0,8"/>
+
+                        <CheckBox x:Name="Time3060CheckBox"
+                                  Content="30–60 мин"
+                                  FontSize="13" Foreground="#555"
+                                  Margin="0,0,0,8"/>
+
+                        <CheckBox x:Name="Time60CheckBox"
+                                  Content="Более 60 мин"
+                                  FontSize="13" Foreground="#555"
+                                  Margin="0,0,0,25"/>
+
+                        <!-- Сложность -->
+                        <TextBlock Text="⚡ Сложность"
+                                   FontSize="14" FontWeight="Medium"
+                                   Foreground="#333"
+                                   Margin="0,0,0,12"/>
+
+                        <CheckBox x:Name="DifficultyEasyCheckBox"
+                                  Content="Простая (до 30 мин)"
+                                  FontSize="13" Foreground="#555"
+                                  Margin="0,0,0,8"/>
+
+                        <CheckBox x:Name="DifficultyMediumCheckBox"
+                                  Content="Средняя (30–60 мин)"
+                                  FontSize="13" Foreground="#555"
+                                  Margin="0,0,0,8"/>
+
+                        <CheckBox x:Name="DifficultyHardCheckBox"
+                                  Content="Сложная (более 60 мин)"
+                                  FontSize="13" Foreground="#555"
+                                  Margin="0,0,0,25"/>
+
+                        <!-- Категории из БД -->
+                        <TextBlock Text="🍽️ Категория"
+                                   FontSize="14" FontWeight="Medium"
+                                   Foreground="#333"
+                                   Margin="0,0,0,12"/>
+
+                        <!-- Список категорий — заполняем динамически -->
+                        <StackPanel x:Name="CategoriesPanel"
+                                    Orientation="Vertical"
+                                    Margin="0,0,0,25"/>
+
+                        <!-- Кнопки -->
+                        <Border Background="#1A5D34" CornerRadius="12" Margin="0,0,0,10">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
+                            </Border.Effect>
+                            <Button x:Name="ApplyFiltersButton"
+                                    Content="Применить"
+                                    FontSize="13" FontWeight="Medium"
+                                    Background="Transparent"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Padding="20,12"
+                                    Click="ApplyFiltersButton_Click"/>
+                        </Border>
+
+                        <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12">
+                            <Button x:Name="ResetFiltersButton"
+                                    Content="Сбросить"
+                                    FontSize="13" FontWeight="Medium"
+                                    Background="Transparent"
+                                    Foreground="#1A5D34"
+                                    BorderThickness="0"
+                                    Padding="20,12"
+                                    Click="ResetFiltersButton_Click"/>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Результаты -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок результатов -->
+                    <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,15">
+                        <TextBlock x:Name="SearchQueryText"
+                                   FontSize="16" FontWeight="Medium"
+                                   Foreground="#1A5D34"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock x:Name="ResultsCountText"
+                                   FontSize="13"
+                                   Foreground="#666"/>
+                    </StackPanel>
+
+                    <!-- Скролл с карточками -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto">
+                        <WrapPanel x:Name="ResultsPanel"
+                                   Orientation="Horizontal"/>
+                    </ScrollViewer>
+
+                    <!-- Заглушка если ничего не найдено -->
+                    <Border x:Name="EmptyState"
+                            Grid.Row="1"
+                            Visibility="Collapsed"
+                            Background="White"
+                            CornerRadius="20"
+                            Padding="40">
                         <Border.Effect>
-                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
+                            <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
-                        <StackPanel Orientation="Vertical">
-
-                            <TextBlock Text="Фильтры" 
-                                       FontSize="18" 
-                                       FontWeight="Bold" 
-                                       Foreground="#1A5D34"
-                                       Margin="0,0,0,20"/>
-
-                            <!-- Время -->
-                            <StackPanel Orientation="Vertical" 
-                                        Margin="0,0,0,25">
-                                <TextBlock Text="⏱️ Время приготовления" 
-                                           FontSize="14" 
-                                           FontWeight="Medium" 
-                                           Foreground="#333"
-                                           Margin="0,0,0,12"/>
-
-                                <CheckBox x:Name="Time30CheckBox"
-                                          Content="До 30 мин" 
-                                          FontSize="13"
-                                          Foreground="#555"
-                                          IsChecked="True"
-                                          Margin="0,0,0,8"/>
-
-                                <CheckBox x:Name="Time3060CheckBox"
-                                          Content="30–60 мин" 
-                                          FontSize="13"
-                                          Foreground="#555"
-                                          IsChecked="True"
-                                          Margin="0,0,0,8"/>
-
-                                <CheckBox x:Name="Time60CheckBox"
-                                          Content="Более 60 мин" 
-                                          FontSize="13"
-                                          Foreground="#555"
-                                          Margin="0,0,0,0"/>
-                            </StackPanel>
-
-                            <!-- Сложность -->
-                            <StackPanel Orientation="Vertical" 
-                                        Margin="0,0,0,25">
-                                <TextBlock Text="⚡ Сложность" 
-                                           FontSize="14" 
-                                           FontWeight="Medium" 
-                                           Foreground="#333"
-                                           Margin="0,0,0,12"/>
-
-                                <CheckBox x:Name="DifficultyEasyCheckBox"
-                                          Content="Простая" 
-                                          FontSize="13"
-                                          Foreground="#555"
-                                          IsChecked="True"
-                                          Margin="0,0,0,8"/>
-
-                                <CheckBox x:Name="DifficultyMediumCheckBox"
-                                          Content="Средняя" 
-                                          FontSize="13"
-                                          Foreground="#555"
-                                          IsChecked="True"
-                                          Margin="0,0,0,8"/>
-
-                                <CheckBox x:Name="DifficultyHardCheckBox"
-                                          Content="Сложная" 
-                                          FontSize="13"
-                                          Foreground="#555"
-                                          Margin="0,0,0,0"/>
-                            </StackPanel>
-
-                            <!-- Категория -->
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="🍽️ Категория" 
-                                           FontSize="14" 
-                                           FontWeight="Medium" 
-                                           Foreground="#333"
-                                           Margin="0,0,0,12"/>
-
-                                <RadioButton x:Name="CategoryAllRadio"
-                                             Content="Все категории" 
-                                             FontSize="13"
-                                             Foreground="#555"
-                                             GroupName="Category"
-                                             IsChecked="True"
-                                             Margin="0,0,0,8"/>
-
-                                <RadioButton x:Name="CategoryMainRadio"
-                                             Content="Основные блюда" 
-                                             FontSize="13"
-                                             Foreground="#555"
-                                             GroupName="Category"
-                                             Margin="0,0,0,8"/>
-
-                                <RadioButton x:Name="CategorySoupRadio"
-                                             Content="Супы" 
-                                             FontSize="13"
-                                             Foreground="#555"
-                                             GroupName="Category"
-                                             Margin="0,0,0,8"/>
-
-                                <RadioButton x:Name="CategoryDessertRadio"
-                                             Content="Десерты" 
-                                             FontSize="13"
-                                             Foreground="#555"
-                                             GroupName="Category"/>
-                            </StackPanel>
-
-                            <!-- Кнопки управления фильтрами -->
-                            <StackPanel Orientation="Vertical" 
-                                        Margin="0,30,0,0">
-
-                                <Border Background="#1A5D34" 
-                                        CornerRadius="12"
-                                        Margin="0,0,0,10">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
-                                    </Border.Effect>
-                                    <Button x:Name="ApplyFiltersButton"
-                                            Content="Применить" 
-                                            FontSize="13"
-                                            FontWeight="Medium"
-                                            Background="Transparent" 
-                                            Foreground="White"
-                                            BorderThickness="0"
-                                            Padding="20,12"
-                                            Click="ApplyFiltersButton_Click"/>
-                                </Border>
-
-                                <Border BorderBrush="#CFA1C1" 
-                                        BorderThickness="2" 
-                                        CornerRadius="12">
-                                    <Button x:Name="ResetFiltersButton"
-                                            Content="Сбросить" 
-                                            FontSize="13"
-                                            FontWeight="Medium"
-                                            Background="Transparent" 
-                                            Foreground="#1A5D34"
-                                            BorderThickness="0"
-                                            Padding="20,12"
-                                            Click="ResetFiltersButton_Click"/>
-                                </Border>
-                            </StackPanel>
-
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="🔍" FontSize="48"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,15"/>
+                            <TextBlock x:Name="EmptyStateText"
+                                       Text="Ничего не найдено"
+                                       FontSize="16" Foreground="#999"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Результаты поиска -->
-                    <ScrollViewer Grid.Column="2"
-                                  VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Vertical">
-
-                            <TextBlock Text='Результаты по запросу "паста"' 
-                                       FontSize="16" 
-                                       FontWeight="Medium"
-                                       Foreground="#1A5D34"
-                                       Margin="0,0,0,20"/>
-
-                            <TextBlock Text="24 рецепта найдено" 
-                                       FontSize="14" 
-                                       Foreground="#666"
-                                       Margin="0,0,0,25"/>
-
-                            <!-- Первая строка результатов -->
-                            <UniformGrid Columns="2" 
-                                         Margin="0,0,0,20">
-
-                                <!-- Паста Карбонара -->
-                                <Border Background="White" 
-                                        CornerRadius="20" 
-                                        Padding="20"
-                                        Margin="0,0,10,10"
-                                        BorderThickness="1"
-                                        BorderBrush="#E0E0E0">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                                    </Border.Effect>
-                                    <Button x:Name="PastaCarbonaraButton"
-                                            Background="Transparent" 
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            Click="PastaCarbonaraButton_Click">
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="🍝" 
-                                                       FontSize="24" 
-                                                       Foreground="#666"
-                                                       Margin="0,0,0,10"/>
-                                            <TextBlock Text="Паста Карбонара" 
-                                                       FontSize="16" 
-                                                       FontWeight="Medium" 
-                                                       Foreground="#333"
-                                                       Margin="0,0,0,8"/>
-                                            <StackPanel Orientation="Horizontal" 
-                                                        Margin="0,0,0,5">
-                                                <TextBlock Text="25 мин" 
-                                                           FontSize="12" 
-                                                           Foreground="#666"
-                                                           Margin="0,0,10,0"/>
-                                                <TextBlock Text="★★★★☆" 
-                                                           FontSize="12" 
-                                                           Foreground="#FFB800"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Button>
-                                </Border>
-
-                                <!-- Паста Болоньезе -->
-                                <Border Background="White" 
-                                        CornerRadius="20" 
-                                        Padding="20"
-                                        Margin="10,0,0,10"
-                                        BorderThickness="1"
-                                        BorderBrush="#E0E0E0">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                                    </Border.Effect>
-                                    <Button x:Name="PastaBologneseButton"
-                                            Background="Transparent" 
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            Click="PastaBologneseButton_Click">
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="🍝" 
-                                                       FontSize="24" 
-                                                       Foreground="#666"
-                                                       Margin="0,0,0,10"/>
-                                            <TextBlock Text="Паста Болоньезе" 
-                                                       FontSize="16" 
-                                                       FontWeight="Medium" 
-                                                       Foreground="#333"
-                                                       Margin="0,0,0,8"/>
-                                            <StackPanel Orientation="Horizontal" 
-                                                        Margin="0,0,0,5">
-                                                <TextBlock Text="40 мин" 
-                                                           FontSize="12" 
-                                                           Foreground="#666"
-                                                           Margin="0,0,10,0"/>
-                                                <TextBlock Text="★★★☆☆" 
-                                                           FontSize="12" 
-                                                           Foreground="#FFB800"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Button>
-                                </Border>
-
-                            </UniformGrid>
-
-                            <!-- Вторая строка результатов -->
-                            <UniformGrid Columns="2" 
-                                         Margin="0,0,0,20">
-
-                                <!-- Паста с морепродуктами -->
-                                <Border Background="White" 
-                                        CornerRadius="20" 
-                                        Padding="20"
-                                        Margin="0,0,10,10"
-                                        BorderThickness="1"
-                                        BorderBrush="#E0E0E0">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                                    </Border.Effect>
-                                    <Button x:Name="PastaSeafoodButton"
-                                            Background="Transparent" 
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            Click="PastaSeafoodButton_Click">
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="🦐" 
-                                                       FontSize="24" 
-                                                       Foreground="#666"
-                                                       Margin="0,0,0,10"/>
-                                            <TextBlock Text="Паста с морепродуктами" 
-                                                       FontSize="16" 
-                                                       FontWeight="Medium" 
-                                                       Foreground="#333"
-                                                       Margin="0,0,0,8"/>
-                                            <StackPanel Orientation="Horizontal" 
-                                                        Margin="0,0,0,5">
-                                                <TextBlock Text="35 мин" 
-                                                           FontSize="12" 
-                                                           Foreground="#666"
-                                                           Margin="0,0,10,0"/>
-                                                <TextBlock Text="★★★★☆" 
-                                                           FontSize="12" 
-                                                           Foreground="#FFB800"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Button>
-                                </Border>
-
-                                <!-- Паста с грибами -->
-                                <Border Background="White" 
-                                        CornerRadius="20" 
-                                        Padding="20"
-                                        Margin="10,0,0,10"
-                                        BorderThickness="1"
-                                        BorderBrush="#E0E0E0">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                                    </Border.Effect>
-                                    <Button x:Name="PastaMushroomButton"
-                                            Background="Transparent" 
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            Click="PastaMushroomButton_Click">
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="🍄" 
-                                                       FontSize="24" 
-                                                       Foreground="#666"
-                                                       Margin="0,0,0,10"/>
-                                            <TextBlock Text="Паста с грибами" 
-                                                       FontSize="16" 
-                                                       FontWeight="Medium" 
-                                                       Foreground="#333"
-                                                       Margin="0,0,0,8"/>
-                                            <StackPanel Orientation="Horizontal" 
-                                                        Margin="0,0,0,5">
-                                                <TextBlock Text="30 мин" 
-                                                           FontSize="12" 
-                                                           Foreground="#666"
-                                                           Margin="0,0,10,0"/>
-                                                <TextBlock Text="★★★★★" 
-                                                           FontSize="12" 
-                                                           Foreground="#FFB800"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Button>
-                                </Border>
-
-                            </UniformGrid>
-
-                            <!-- Индикатор -->
-                            <TextBlock Text="•••" 
-                                       FontSize="24" 
-                                       Foreground="#CFA1C1"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,20"/>
-
-                            <!-- Кнопка показать еще -->
-                            <Border BorderBrush="#CFA1C1" 
-                                    BorderThickness="2" 
-                                    CornerRadius="12"
-                                    HorizontalAlignment="Center">
-                                <Button x:Name="ShowMoreButton"
-                                        Content="Показать ещё" 
-                                        FontSize="14"
-                                        FontWeight="Medium"
-                                        Background="Transparent" 
-                                        Foreground="#1A5D34"
-                                        BorderThickness="0"
-                                        Padding="25,12"
-                                        Margin="0,0,0,20"
-                                        Click="ShowMoreButton_Click"/>
-                            </Border>
-
-                        </StackPanel>
-                    </ScrollViewer>
-
                 </Grid>
-
-            </StackPanel>
-        </ScrollViewer>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>

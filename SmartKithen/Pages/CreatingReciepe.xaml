@@ -304,13 +304,13 @@
                                                Margin="0,0,0,8"/>
                                     <Grid>
                                         <TextBox x:Name="TimeTextBox"
-                                                 Text="30" 
-                                                 FontSize="14" 
-                                                 Padding="8"
-                                                 BorderBrush="#E0E0E0" 
-                                                 BorderThickness="1"
-                                                 Width="60"
-                                                 HorizontalAlignment="Left"/>
+                                                Text="30" 
+                                                FontSize="14" 
+                                                Padding="8"
+                                                BorderBrush="#E0E0E0" 
+                                                BorderThickness="1"
+                                                Width="60"
+                                                HorizontalAlignment="Left"/>
                                         <TextBlock Text="мин" 
                                                    FontSize="14" 
                                                    Foreground="#1A5D34"
@@ -389,14 +389,7 @@
                                                Foreground="#666"
                                                Margin="0,0,0,8"/>
                                     <ComboBox x:Name="CategoryComboBox"
-                                              SelectedIndex="0"
-                                              Style="{StaticResource ComboBoxStyle}">
-                                        <ComboBoxItem Content="Основные блюда"/>
-                                        <ComboBoxItem Content="Завтраки"/>
-                                        <ComboBoxItem Content="Супы"/>
-                                        <ComboBoxItem Content="Салаты"/>
-                                        <ComboBoxItem Content="Десерты"/>
-                                    </ComboBox>
+                                              Style="{StaticResource ComboBoxStyle}"/>
                                 </StackPanel>
                             </Border>
 

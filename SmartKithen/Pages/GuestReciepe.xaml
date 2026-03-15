@@ -280,7 +280,8 @@
                             Content="Войти в аккаунт" 
                             Style="{StaticResource SecondaryButtonStyle}"
                             HorizontalAlignment="Left"
-                            Padding="20,10"/>
+                            Padding="20,10"
+                            Click="btnLogin_Click"/>
                 </StackPanel>
             </Border>
 
