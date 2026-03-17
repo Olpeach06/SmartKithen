@@ -115,6 +115,8 @@
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
                     </Border.Effect>
+                    
+                    
                     <StackPanel Orientation="Vertical">
 
                         <TextBlock Text="Фильтры"

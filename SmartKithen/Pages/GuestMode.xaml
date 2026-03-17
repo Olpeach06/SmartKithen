@@ -86,46 +86,42 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    
-                    
 
-                    <!-- Логотип и название -->
+                    <!-- Кнопка назад -->
                     <Border Grid.Column="0" 
                             Background="White" 
                             CornerRadius="15" 
-                            Padding="20,15"
+                            Padding="15,10"
                             HorizontalAlignment="Left">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Grid.Column="0"
-                                    Content="← Назад"
-                                    FontSize="14"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Foreground="#1A5D34"
-                                    Padding="10,5"
-                                    Click="btnBack_Click"/>
-                            <TextBlock Text="👑" 
-                                       FontSize="20" 
-                                       Margin="0,0,10,0"/>
-                            <TextBlock Text="Гостевой режим" 
-                                       FontSize="18" 
-                                       FontWeight="Bold" 
-                                       Foreground="#1A5D34"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <Button x:Name="btnBack"
+                                Content="← Назад"
+                                FontSize="14"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="#1A5D34"
+                                Padding="10,5"
+                                Click="btnBack_Click"/>
                     </Border>
+
+                    <!-- Заголовок по центру -->
+                    <TextBlock Grid.Column="1"
+                               Text="👑 Гостевой режим"
+                               FontSize="22" 
+                               FontWeight="Bold" 
+                               Foreground="#1A5D34"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
 
                     <!-- Статистика -->
                     <Border Grid.Column="2"
                             Background="White" 
                             CornerRadius="15" 
-                            Padding="20,15"
+                            Padding="15,10"
                             HorizontalAlignment="Right">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
@@ -134,7 +130,8 @@
                             <TextBlock Text="📊" 
                                        FontSize="20" 
                                        Margin="0,0,10,0"/>
-                            <TextBlock Text="Вы создали 3 рецепта" 
+                            <TextBlock x:Name="StatsText" 
+                                       Text="Вы создали 0 рецептов" 
                                        FontSize="14" 
                                        FontWeight="SemiBold" 
                                        Foreground="#1A5D34"
@@ -171,11 +168,12 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center">
                                 <TextBlock Text="👑" 
-           FontSize="20" Width="31"/>
+                                           FontSize="20" 
+                                           Width="31"/>
                                 <TextBlock Text="👤" 
                                            FontSize="30"
-                                           Margin="0,0,0,5" Height="31"/>
-                                
+                                           Margin="0,0,0,5" 
+                                           Height="31"/>
                             </StackPanel>
                         </Border>
 
@@ -220,7 +218,7 @@
                         <StackPanel Orientation="Vertical" 
                                     Margin="0,0,0,20">
 
-                            <!-- Преимущество 1 -->
+                            <!-- Преимущество 1 - Сохранение рецептов -->
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -237,7 +235,7 @@
                                         Width="40"
                                         Height="40"
                                         Margin="0,0,15,0">
-                                    <TextBlock Text="💾" 
+                                    <TextBlock Text="📝" 
                                                FontSize="16"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
@@ -246,18 +244,18 @@
                                 <!-- Текст -->
                                 <StackPanel Grid.Column="1"
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="Сохранить все данные" 
+                                    <TextBlock Text="Сохранить все рецепты" 
                                                FontSize="16" 
                                                FontWeight="SemiBold"
                                                Foreground="#1A5D34"
                                                Margin="0,0,0,2"/>
-                                    <TextBlock Text="Не потеряйте созданные рецепты" 
+                                    <TextBlock Text="Ваши рецепты останутся с вами навсегда" 
                                                FontSize="13" 
                                                Foreground="#666"/>
                                 </StackPanel>
                             </Grid>
 
-                            <!-- Преимущество 2 -->
+                            <!-- Преимущество 2 - Добавление продуктов в холодильник -->
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -274,7 +272,7 @@
                                         Width="40"
                                         Height="40"
                                         Margin="0,0,15,0">
-                                    <TextBlock Text="🔄" 
+                                    <TextBlock Text="🧊" 
                                                FontSize="16"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
@@ -283,18 +281,55 @@
                                 <!-- Текст -->
                                 <StackPanel Grid.Column="1"
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="Синхронизировать между устройствами" 
+                                    <TextBlock Text="Управление холодильником" 
                                                FontSize="16" 
                                                FontWeight="SemiBold"
                                                Foreground="#1A5D34"
                                                Margin="0,0,0,2"/>
-                                    <TextBlock Text="Работайте на телефоне и компьютере" 
+                                    <TextBlock Text="Добавляйте продукты в свой холодильник" 
                                                FontSize="13" 
                                                Foreground="#666"/>
                                 </StackPanel>
                             </Grid>
 
-                            <!-- Преимущество 3 -->
+                            <!-- Преимущество 3 - Отслеживание сроков годности -->
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Иконка -->
+                                <Border Grid.Column="0"
+                                        Background="#FFF8FC" 
+                                        CornerRadius="8" 
+                                        Padding="10"
+                                        BorderBrush="#CFA1C1"
+                                        BorderThickness="1"
+                                        Width="40"
+                                        Height="40"
+                                        Margin="0,0,15,0">
+                                    <TextBlock Text="⏰" 
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+
+                                <!-- Текст -->
+                                <StackPanel Grid.Column="1"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="Контроль сроков годности" 
+                                               FontSize="16" 
+                                               FontWeight="SemiBold"
+                                               Foreground="#1A5D34"
+                                               Margin="0,0,0,2"/>
+                                    <TextBlock Text="Никаких просроченных продуктов" 
+                                               FontSize="13" 
+                                               Foreground="#666"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Преимущество 4 - Умные уведомления -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -311,7 +346,7 @@
                                         Width="40"
                                         Height="40"
                                         Margin="0,0,15,0">
-                                    <TextBlock Text="📊" 
+                                    <TextBlock Text="🔔" 
                                                FontSize="16"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
@@ -320,99 +355,19 @@
                                 <!-- Текст -->
                                 <StackPanel Grid.Column="1"
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="Получить доступ к статистике" 
+                                    <TextBlock Text="Умные уведомления" 
                                                FontSize="16" 
                                                FontWeight="SemiBold"
                                                Foreground="#1A5D34"
                                                Margin="0,0,0,2"/>
-                                    <TextBlock Text="Отслеживайте свою активность" 
+                                    <TextBlock Text="О скорой порче продуктов и новых рецептах" 
                                                FontSize="13" 
                                                Foreground="#666"/>
                                 </StackPanel>
                             </Grid>
-
                         </StackPanel>
-
                     </StackPanel>
                 </Border>
-
-                <!-- Дополнительные преимущества -->
-                <Grid Margin="0,0,0,30">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Преимущество 4 -->
-                    <Border Grid.Column="0"
-                            Background="#FFF8FC" 
-                            CornerRadius="10" 
-                            Padding="20"
-                            Margin="0,0,10,0"
-                            BorderBrush="#CFA1C1"
-                            BorderThickness="1">
-                        <StackPanel Orientation="Vertical" 
-                                    HorizontalAlignment="Center">
-                            <TextBlock Text="📱" 
-                                       FontSize="24"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,10"/>
-                            <TextBlock Text="Мобильное приложение" 
-                                       FontSize="14" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#1A5D34"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Преимущество 5 -->
-                    <Border Grid.Column="1"
-                            Background="#FFF8FC" 
-                            CornerRadius="10" 
-                            Padding="20"
-                            Margin="10,0,10,0"
-                            BorderBrush="#CFA1C1"
-                            BorderThickness="1">
-                        <StackPanel Orientation="Vertical" 
-                                    HorizontalAlignment="Center">
-                            <TextBlock Text="🔔" 
-                                       FontSize="24"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,10"/>
-                            <TextBlock Text="Умные уведомления" 
-                                       FontSize="14" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#1A5D34"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Преимущество 6 -->
-                    <Border Grid.Column="2"
-                            Background="#FFF8FC" 
-                            CornerRadius="10" 
-                            Padding="20"
-                            Margin="10,0,0,0"
-                            BorderBrush="#CFA1C1"
-                            BorderThickness="1">
-                        <StackPanel Orientation="Vertical" 
-                                    HorizontalAlignment="Center">
-                            <TextBlock Text="👥" 
-                                       FontSize="24"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,10"/>
-                            <TextBlock Text="Поделиться с друзьями" 
-                                       FontSize="14" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#1A5D34"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                </Grid>
 
                 <!-- Кнопки действий -->
                 <Grid Margin="0,0,0,20">
@@ -431,14 +386,9 @@
                             BorderThickness="1"
                             Margin="0,0,10,0"
                             Click="ContinueGuestButton_Click">
-                        <Border>
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                            </Border.Effect>
-                            <TextBlock Text="👤 Продолжить как гость" 
-                                       FontSize="14" 
-                                       FontWeight="SemiBold"/>
-                        </Border>
+                        <TextBlock Text="👤 Продолжить как гость" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold"/>
                     </Button>
 
                     <!-- Сохранить прогресс -->
