@@ -122,7 +122,7 @@ namespace SmartKithen.Pages
         // Кнопка "Список покупок"
         private void btnShoppingList_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new GuestProduct());
+            NavigationService?.Navigate(new ListProducts());
         }
 
         // Кнопка "Случайный рецепт"
