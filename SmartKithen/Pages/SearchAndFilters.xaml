@@ -6,7 +6,87 @@
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1200"
       Title="SearchAndFilters"
-      Background="#FFF8FC">
+      Background="#FFF8FC"
+      MinWidth="600"
+      MinHeight="500">
+
+    <Page.Resources>
+        <!-- Стиль для основной зеленой кнопки (как кнопка назад) -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A5D34"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144528"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для вторичной кнопки (сброс) -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1A5D34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#CFA1C1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFF0F5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для карточек рецептов -->
+        <Style x:Key="RecipeCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,15,15"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid>
         <Rectangle>
@@ -18,7 +98,7 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <Grid Margin="25">
+        <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -26,37 +106,36 @@
             </Grid.RowDefinitions>
 
             <!-- Шапка -->
-            <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid Grid.Row="0" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0"
+                        x:Name="BackButton"
                         Content="← Назад"
-                        FontSize="14"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Foreground="#1A5D34"
-                        Padding="10,5"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Padding="15,8"
                         Click="BackButton_Click"/>
 
                 <TextBlock Grid.Column="1"
-                           Text="Поиск рецептов"
-                           FontSize="20" FontWeight="Bold"
+                           Text="🍳 Поиск рецептов"
+                           FontSize="22" FontWeight="Bold"
                            Foreground="#1A5D34"
                            HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"/>
             </Grid>
 
-            <!-- Строка поиска -->
+            <!-- Строка поиска (адаптивная) -->
             <Border Grid.Row="1"
                     Background="White"
                     CornerRadius="15"
-                    Margin="0,0,0,20"
-                    Padding="5"
+                    Margin="0,0,0,15"
                     BorderThickness="1"
-                    BorderBrush="#E0E0E0">
+                    BorderBrush="#E0E0E0"
+                    Height="45">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                 </Border.Effect>
@@ -69,7 +148,8 @@
 
                     <TextBlock Grid.Column="0"
                                Text="🔍"
-                               FontSize="16" Foreground="#666"
+                               FontSize="16" 
+                               Foreground="#1A5D34"
                                VerticalAlignment="Center"
                                Margin="15,0,10,0"/>
 
@@ -79,27 +159,28 @@
                              BorderThickness="0"
                              Background="Transparent"
                              VerticalAlignment="Center"
-                             Padding="0,10"
+                             Padding="0"
                              Foreground="#333"
                              TextChanged="SearchTextBox_TextChanged"/>
 
                     <Button x:Name="ClearSearchButton"
                             Grid.Column="2"
-                            Content="×"
-                            FontSize="20"
+                            Content="✕"
+                            FontSize="16"
                             Background="Transparent"
                             BorderThickness="0"
                             Foreground="#999"
-                            Padding="12,5"
+                            Padding="12,0"
                             Visibility="Collapsed"
+                            Cursor="Hand"
                             Click="ClearSearchButton_Click"/>
                 </Grid>
             </Border>
 
-            <!-- Основной контент -->
+            <!-- Основной контент (адаптивный) -->
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="280"/>
+                    <ColumnDefinition Width="Auto" MinWidth="250" MaxWidth="300"/>
                     <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -108,105 +189,84 @@
                 <Border Grid.Column="0"
                         Background="White"
                         CornerRadius="20"
-                        Padding="25"
+                        Padding="15"
                         BorderThickness="1"
                         BorderBrush="#E0E0E0"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Stretch"
+                        MaxWidth="300"
+                        MinWidth="250">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
                     </Border.Effect>
-                    
-                    
-                    <StackPanel Orientation="Vertical">
 
-                        <TextBlock Text="Фильтры"
-                                   FontSize="18" FontWeight="Bold"
-                                   Foreground="#1A5D34"
-                                   Margin="0,0,0,20"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalAlignment="Stretch">
+                        <!-- Растягиваем ScrollViewer -->
+                        <StackPanel Orientation="Vertical">
 
-                        <!-- Время приготовления -->
-                        <TextBlock Text="⏱️ Время приготовления"
-                                   FontSize="14" FontWeight="Medium"
-                                   Foreground="#333"
-                                   Margin="0,0,0,12"/>
+                            <TextBlock Text="Фильтры"
+                       FontSize="18" FontWeight="Bold"
+                       Foreground="#1A5D34"
+                       Margin="0,0,0,10"/>
 
-                        <CheckBox x:Name="Time30CheckBox"
-                                  Content="До 30 мин"
-                                  FontSize="13" Foreground="#555"
-                                  Margin="0,0,0,8"/>
+                            <!-- Время приготовления -->
+                            <TextBlock Text="⏱️ Время приготовления"
+                       FontSize="14" FontWeight="Medium"
+                       Foreground="#333"
+                       Margin="0,0,0,10"/>
 
-                        <CheckBox x:Name="Time3060CheckBox"
-                                  Content="30–60 мин"
-                                  FontSize="13" Foreground="#555"
-                                  Margin="0,0,0,8"/>
+                            <CheckBox x:Name="Time30CheckBox"
+                      Content="До 30 минут"
+                      FontSize="13" Foreground="#555"
+                      Margin="0,0,0,8"
+                      Checked="FilterChanged"
+                      Unchecked="FilterChanged"/>
 
-                        <CheckBox x:Name="Time60CheckBox"
-                                  Content="Более 60 мин"
-                                  FontSize="13" Foreground="#555"
-                                  Margin="0,0,0,25"/>
+                            <CheckBox x:Name="Time3060CheckBox"
+                      Content="30–60 минут"
+                      FontSize="13" Foreground="#555"
+                      Margin="0,0,0,8"
+                      Checked="FilterChanged"
+                      Unchecked="FilterChanged"/>
 
-                        <!-- Сложность -->
-                        <TextBlock Text="⚡ Сложность"
-                                   FontSize="14" FontWeight="Medium"
-                                   Foreground="#333"
-                                   Margin="0,0,0,12"/>
+                            <CheckBox x:Name="Time60CheckBox"
+                      Content="Более 60 минут"
+                      FontSize="13" Foreground="#555"
+                      Margin="0,0,0,18"
+                      Checked="FilterChanged"
+                      Unchecked="FilterChanged"/>
 
-                        <CheckBox x:Name="DifficultyEasyCheckBox"
-                                  Content="Простая (до 30 мин)"
-                                  FontSize="13" Foreground="#555"
-                                  Margin="0,0,0,8"/>
+                            <!-- Категории из БД -->
+                            <TextBlock Text="🍽️ Категория"
+                       FontSize="14" FontWeight="Medium"
+                       Foreground="#333"
+                       Margin="0,0,0,10"/>
 
-                        <CheckBox x:Name="DifficultyMediumCheckBox"
-                                  Content="Средняя (30–60 мин)"
-                                  FontSize="13" Foreground="#555"
-                                  Margin="0,0,0,8"/>
+                            <!-- Список категорий — динамический -->
+                            <StackPanel x:Name="CategoriesPanel"
+                        Orientation="Vertical"
+                        Margin="0,0,0,0"/>
 
-                        <CheckBox x:Name="DifficultyHardCheckBox"
-                                  Content="Сложная (более 60 мин)"
-                                  FontSize="13" Foreground="#555"
-                                  Margin="0,0,0,25"/>
+                            <!-- Кнопки всегда внизу панели -->
+                            <StackPanel Orientation="Vertical"
+                        Margin="0,10,0,0">
+                                <Button x:Name="ApplyFiltersButton"
+                        Content="Применить"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,0,0,8"
+                        Click="ApplyFiltersButton_Click"/>
 
-                        <!-- Категории из БД -->
-                        <TextBlock Text="🍽️ Категория"
-                                   FontSize="14" FontWeight="Medium"
-                                   Foreground="#333"
-                                   Margin="0,0,0,12"/>
-
-                        <!-- Список категорий — заполняем динамически -->
-                        <StackPanel x:Name="CategoriesPanel"
-                                    Orientation="Vertical"
-                                    Margin="0,0,0,25"/>
-
-                        <!-- Кнопки -->
-                        <Border Background="#1A5D34" CornerRadius="12" Margin="0,0,0,10">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
-                            </Border.Effect>
-                            <Button x:Name="ApplyFiltersButton"
-                                    Content="Применить"
-                                    FontSize="13" FontWeight="Medium"
-                                    Background="Transparent"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    Padding="20,12"
-                                    Click="ApplyFiltersButton_Click"/>
-                        </Border>
-
-                        <Border BorderBrush="#CFA1C1" BorderThickness="2" CornerRadius="12">
-                            <Button x:Name="ResetFiltersButton"
-                                    Content="Сбросить"
-                                    FontSize="13" FontWeight="Medium"
-                                    Background="Transparent"
-                                    Foreground="#1A5D34"
-                                    BorderThickness="0"
-                                    Padding="20,12"
-                                    Click="ResetFiltersButton_Click"/>
-                        </Border>
-
-                    </StackPanel>
+                                <Button x:Name="ResetFiltersButton"
+                        Content="Сбросить"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="ResetFiltersButton_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Border>
 
-                <!-- Результаты -->
+                <!-- Результаты (адаптивные) -->
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -214,21 +274,25 @@
                     </Grid.RowDefinitions>
 
                     <!-- Заголовок результатов -->
-                    <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,15">
+                    <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,8">
                         <TextBlock x:Name="SearchQueryText"
-                                   FontSize="16" FontWeight="Medium"
+                                   FontSize="16" FontWeight="SemiBold"
                                    Foreground="#1A5D34"
-                                   Margin="0,0,0,5"/>
+                                   Text="Все рецепты"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,2"/>
                         <TextBlock x:Name="ResultsCountText"
-                                   FontSize="13"
+                                   FontSize="12"
                                    Foreground="#666"/>
                     </StackPanel>
 
-                    <!-- Скролл с карточками -->
+                    <!-- Скролл с карточками (адаптивный WrapPanel) -->
                     <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Auto">
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
                         <WrapPanel x:Name="ResultsPanel"
-                                   Orientation="Horizontal"/>
+                                   Orientation="Horizontal"
+                                   HorizontalAlignment="Left"/>
                     </ScrollViewer>
 
                     <!-- Заглушка если ничего не найдено -->
@@ -237,22 +301,34 @@
                             Visibility="Collapsed"
                             Background="White"
                             CornerRadius="20"
-                            Padding="40">
+                            Padding="30,50"
+                            Margin="0,20,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            MaxWidth="400">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                            <TextBlock Text="🔍" FontSize="48"
+                            <TextBlock Text="😕" FontSize="64"
                                        HorizontalAlignment="Center"
-                                       Margin="0,0,0,15"/>
+                                       Margin="0,0,0,20"/>
                             <TextBlock x:Name="EmptyStateText"
                                        Text="Ничего не найдено"
-                                       FontSize="16" Foreground="#999"
-                                       HorizontalAlignment="Center"/>
+                                       FontSize="18" FontWeight="SemiBold"
+                                       Foreground="#1A5D34"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="Попробуйте изменить параметры поиска"
+                                       FontSize="14" Foreground="#666"
+                                       HorizontalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"/>
                         </StackPanel>
                     </Border>
-
                 </Grid>
             </Grid>
         </Grid>

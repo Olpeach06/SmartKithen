@@ -12,8 +12,8 @@ namespace SmartKithen.Pages
 {
     public partial class SearchAndFilters : Page
     {
-        // Храним все рецепты — фильтруем на клиенте без лишних запросов
         private List<Recipes> _allRecipes = new List<Recipes>();
+        private List<Categories> _allCategories = new List<Categories>();
 
         public SearchAndFilters()
         {
@@ -52,27 +52,30 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    var categories = context.Categories
+                    _allCategories = context.Categories
                         .OrderBy(c => c.Name)
                         .ToList();
 
                     CategoriesPanel.Children.Clear();
 
-                    // "Все категории" — первый RadioButton
+                    // "Все категории"
                     var allRadio = new RadioButton
                     {
                         Content = "Все категории",
                         FontSize = 13,
                         Foreground = new SolidColorBrush(
-                            (Color)ColorConverter.ConvertFromString("#555")),
+                            (Color)ColorConverter.ConvertFromString("#1A5D34")),
                         GroupName = "Category",
                         IsChecked = true,
                         Tag = 0,
-                        Margin = new Thickness(0, 0, 0, 8)
+                        Margin = new Thickness(0, 0, 0, 8),
+                        FontWeight = FontWeights.Medium
                     };
+                    allRadio.Checked += CategoryRadio_Checked;
                     CategoriesPanel.Children.Add(allRadio);
 
-                    foreach (var cat in categories)
+                    // Категории из БД
+                    foreach (var cat in _allCategories)
                     {
                         var radio = new RadioButton
                         {
@@ -84,6 +87,7 @@ namespace SmartKithen.Pages
                             Tag = cat.Id,
                             Margin = new Thickness(0, 0, 0, 8)
                         };
+                        radio.Checked += CategoryRadio_Checked;
                         CategoriesPanel.Children.Add(radio);
                     }
                 }
@@ -94,76 +98,74 @@ namespace SmartKithen.Pages
             }
         }
 
+        private void CategoryRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void FilterChanged(object sender, RoutedEventArgs e)
+        {
+            ApplyFilters();
+        }
+
         private void ApplyFilters()
         {
-            var searchText = SearchTextBox.Text.Trim();
-            var results = _allRecipes.AsEnumerable();
-
-            // Поиск по названию
-            if (!string.IsNullOrEmpty(searchText))
+            try
             {
-                results = results.Where(r =>
-                    r.Title.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
+                var searchText = SearchTextBox.Text.Trim();
+                var results = _allRecipes.AsEnumerable();
 
-            // Фильтр по времени — если ни один не выбран, игнорируем фильтр
-            var timeChecked = (Time30CheckBox.IsChecked == true)
-                           || (Time3060CheckBox.IsChecked == true)
-                           || (Time60CheckBox.IsChecked == true);
-
-            if (timeChecked)
-            {
-                results = results.Where(r =>
+                // Поиск по названию
+                if (!string.IsNullOrEmpty(searchText))
                 {
-                    var time = r.CookingTime ?? 0;
-                    if (Time30CheckBox.IsChecked == true && time < 30) return true;
-                    if (Time3060CheckBox.IsChecked == true && time >= 30 && time <= 60) return true;
-                    if (Time60CheckBox.IsChecked == true && time > 60) return true;
-                    return false;
-                });
-            }
+                    results = results.Where(r =>
+                        r.Title.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0);
+                }
 
-            // Фильтр по сложности (по времени)
-            var diffChecked = (DifficultyEasyCheckBox.IsChecked == true)
-                           || (DifficultyMediumCheckBox.IsChecked == true)
-                           || (DifficultyHardCheckBox.IsChecked == true);
+                // Фильтр по времени
+                bool hasTimeFilter = Time30CheckBox.IsChecked == true ||
+                                     Time3060CheckBox.IsChecked == true ||
+                                     Time60CheckBox.IsChecked == true;
 
-            if (diffChecked)
-            {
-                results = results.Where(r =>
+                if (hasTimeFilter)
                 {
-                    var time = r.CookingTime ?? 0;
-                    if (DifficultyEasyCheckBox.IsChecked == true && time < 30) return true;
-                    if (DifficultyMediumCheckBox.IsChecked == true && time >= 30 && time <= 60) return true;
-                    if (DifficultyHardCheckBox.IsChecked == true && time > 60) return true;
-                    return false;
-                });
-            }
+                    results = results.Where(r =>
+                    {
+                        var time = r.CookingTime ?? 0;
+                        if (Time30CheckBox.IsChecked == true && time > 0 && time <= 30) return true;
+                        if (Time3060CheckBox.IsChecked == true && time > 30 && time <= 60) return true;
+                        if (Time60CheckBox.IsChecked == true && time > 60) return true;
+                        return false;
+                    });
+                }
 
-            // Фильтр по категории
-            var selectedCategoryId = GetSelectedCategoryId();
-            if (selectedCategoryId != 0)
+                // Фильтр по категории
+                var selectedCategoryId = GetSelectedCategoryId();
+                if (selectedCategoryId != 0)
+                {
+                    results = results.Where(r => r.CategoryId == selectedCategoryId);
+                }
+
+                var finalList = results.ToList();
+
+                // Обновляем заголовок результатов
+                if (string.IsNullOrEmpty(searchText))
+                {
+                    SearchQueryText.Text = "Все рецепты";
+                }
+                else
+                {
+                    SearchQueryText.Text = $"Результаты по запросу «{searchText}»";
+                }
+
+                ResultsCountText.Text = GetCountLabel(finalList.Count);
+
+                RenderResults(finalList);
+            }
+            catch (Exception ex)
             {
-                results = results.Where(r => r.CategoryId == selectedCategoryId);
+                MessageBox.Show($"Ошибка применения фильтров: {ex.Message}");
             }
-
-            var finalList = results.ToList();
-
-            // Обновляем заголовок результатов
-            if (string.IsNullOrEmpty(searchText))
-            {
-                SearchQueryText.Text = "Все рецепты";
-            }
-            else
-            {
-                SearchQueryText.Text = $"Результаты по запросу «{searchText}»";
-            }
-
-            ResultsCountText.Text = finalList.Count == 0
-                ? "Ничего не найдено"
-                : GetCountLabel(finalList.Count);
-
-            RenderResults(finalList);
         }
 
         private int GetSelectedCategoryId()
@@ -186,7 +188,7 @@ namespace SmartKithen.Pages
                 ResultsPanel.Visibility = Visibility.Collapsed;
 
                 EmptyStateText.Text = string.IsNullOrEmpty(SearchTextBox.Text.Trim())
-                    ? "Рецептов по выбранным фильтрам не найдено"
+                    ? "Рецепты не найдены"
                     : $"Ничего не найдено по запросу «{SearchTextBox.Text.Trim()}»";
                 return;
             }
@@ -204,10 +206,10 @@ namespace SmartKithen.Pages
         {
             var card = new Border
             {
-                Width = 220,
+                Width = 200,
                 Background = Brushes.White,
-                CornerRadius = new CornerRadius(20),
-                Padding = new Thickness(20),
+                CornerRadius = new CornerRadius(15),
+                Padding = new Thickness(15),
                 Margin = new Thickness(0, 0, 15, 15),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
@@ -217,7 +219,7 @@ namespace SmartKithen.Pages
 
             card.Effect = new DropShadowEffect
             {
-                BlurRadius = 10,
+                BlurRadius = 8,
                 Opacity = 0.08,
                 ShadowDepth = 2
             };
@@ -229,55 +231,48 @@ namespace SmartKithen.Pages
             content.Children.Add(new TextBlock
             {
                 Text = emoji,
-                FontSize = 28,
-                Margin = new Thickness(0, 0, 0, 10)
+                FontSize = 32,
+                Margin = new Thickness(0, 0, 0, 8),
+                HorizontalAlignment = HorizontalAlignment.Center
             });
 
             // Название
             content.Children.Add(new TextBlock
             {
                 Text = recipe.Title,
-                FontSize = 15,
+                FontSize = 14,
                 FontWeight = FontWeights.Medium,
                 Foreground = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#1A5D34")),
                 TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 0, 0, 8)
+                TextAlignment = TextAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 8),
+                MaxHeight = 40
             });
 
-            // Время и сложность
+            // Время
             var time = recipe.CookingTime ?? 0;
-            var difficulty = GetDifficultyLabel(time);
-            var timeText = time > 0 ? $"{time} мин" : "— мин";
+            var timeText = time > 0 ? $"⏱️ {time} мин" : "⏱️ Время не указано";
 
-            var infoRow = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-            infoRow.Children.Add(new TextBlock
+            content.Children.Add(new TextBlock
             {
                 Text = timeText,
                 FontSize = 12,
-                Foreground = Brushes.Gray
+                Foreground = Brushes.Gray,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 4)
             });
-            infoRow.Children.Add(new TextBlock
-            {
-                Text = $"  •  {difficulty}",
-                FontSize = 12,
-                Foreground = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString("#CFA1C1"))
-            });
-            content.Children.Add(infoRow);
 
             // Категория
             if (recipe.Categories != null)
             {
                 content.Children.Add(new TextBlock
                 {
-                    Text = recipe.Categories.Name,
+                    Text = $"• {recipe.Categories.Name}",
                     FontSize = 11,
-                    Foreground = Brushes.Gray
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#CFA1C1")),
+                    HorizontalAlignment = HorizontalAlignment.Center
                 });
             }
 
@@ -290,14 +285,6 @@ namespace SmartKithen.Pages
             };
 
             return card;
-        }
-
-        private string GetDifficultyLabel(int cookingTime)
-        {
-            if (cookingTime == 0) return "Не указано";
-            if (cookingTime < 30) return "Простая";
-            if (cookingTime <= 60) return "Средняя";
-            return "Сложная";
         }
 
         private string GetCategoryEmoji(string categoryName)
@@ -318,37 +305,42 @@ namespace SmartKithen.Pages
                 case "Сладости": return "🍰";
                 case "Супы": return "🍲";
                 case "Напитки": return "🥤";
+                case "Соусы": return "🥫";
+                case "Специи": return "🧂";
+                case "Бакалея": return "📦";
+                case "Замороженные продукты": return "❄️";
                 default: return "🍽️";
             }
         }
 
         private string GetCountLabel(int count)
         {
+            if (count == 0) return "Ничего не найдено";
+            return $"Найдено: {count} {GetCountWord(count)}";
+        }
+
+        private string GetCountWord(int count)
+        {
             if (count % 100 >= 11 && count % 100 <= 19)
-                return $"{count} рецептов найдено";
+                return "рецептов";
 
             switch (count % 10)
             {
-                case 1: return $"{count} рецепт найден";
+                case 1: return "рецепт";
                 case 2:
                 case 3:
-                case 4: return $"{count} рецепта найдено";
-                default: return $"{count} рецептов найдено";
+                case 4: return "рецепта";
+                default: return "рецептов";
             }
         }
 
-        // Поиск в реальном времени
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ClearSearchButton != null)
-            {
-                ClearSearchButton.Visibility = string.IsNullOrEmpty(SearchTextBox.Text)
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-            }
+            ClearSearchButton.Visibility = string.IsNullOrEmpty(SearchTextBox.Text)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
-            if (ResultsPanel != null)
-                ApplyFilters();
+            ApplyFilters();
         }
 
         private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
@@ -369,11 +361,6 @@ namespace SmartKithen.Pages
             Time3060CheckBox.IsChecked = false;
             Time60CheckBox.IsChecked = false;
 
-            // Сбрасываем сложность
-            DifficultyEasyCheckBox.IsChecked = false;
-            DifficultyMediumCheckBox.IsChecked = false;
-            DifficultyHardCheckBox.IsChecked = false;
-
             // Сбрасываем категорию на "Все"
             foreach (var child in CategoriesPanel.Children)
             {
@@ -391,13 +378,5 @@ namespace SmartKithen.Pages
         {
             NavigationService?.GoBack();
         }
-
-        // Заглушки для старых хендлеров если они вдруг остались в xaml
-        private void Button_Click(object sender, RoutedEventArgs e) { }
-        private void PastaCarbonaraButton_Click(object sender, RoutedEventArgs e) { }
-        private void PastaBologneseButton_Click(object sender, RoutedEventArgs e) { }
-        private void PastaSeafoodButton_Click(object sender, RoutedEventArgs e) { }
-        private void PastaMushroomButton_Click(object sender, RoutedEventArgs e) { }
-        private void ShowMoreButton_Click(object sender, RoutedEventArgs e) { }
     }
 }
