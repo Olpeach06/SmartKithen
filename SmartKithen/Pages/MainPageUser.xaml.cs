@@ -268,10 +268,10 @@ namespace SmartKithen.Pages
             NavigationService?.Navigate(new MyRecipes());
 
         private void btnShoppingList_Click(object sender, RoutedEventArgs e) =>
-            NavigationService?.Navigate(new EmptyGroceryList());
+            NavigationService?.Navigate(new ListProducts());
 
         private void btnMyProducts_Click(object sender, RoutedEventArgs e) =>
-            NavigationService?.Navigate(new ListProducts());
+            NavigationService?.Navigate(new EmptyGroceryList());
 
         private void btnRandomRecipe_Click(object sender, RoutedEventArgs e)
         {

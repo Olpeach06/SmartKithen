@@ -7,7 +7,173 @@
       mc:Ignorable="d" 
       d:DesignHeight="1330" d:DesignWidth="800"
       Title="RecipeDetails"
-      Background="#FFF8FC">
+      Background="#FFF8FC"
+      MinWidth="800"
+      MinHeight="600">
+
+    <Page.Resources>
+        <!-- Стиль для кнопки "Назад" -->
+        <Style x:Key="BackButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A5D34"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144528"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для второстепенных кнопок -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1A5D34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#1A5D34"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F0F9FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для иконок действий -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1A5D34"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFF0F5"/>
+                                <Setter Property="Foreground" Value="#CFA1C1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для зеленой кнопки -->
+        <Style x:Key="GreenButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A5D34"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144528"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для оранжевой кнопки -->
+        <Style x:Key="OrangeButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FFA500"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FF8C00"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для карточек -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid>
         <!-- Фоновый градиент -->
@@ -20,335 +186,228 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <!-- Шапка с навигацией -->
-                <Grid Margin="20,20,20,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <!-- Верхняя панель с кнопками (адаптивная) -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка Назад -->
-                    <Button x:Name="BackButton"
-                            Grid.Column="0"
-                            Content="← Назад" 
-                            FontSize="14"
-                            Background="Transparent" 
-                            BorderThickness="0"
-                            Foreground="#1A5D34"
-                            Padding="10,5"
-                            HorizontalAlignment="Left"
-                            Cursor="Hand"
-                            Click="BackButton_Click">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Foreground" Value="#CFA1C1"/>
-                                        <Setter Property="Background" Value="#FFF0F5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
+                <!-- Кнопка назад -->
+                <Button Grid.Column="0"
+                        x:Name="BackButton"
+                        Content="← Назад" 
+                        Style="{StaticResource BackButtonStyle}"/>
 
-                    <!-- Поиск и навигация -->
-                    <StackPanel Grid.Column="2" 
-                                Orientation="Horizontal" 
-                                VerticalAlignment="Center"
-                                Margin="10,0,0,0">
-                        <Button x:Name="SearchButton"
-                                Content="🔍" 
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                FontSize="16"
-                                Padding="5"
-                                Cursor="Hand"
-                                Click="SearchButton_Click">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Foreground" Value="#CFA1C1"/>
-                                            <Setter Property="Background" Value="#FFF0F5"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                <!-- Панель действий (горизонтальная, адаптивная) -->
+                <WrapPanel Grid.Column="2" 
+                           HorizontalAlignment="Right"
+                           Margin="10,0,0,0">
+                    
+                    <Button x:Name="AddToFavoritesButton"
+                            Content="❤️ В избранное"
+                            Style="{StaticResource ActionButtonStyle}"
+                            ToolTip="Добавить в избранное"/>
+                    
+                    <Button x:Name="ShareButton"
+                            Content="📤 Поделиться"
+                            Style="{StaticResource ActionButtonStyle}"
+                            ToolTip="Поделиться рецептом"
+                            Margin="10,0,0,0"/>
+                    
+                    <Button x:Name="PrintButton"
+                            Content="🖨️ Печать"
+                            Style="{StaticResource ActionButtonStyle}"
+                            ToolTip="Распечатать рецепт"
+                            Margin="10,0,0,0"/>
+                </WrapPanel>
+            </Grid>
 
-                        <Button x:Name="NextButton"
-                                Content="→" 
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                FontSize="16"
-                                Padding="5"
-                                Margin="5,0,0,0"
-                                Cursor="Hand"
-                                Click="NextButton_Click">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Foreground" Value="#CFA1C1"/>
-                                            <Setter Property="Background" Value="#FFF0F5"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+            <!-- Основной контент с прокруткой -->
+            <ScrollViewer Grid.Row="1" 
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Orientation="Vertical">
 
-                        <Button x:Name="MenuButton"
-                                Content="⋮" 
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                FontSize="16"
-                                Padding="5"
-                                Margin="5,0,0,0"
-                                Cursor="Hand"
-                                Click="MenuButton_Click">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Foreground" Value="#CFA1C1"/>
-                                            <Setter Property="Background" Value="#FFF0F5"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </StackPanel>
+                    <!-- Верхний блок: картинка + информация (как в предыдущей версии) -->
+                    <Grid Margin="0,0,0,30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка "В готовку" -->
-                    <Border Grid.Column="4"
-                            Background="#1A5D34" 
-                            CornerRadius="12"
-                            Padding="0">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
-                        </Border.Effect>
-                        <Button x:Name="StartCookingButton"
-                                Content="В готовку" 
-                                FontSize="12"
-                                FontWeight="SemiBold"
-                                Background="Transparent" 
-                                Foreground="White"
-                                BorderThickness="0"
-                                Padding="15,8"
-                                Cursor="Hand"
-                                Click="StartCookingButton_Click">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Opacity" Value="0.9"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </Border>
-                </Grid>
-
-                <!-- Изображение рецепта (заглушка) -->
-                <Border Height="250" 
-                        Background="#F8F9FA" 
-                        Margin="20,20,20,0"
-                        CornerRadius="20"
-                        BorderBrush="#E0E0E0" 
-                        BorderThickness="1">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="3"/>
-                    </Border.Effect>
-                    <Grid>
-                        <TextBlock x:Name="RecipeImagePlaceholder" 
-                                   Text="🍝" 
-                                   FontSize="80" 
-                                   Foreground="#999"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-                </Border>
-
-                <!-- Основная информация -->
-                <Border Background="White" 
-                        CornerRadius="20" 
-                        Margin="20,20,20,0"
-                        Padding="30">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
-                    </Border.Effect>
-                    <StackPanel Orientation="Vertical">
-
-                        <!-- Название рецепта (динамическое) -->
-                        <TextBlock x:Name="RecipeTitleText" 
-                                   Text="ЗАГРУЗКА..." 
-                                   FontSize="24" 
-                                   FontWeight="Bold" 
-                                   Foreground="#1A5D34"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,15"/>
-
-                        <!-- Время и порции -->
-                        <Grid Margin="0,0,0,15">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0" 
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="🕐" 
-                                           FontSize="18"
-                                           Foreground="#666"/>
-                                <TextBlock x:Name="CookingTimeText" 
-                                           Text="-- мин" 
-                                           FontSize="14" 
-                                           Foreground="#666"
-                                           FontWeight="Medium"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" 
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="🍽️" 
-                                           FontSize="18"
-                                           Foreground="#666"/>
-                                <TextBlock x:Name="ServingsText" 
-                                           Text="2 порции" 
-                                           FontSize="14" 
-                                           Foreground="#666"
-                                           FontWeight="Medium"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="2" 
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="⚡" 
-                                           FontSize="18"
-                                           Foreground="#666"/>
-                                <TextBlock x:Name="DifficultyText" 
-                                           Text="Средняя" 
-                                           FontSize="14" 
-                                           Foreground="#666"
-                                           FontWeight="Medium"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <!-- Рейтинг (можно сделать динамическим) -->
-                        <StackPanel Orientation="Horizontal" 
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,0,15">
-                            <TextBlock x:Name="RatingStars" 
-                                       Text="★★★★☆" 
-                                       FontSize="18" 
-                                       Foreground="#FFB800"
-                                       Margin="0,0,5,0"/>
-                            <TextBlock x:Name="RatingValueText" 
-                                       Text="4.5" 
-                                       FontSize="14" 
-                                       Foreground="#666"/>
-                        </StackPanel>
-
-                        <!-- Описание рецепта (динамическое) -->
-                        <TextBlock x:Name="RecipeDescriptionText" 
-                                   Text="Загрузка описания..." 
-                                   FontSize="16" 
-                                   Foreground="#555"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   LineHeight="22"
-                                   Margin="0,0,0,20"/>
-
-                        <!-- Кнопка добавления в список покупок -->
-                        <Border Background="#FFA500" 
-                                CornerRadius="12"
-                                HorizontalAlignment="Center">
+                        <!-- Картинка рецепта -->
+                        <Border Grid.Column="0"
+                                Height="300"
+                                Background="#F8F9FA" 
+                                CornerRadius="20"
+                                BorderBrush="#E0E0E0" 
+                                BorderThickness="1">
                             <Border.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="3"/>
                             </Border.Effect>
-                            <Button x:Name="AddToShoppingListButton"
-                                    Content="Добавить в список покупок" 
-                                    FontSize="14" 
-                                    FontWeight="SemiBold"
-                                    Background="Transparent" 
-                                    Foreground="White" 
-                                    BorderThickness="0"
-                                    Padding="25,12"
-                                    HorizontalAlignment="Center"
-                                    Cursor="Hand"
-                                    Click="AddToShoppingListButton_Click">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Opacity" Value="0.9"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                            <Grid>
+                                <TextBlock x:Name="RecipeImagePlaceholder" 
+                                           Text="🍳" 
+                                           FontSize="80" 
+                                           Foreground="#999"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                <Border x:Name="CategoryBadge"
+                                        Background="#1A5D34"
+                                        CornerRadius="5"
+                                        Padding="10,5"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Margin="10"
+                                        Visibility="Collapsed">
+                                    <TextBlock x:Name="CategoryBadgeText"
+                                               Foreground="White"
+                                               FontSize="12"/>
+                                </Border>
+                            </Grid>
                         </Border>
 
-                    </StackPanel>
-                </Border>
+                        <!-- Информация о рецепте -->
+                        <StackPanel Grid.Column="2" 
+                                    VerticalAlignment="Top">
 
-                <!-- Ингредиенты -->
-                <Border Background="White" 
-                        CornerRadius="20" 
-                        Margin="20,20,20,0"
-                        Padding="30">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
-                    </Border.Effect>
-                    <StackPanel Orientation="Vertical">
+                            <!-- Название -->
+                            <TextBlock x:Name="RecipeTitleText" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#1A5D34"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,15"/>
 
-                        <TextBlock Text="📝 ИНГРЕДИЕНТЫ" 
-                                   FontSize="18" 
-                                   FontWeight="Bold" 
-                                   Foreground="#1A5D34"
-                                   Margin="0,0,0,20"/>
+                            <!-- Время и категория -->
+                            <WrapPanel Margin="0,0,0,15">
+                                <Border Background="#FFF8FC"
+                                        CornerRadius="10"
+                                        Padding="12,8"
+                                        Margin="0,0,10,5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="⏱️" FontSize="16" Margin="0,0,8,0"/>
+                                        <TextBlock x:Name="CookingTimeText" 
+                                                   FontSize="14" 
+                                                   Foreground="#1A5D34"
+                                                   FontWeight="Medium"/>
+                                    </StackPanel>
+                                </Border>
 
-                        <Border Background="#F8F9FA" 
-                                CornerRadius="15" 
-                                Padding="20,15">
-                            <!-- ДИНАМИЧЕСКАЯ ПАНЕЛЬ ДЛЯ ИНГРЕДИЕНТОВ -->
-                            <StackPanel x:Name="IngredientsPanel" 
+                                <Border Background="#FFF8FC"
+                                        CornerRadius="10"
+                                        Padding="12,8"
+                                        Margin="0,0,10,5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="🍽️" FontSize="16" Margin="0,0,8,0"/>
+                                        <TextBlock x:Name="CategoryText" 
+                                                   FontSize="14" 
+                                                   Foreground="#1A5D34"
+                                                   FontWeight="Medium"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+
+                            <!-- Описание -->
+                            <Border Background="#F9F9F9"
+                                    CornerRadius="10"
+                                    Padding="15"
+                                    Margin="0,0,0,15">
+                                <TextBlock x:Name="RecipeDescriptionText" 
+                                           FontSize="15" 
+                                           Foreground="#555"
+                                           TextWrapping="Wrap"
+                                           LineHeight="22"/>
+                            </Border>
+
+                            <!-- Кнопка "В готовку" -->
+                            <Button x:Name="StartCookingButton"
+                                    Content="🍳 Начать готовку" 
+                                    Style="{StaticResource GreenButtonStyle}"
+                                    HorizontalAlignment="Left"
+                                    Width="200"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Ингредиенты -->
+                    <Border Style="{StaticResource CardStyle}"
+                            Margin="0,0,0,20">
+                        <StackPanel Orientation="Vertical">
+
+                            <!-- Заголовок с подсказкой -->
+                            <Grid Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <TextBlock Text="📝 ИНГРЕДИЕНТЫ" 
+                                               FontSize="20" 
+                                               FontWeight="Bold" 
+                                               Foreground="#1A5D34"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text=" (отметьте, что нужно купить)" 
+                                               FontSize="14" 
+                                               Foreground="#666"
+                                               VerticalAlignment="Center"
+                                               Margin="10,0,0,0"/>
+                                </StackPanel>
+
+                                <!-- Кнопка "Добавить отмеченное" -->
+                                <Button Grid.Column="1"
+                                        x:Name="AddToShoppingListButton"
+                                        Content="🛒 Добавить отмеченное"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Padding="15,8"
+                                        FontSize="12"/>
+                            </Grid>
+
+                            <!-- Список ингредиентов -->
+                            <ScrollViewer MaxHeight="400"
+                                          VerticalScrollBarVisibility="Auto">
+                                <StackPanel x:Name="IngredientsPanel" 
+                                            Orientation="Vertical"
+                                            Margin="0,0,10,0"/>
+                            </ScrollViewer>
+
+                            <!-- Нижняя подсказка -->
+                            <Border Background="#FFF8FC"
+                                    CornerRadius="10"
+                                    Padding="15"
+                                    Margin="0,20,0,0">
+                                <TextBlock Text="💡 Выберите продукты, которые нужно купить, и нажмите кнопку выше"
+                                           FontSize="13"
+                                           Foreground="#666"
+                                           TextAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Шаги приготовления -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="👩‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ" 
+                                       FontSize="20" 
+                                       FontWeight="Bold" 
+                                       Foreground="#1A5D34"
+                                       Margin="0,0,0,20"/>
+
+                            <StackPanel x:Name="StepsPanel" 
                                         Orientation="Vertical"/>
-                        </Border>
-
-                    </StackPanel>
-                </Border>
-
-                <!-- Шаги приготовления -->
-                <Border Background="White" 
-                        CornerRadius="20" 
-                        Margin="20,20,20,20"
-                        Padding="30">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
-                    </Border.Effect>
-                    <StackPanel Orientation="Vertical">
-
-                        <TextBlock Text="👩‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ" 
-                                   FontSize="18" 
-                                   FontWeight="Bold" 
-                                   Foreground="#1A5D34"
-                                   Margin="0,0,0,20"/>
-
-                        <!-- ДИНАМИЧЕСКАЯ ПАНЕЛЬ ДЛЯ ШАГОВ -->
-                        <StackPanel x:Name="StepsPanel" 
-                                    Orientation="Vertical"/>
-
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>
