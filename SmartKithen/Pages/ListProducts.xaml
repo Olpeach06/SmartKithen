@@ -7,7 +7,115 @@
       mc:Ignorable="d" 
       d:DesignHeight="1100" d:DesignWidth="800"
       Title="ListProducts"
-      Background="#FFF8FC">
+      Background="#FFF8FC"
+      MinWidth="700"
+      MinHeight="600">
+
+    <Page.Resources>
+        <!-- Стиль для кнопки назад -->
+        <Style x:Key="BackButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A5D34"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144528"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для зеленой кнопки -->
+        <Style x:Key="GreenButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1A5D34"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#144528"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для вторичной кнопки -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1A5D34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#CFA1C1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFF0F5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для пустого состояния -->
+        <Style x:Key="EmptyStateStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="30"/>
+            <Setter Property="Margin" Value="0,20,0,0"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid>
         <!-- Фоновый градиент -->
@@ -40,17 +148,14 @@
                                 VerticalAlignment="Center">
                         <Button x:Name="BackButton"
                                 Content="← Назад" 
-                                FontSize="14"
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                Foreground="#1A5D34"
-                                Padding="10,5"
+                                Style="{StaticResource BackButtonStyle}"
+                                Padding="15,8"
                                 Click="BackButton_Click"/>
                         <TextBlock Text="Мои списки > Текущий" 
                                    FontSize="14" 
                                    Foreground="#666"
                                    VerticalAlignment="Center"
-                                   Margin="5,0,0,0"/>
+                                   Margin="10,0,0,0"/>
                     </StackPanel>
 
                     <!-- Правые элементы -->
@@ -59,7 +164,8 @@
                                 VerticalAlignment="Center">
 
                         <!-- Профиль -->
-                        <Border Background="#1A5D34" 
+                        <Border x:Name="ProfileBorder"
+                                Background="#1A5D34" 
                                 CornerRadius="15" 
                                 Padding="12,8"
                                 Margin="0,0,15,0">
@@ -68,7 +174,8 @@
                                            FontSize="14"
                                            Foreground="White"
                                            Margin="0,0,8,0"/>
-                                <TextBlock Text="Анна" 
+                                <TextBlock x:Name="UserNameText"
+                                           Text="Загрузка..." 
                                            FontSize="12" 
                                            Foreground="White"
                                            FontWeight="SemiBold"/>
@@ -77,7 +184,7 @@
 
                         <!-- Экспорт -->
                         <Border Background="#1A5D34" 
-                                CornerRadius="12"
+                                CornerRadius="8"
                                 Padding="0">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
@@ -94,11 +201,13 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Секция выбора рецептов -->
-                <Border Background="White" 
+                <!-- Секция выбора рецептов (ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ) -->
+                <Border x:Name="RecipesSection"
+                        Background="White" 
                         CornerRadius="20" 
                         Padding="30,25" 
-                        Margin="0,0,0,25">
+                        Margin="0,0,0,25"
+                        Visibility="Collapsed">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="3"/>
                     </Border.Effect>
@@ -111,116 +220,46 @@
                                    Margin="0,0,0,20"/>
 
                         <!-- Список рецептов -->
-                        <StackPanel Orientation="Vertical" 
-                                    Margin="0,0,0,20">
+                        <StackPanel x:Name="RecipesPanel" Orientation="Vertical"/>
 
-                            <!-- Паста Карбонара -->
-                            <Border BorderBrush="#F0F0F0" 
-                                    BorderThickness="0,0,0,1" 
-                                    Padding="0,0,0,12"
-                                    Margin="0,0,0,12">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="PastaCheckBox"
-                                              IsChecked="True"
-                                              Margin="0,0,15,0"
-                                              Checked="RecipeCheckBox_Changed"
-                                              Unchecked="RecipeCheckBox_Changed"/>
-                                    <StackPanel>
-                                        <TextBlock Text="Паста Карбонара" 
-                                                   FontSize="14" 
-                                                   FontWeight="Medium" 
-                                                   Foreground="#333"/>
-                                        <TextBlock Text="Итальянская паста с беконом и сыром" 
-                                                   FontSize="12" 
-                                                   Foreground="#888"
-                                                   Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Салат Цезарь -->
-                            <Border BorderBrush="#F0F0F0" 
-                                    BorderThickness="0,0,0,1" 
-                                    Padding="0,0,0,12"
-                                    Margin="0,0,0,12">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="SaladCheckBox"
-                                              IsChecked="True"
-                                              Margin="0,0,15,0"
-                                              Checked="RecipeCheckBox_Changed"
-                                              Unchecked="RecipeCheckBox_Changed"/>
-                                    <StackPanel>
-                                        <TextBlock Text="Салат Цезарь" 
-                                                   FontSize="14" 
-                                                   FontWeight="Medium" 
-                                                   Foreground="#333"/>
-                                        <TextBlock Text="Классический салат с курицей" 
-                                                   FontSize="12" 
-                                                   Foreground="#888"
-                                                   Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Тирамису -->
-                            <Border BorderBrush="#F0F0F0" 
-                                    BorderThickness="0,0,0,1" 
-                                    Padding="0,0,0,12"
-                                    Margin="0,0,0,12">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="TiramisuCheckBox"
-                                              IsChecked="False"
-                                              Margin="0,0,15,0"
-                                              Checked="RecipeCheckBox_Changed"
-                                              Unchecked="RecipeCheckBox_Changed"/>
-                                    <StackPanel>
-                                        <TextBlock Text="Тирамису" 
-                                                   FontSize="14" 
-                                                   FontWeight="Medium" 
-                                                   Foreground="#333"/>
-                                        <TextBlock Text="Итальянский десерт с кофе" 
-                                                   FontSize="12" 
-                                                   Foreground="#888"
-                                                   Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Грибной суп -->
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox x:Name="SoupCheckBox"
-                                          IsChecked="False"
-                                          Margin="0,0,15,0"
-                                          Checked="RecipeCheckBox_Changed"
-                                          Unchecked="RecipeCheckBox_Changed"/>
-                                <StackPanel>
-                                    <TextBlock Text="Грибной суп" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"/>
-                                    <TextBlock Text="Ароматный суп с грибами" 
-                                               FontSize="12" 
-                                               Foreground="#888"
-                                               Margin="0,2,0,0"/>
-                                </StackPanel>
+                        <!-- Пустое состояние для рецептов -->
+                        <Border x:Name="EmptyRecipesState"
+                                Style="{StaticResource EmptyStateStyle}"
+                                Visibility="Collapsed">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                <TextBlock Text="📖" 
+                                           FontSize="48" 
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,15"/>
+                                <TextBlock Text="У вас пока нет рецептов" 
+                                           FontSize="16" 
+                                           FontWeight="SemiBold"
+                                           Foreground="#1A5D34"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock Text="Добавьте рецепты в избранное, чтобы формировать список покупок"
+                                           FontSize="13"
+                                           Foreground="#666"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           Margin="0,0,0,15"/>
+                                <Button Content="🔍 Найти рецепты"
+                                        Style="{StaticResource GreenButtonStyle}"
+                                        Padding="20,10"
+                                        HorizontalAlignment="Center"
+                                        Click="AddRecipeButton_Click"/>
                             </StackPanel>
-                        </StackPanel>
-
-                        <!-- Кнопка добавления рецепта -->
-                        <Border BorderBrush="#CFA1C1" 
-                                BorderThickness="2" 
-                                CornerRadius="12"
-                                HorizontalAlignment="Left">
-                            <Button x:Name="AddRecipeButton"
-                                    Content="➕ Добавить рецепт" 
-                                    FontSize="13"
-                                    Background="Transparent" 
-                                    Foreground="#1A5D34"
-                                    BorderThickness="0"
-                                    Padding="20,10"
-                                    Click="AddRecipeButton_Click"/>
                         </Border>
 
+                        <!-- Кнопка генерации -->
+                        <Button x:Name="GenerateForSelectedButton"
+                                Content="🤖 Добавить недостающие продукты"
+                                Style="{StaticResource GreenButtonStyle}"
+                                Margin="0,20,0,0"
+                                HorizontalAlignment="Center"
+                                Padding="25,12"
+                                Click="GenerateForSelectedButton_Click"/>
                     </StackPanel>
                 </Border>
 
@@ -238,7 +277,8 @@
                                        FontSize="18" 
                                        FontWeight="Bold" 
                                        Foreground="#1A5D34"/>
-                            <TextBlock Text="(7 позиций)" 
+                            <TextBlock x:Name="ItemsCountText" 
+                                       Text="(0 позиций)" 
                                        FontSize="14" 
                                        Foreground="#CFA1C1"
                                        FontWeight="Medium"
@@ -246,163 +286,65 @@
                                        VerticalAlignment="Bottom"/>
                         </StackPanel>
 
-                        <!-- Категория: МЯСО/РЫБА -->
-                        <Border Background="#F8F9FA" 
-                                CornerRadius="15" 
-                                Padding="20,15"
-                                Margin="0,0,0,20">
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="🥩 МЯСО/РЫБА" 
-                                           FontSize="14" 
-                                           FontWeight="Bold" 
-                                           Foreground="#1A5D34"
+                        <!-- Контейнеры для категорий продуктов -->
+                        <StackPanel x:Name="MeatFishPanel" Orientation="Vertical"/>
+                        <StackPanel x:Name="DairyPanel" Orientation="Vertical"/>
+                        <StackPanel x:Name="VegFruitPanel" Orientation="Vertical"/>
+                        <StackPanel x:Name="OtherPanel" Orientation="Vertical"/>
+
+                        <!-- Пустое состояние для продуктов -->
+                        <Border x:Name="EmptyProductsState"
+                                Style="{StaticResource EmptyStateStyle}"
+                                Visibility="Collapsed">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                <TextBlock Text="🛒" 
+                                           FontSize="48" 
+                                           HorizontalAlignment="Center"
                                            Margin="0,0,0,15"/>
-
-                                <!-- Бекон -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <CheckBox x:Name="BaconCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Бекон" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="200 г" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
-
-                                <!-- Курица -->
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="ChickenCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Курица" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="300 г" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Категория: МОЛОЧНЫЕ -->
-                        <Border Background="#F8F9FA" 
-                                CornerRadius="15" 
-                                Padding="20,15"
-                                Margin="0,0,0,20">
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="🥛 МОЛОЧНЫЕ" 
-                                           FontSize="14" 
-                                           FontWeight="Bold" 
+                                <TextBlock x:Name="EmptyProductsTitle"
+                                           Text="Список покупок пуст" 
+                                           FontSize="16" 
+                                           FontWeight="SemiBold"
                                            Foreground="#1A5D34"
-                                           Margin="0,0,0,15"/>
-
-                                <!-- Сливки -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <CheckBox x:Name="CreamCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Сливки" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="200 мл" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
-
-                                <!-- Париезан -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <CheckBox x:Name="ParmesanCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Париезан" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="100 г" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
-
-                                <!-- Сыр -->
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="CheeseCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Сыр" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="150 г" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Категория: ОВОЩИ/ФРУКТЫ -->
-                        <Border Background="#F8F9FA" 
-                                CornerRadius="15" 
-                                Padding="20,15"
-                                Margin="0,0,0,25">
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="🥦 ОВОЩИ/ФРУКТЫ" 
-                                           FontSize="14" 
-                                           FontWeight="Bold" 
-                                           Foreground="#1A5D34"
-                                           Margin="0,0,0,15"/>
-
-                                <!-- Салат -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <CheckBox x:Name="LettuceCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Салат" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="1 шт" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
-
-                                <!-- Помидоры -->
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="TomatoesCheckBox" Margin="0,0,15,0"/>
-                                    <TextBlock Text="Помидоры" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="#333"
-                                               Width="120"/>
-                                    <TextBlock Text="2 шт" 
-                                               FontSize="13" 
-                                               Foreground="#666"/>
-                                </StackPanel>
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,8"/>
+                                <TextBlock x:Name="EmptyProductsMessage"
+                                           Text="Добавьте продукты из рецептов или нажмите «Добавить продукт»"
+                                           FontSize="13"
+                                           Foreground="#666"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           TextAlignment="Center"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Кнопки управления -->
-                        <StackPanel Orientation="Horizontal" 
+                        <StackPanel x:Name="ActionButtonsPanel"
+                                    Orientation="Horizontal" 
                                     HorizontalAlignment="Center"
-                                    Margin="0,15,0,0">
+                                    Margin="0,25,0,0"
+                                    Visibility="Collapsed">
 
+                            <!-- Кнопка добавления продукта -->
                             <Border Background="#1A5D34" 
-                                    CornerRadius="12"
+                                    CornerRadius="8"
                                     Margin="0,0,10,0">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
                                 </Border.Effect>
-                                <Button x:Name="GenerateButton"
-                                        Content="🤖 Сгенерировать автоматически" 
+                                <Button x:Name="AddProductButton"
+                                        Content="➕ Добавить продукт" 
                                         FontSize="13"
                                         Background="Transparent" 
                                         Foreground="White"
                                         BorderThickness="0"
                                         Padding="25,12"
-                                        Click="GenerateButton_Click"/>
+                                        Click="AddProductButton_Click"/>
                             </Border>
 
                             <Border BorderBrush="#CFA1C1" 
                                     BorderThickness="2" 
-                                    CornerRadius="12">
+                                    CornerRadius="8">
                                 <Button x:Name="ClearCheckedButton"
                                         Content="🗑️ Очистить отмеченные" 
                                         FontSize="13"
@@ -412,12 +354,9 @@
                                         Padding="25,12"
                                         Click="ClearCheckedButton_Click"/>
                             </Border>
-
                         </StackPanel>
-
                     </StackPanel>
                 </Border>
-
             </StackPanel>
         </ScrollViewer>
     </Grid>

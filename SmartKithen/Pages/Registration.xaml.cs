@@ -11,6 +11,7 @@ namespace SmartKithen.Pages
     {
         private bool _isPasswordVisible = false;
         private bool _isConfirmPasswordVisible = false;
+        private bool _fromGuestMode = false; // Флаг для режима гостя
 
         public Registration()
         {
@@ -33,9 +34,32 @@ namespace SmartKithen.Pages
             tbVisibleConfirmPassword.TextChanged += TbVisibleConfirmPassword_TextChanged;
         }
 
+        // Конструктор с параметром для режима гостя
+        public Registration(bool fromGuestMode) : this()
+        {
+            _fromGuestMode = fromGuestMode;
+        }
+
         private void Registration_Loaded(object sender, RoutedEventArgs e)
         {
             tbFirstName.Focus();
+
+            // Если регистрация из гостевого режима, показываем уведомление
+            if (_fromGuestMode && SessionManager.HasGuestData())
+            {
+                ShowGuestDataNotification();
+            }
+        }
+
+        private void ShowGuestDataNotification()
+        {
+            var summary = SessionManager.GetGuestDataSummary();
+            var result = MessageBox.Show(
+                $"У вас есть временные данные в гостевом режиме:\n{summary}\n\n" +
+                "После регистрации они будут автоматически перенесены в ваш аккаунт.",
+                "Перенос данных",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
@@ -137,25 +161,44 @@ namespace SmartKithen.Pages
                     return;
                 }
 
+                // Создание нового пользователя
                 Users newUser = CreateNewUser();
+                int newUserId = 0;
 
-                if (SaveUserToDatabase(newUser))
+                // Сохранение пользователя в БД
+                using (var context = new SmartKitchenEntities())
                 {
-                    App.CurrentUser = newUser;
+                    context.Users.Add(newUser);
+                    int result = context.SaveChanges();
 
-                    // Переносим рецепт из гостевой сессии если есть
-                    if (GuestSession.HasPendingRecipe)
-                        TransferGuestRecipe(newUser.Id);
+                    if (result > 0)
+                    {
+                        newUserId = newUser.Id; // Получаем ID созданного пользователя
 
-                    NavigationService?.Navigate(new MainPageUser());
+                        // Если регистрация из гостевого режима и есть данные, переносим их
+                        if (_fromGuestMode && SessionManager.HasGuestData())
+                        {
+                            TransferGuestData(context, newUserId);
+                        }
 
-                    MessageBox.Show($"Регистрация успешна! Добро пожаловать, {newUser.Name}!",
-                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show("Ошибка при сохранении пользователя. Попробуйте позже.",
-                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        // Автоматический вход после регистрации
+                        App.CurrentUser = newUser;
+
+                        // Переход на главную страницу пользователя
+                        NavigationService?.Navigate(new MainPageUser());
+
+                        string message = _fromGuestMode
+                            ? $"Регистрация успешна! Ваши временные данные перенесены в аккаунт."
+                            : $"Регистрация успешна! Добро пожаловать, {newUser.Name}!";
+
+                        MessageBox.Show(message, "Успех",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ошибка при сохранении пользователя. Попробуйте позже.",
+                            "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
@@ -164,79 +207,88 @@ namespace SmartKithen.Pages
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private void TransferGuestRecipe(int userId)
+
+        // ИСПРАВЛЕННЫЙ МЕТОД: Перенос данных гостя в аккаунт пользователя
+        private void TransferGuestData(SmartKitchenEntities context, int newUserId)
         {
             try
             {
-                var data = GuestSession.PendingRecipe;
+                int transferredCount = 0;
 
-                using (var context = new SmartKitchenEntities())
+                // Переносим список покупок из SessionManager.GuestShoppingList
+                if (SessionManager.GuestShoppingList != null && SessionManager.GuestShoppingList.Any())
                 {
-                    var recipe = new Recipes
+                    foreach (var item in SessionManager.GuestShoppingList)
                     {
-                        Title = data.Title,
-                        Description = data.Description,
-                        CookingTime = data.CookingTime,
-                        CategoryId = data.CategoryId,
-                        Instructions = ""
-                    };
+                        // Проверяем, нет ли уже такого продукта в холодильнике
+                        var existingItem = context.FridgeItems
+                            .FirstOrDefault(f => f.UserId == newUserId && f.ProductId == item.ProductId);
 
-                    context.Recipes.Add(recipe);
-                    context.SaveChanges();
-
-                    foreach (var ing in data.Ingredients)
-                    {
-                        var product = context.Products
-                            .FirstOrDefault(p => p.Name.ToLower() == ing.Name.ToLower());
-
-                        if (product == null)
+                        if (existingItem != null)
                         {
-                            product = new Products
-                            {
-                                Name = ing.Name,
-                                CategoryId = 6,
-                                DefaultUnit = ing.Unit
-                            };
-                            context.Products.Add(product);
-                            context.SaveChanges();
+                            // Если есть, увеличиваем количество
+                            existingItem.Quantity += item.Quantity;
                         }
-
-                        context.Ingredients.Add(new Ingredients
+                        else
                         {
-                            RecipeId = recipe.Id,
-                            ProductId = product.Id,
-                            Quantity = ing.Quantity,
-                            Unit = ing.Unit
-                        });
+                            // Если нет, добавляем новый
+                            var fridgeItem = new FridgeItems
+                            {
+                                UserId = newUserId,
+                                ProductId = item.ProductId,
+                                Quantity = item.Quantity,
+                                ExpiryDate = DateTime.Today.AddMonths(1)
+                            };
+                            context.FridgeItems.Add(fridgeItem);
+                        }
+                        transferredCount++;
                     }
-
-                    for (int i = 0; i < data.Steps.Count; i++)
-                    {
-                        context.RecipeSteps.Add(new RecipeSteps
-                        {
-                            RecipeId = recipe.Id,
-                            StepNumber = i + 1,
-                            Description = data.Steps[i]
-                        });
-                    }
-
-                    context.SaveChanges();
                 }
 
-                GuestSession.Clear();
+                // Переносим продукты из SessionManager.GuestProducts (если есть)
+                if (SessionManager.GuestProducts != null && SessionManager.GuestProducts.Any())
+                {
+                    foreach (var product in SessionManager.GuestProducts)
+                    {
+                        var existingItem = context.FridgeItems
+                            .FirstOrDefault(f => f.UserId == newUserId && f.ProductId == product.ProductId);
 
-                MessageBox.Show(
-                    $"Рецепт «{data.Title}» из гостевой сессии успешно сохранён в ваш аккаунт!",
-                    "Рецепт перенесён",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                        if (existingItem != null)
+                        {
+                            existingItem.Quantity += product.Quantity;
+                        }
+                        else
+                        {
+                            var fridgeItem = new FridgeItems
+                            {
+                                UserId = newUserId,
+                                ProductId = product.ProductId,
+                                Quantity = product.Quantity,
+                                ExpiryDate = product.ExpiryDate ?? DateTime.Today.AddMonths(1)
+                            };
+                            context.FridgeItems.Add(fridgeItem);
+                        }
+                        transferredCount++;
+                    }
+                }
+
+                // Сохраняем изменения
+                context.SaveChanges();
+
+                // Очищаем временные данные гостя
+                SessionManager.ClearGuestData();
+
+                System.Diagnostics.Debug.WriteLine($"Перенесено {transferredCount} продуктов для пользователя ID: {newUserId}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Не удалось перенести рецепт: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"Ошибка переноса данных гостя: {ex.Message}");
+                // Не прерываем регистрацию, если что-то пошло не так с переносом
+                MessageBox.Show("Данные гостя не удалось перенести, но регистрация завершена успешно.",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
         private bool ValidateRegistration()
         {
             if (string.IsNullOrWhiteSpace(tbFirstName.Text))
@@ -372,10 +424,11 @@ namespace SmartKithen.Pages
         {
             string password = _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
 
+            // В реальном проекте здесь должно быть хэширование пароля!
             return new Users
             {
                 Login = tbEmail.Text.Trim(),
-                PasswordHash = password,
+                PasswordHash = password, // TODO: Добавить хэширование
                 Name = $"{tbFirstName.Text.Trim()} {tbLastName.Text.Trim()}".Trim()
             };
         }

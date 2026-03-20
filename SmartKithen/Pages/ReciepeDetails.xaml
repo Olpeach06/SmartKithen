@@ -12,7 +12,6 @@
       MinHeight="600">
 
     <Page.Resources>
-        <!-- Стиль для кнопки "Назад" -->
         <Style x:Key="BackButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1A5D34"/>
             <Setter Property="Foreground" Value="White"/>
@@ -25,7 +24,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="10"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
@@ -42,7 +41,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для второстепенных кнопок -->
         <Style x:Key="SecondaryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="#1A5D34"/>
@@ -73,7 +71,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для иконок действий -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#1A5D34"/>
@@ -100,7 +97,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для зеленой кнопки -->
         <Style x:Key="GreenButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1A5D34"/>
             <Setter Property="Foreground" Value="White"/>
@@ -113,7 +109,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="10"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
@@ -130,37 +126,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для оранжевой кнопки -->
-        <Style x:Key="OrangeButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FFA500"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="20,12"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="10"
-                                Padding="{TemplateBinding Padding}">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="8" Opacity="0.2" ShadowDepth="2"/>
-                            </Border.Effect>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FF8C00"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Стиль для карточек -->
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="15"/>
@@ -176,7 +141,6 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Фоновый градиент -->
         <Rectangle>
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -192,7 +156,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Верхняя панель с кнопками (адаптивная) -->
             <Grid Grid.Row="0" Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -200,43 +163,18 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Кнопка назад -->
-                <Button Grid.Column="0"
-                        x:Name="BackButton"
-                        Content="← Назад" 
-                        Style="{StaticResource BackButtonStyle}"/>
+                <Button Grid.Column="0" x:Name="BackButton" Content="← Назад" Style="{StaticResource BackButtonStyle}" Click="BackButton_Click"/>
 
-                <!-- Панель действий (горизонтальная, адаптивная) -->
-                <WrapPanel Grid.Column="2" 
-                           HorizontalAlignment="Right"
-                           Margin="10,0,0,0">
-                    
-                    <Button x:Name="AddToFavoritesButton"
-                            Content="❤️ В избранное"
-                            Style="{StaticResource ActionButtonStyle}"
-                            ToolTip="Добавить в избранное"/>
-                    
-                    <Button x:Name="ShareButton"
-                            Content="📤 Поделиться"
-                            Style="{StaticResource ActionButtonStyle}"
-                            ToolTip="Поделиться рецептом"
-                            Margin="10,0,0,0"/>
-                    
-                    <Button x:Name="PrintButton"
-                            Content="🖨️ Печать"
-                            Style="{StaticResource ActionButtonStyle}"
-                            ToolTip="Распечатать рецепт"
-                            Margin="10,0,0,0"/>
+                <WrapPanel Grid.Column="2" HorizontalAlignment="Right" Margin="10,0,0,0">
+                    <Button x:Name="AddToFavoritesButton" Content="❤️ В избранное" Style="{StaticResource ActionButtonStyle}" ToolTip="Добавить в избранное" Click="AddToFavoritesButton_Click"/>
+                    <Button x:Name="ShareButton" Content="📤 Поделиться" Style="{StaticResource ActionButtonStyle}" ToolTip="Поделиться рецептом" Margin="10,0,0,0" Click="ShareButton_Click"/>
+                    <Button x:Name="PrintButton" Content="🖨️ Печать" Style="{StaticResource ActionButtonStyle}" ToolTip="Распечатать рецепт" Margin="10,0,0,0" Click="PrintButton_Click"/>
                 </WrapPanel>
             </Grid>
 
-            <!-- Основной контент с прокруткой -->
-            <ScrollViewer Grid.Row="1" 
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Orientation="Vertical">
 
-                    <!-- Верхний блок: картинка + информация (как в предыдущей версии) -->
                     <Grid Margin="0,0,0,30">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="300"/>
@@ -244,166 +182,81 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Картинка рецепта -->
-                        <Border Grid.Column="0"
-                                Height="300"
-                                Background="#F8F9FA" 
-                                CornerRadius="20"
-                                BorderBrush="#E0E0E0" 
-                                BorderThickness="1">
+                        <Border Grid.Column="0" Height="300" Background="#F8F9FA" CornerRadius="20" BorderBrush="#E0E0E0" BorderThickness="1">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="3"/>
                             </Border.Effect>
                             <Grid>
-                                <TextBlock x:Name="RecipeImagePlaceholder" 
-                                           Text="🍳" 
-                                           FontSize="80" 
-                                           Foreground="#999"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                                <Border x:Name="CategoryBadge"
-                                        Background="#1A5D34"
-                                        CornerRadius="5"
-                                        Padding="10,5"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Margin="10"
-                                        Visibility="Collapsed">
-                                    <TextBlock x:Name="CategoryBadgeText"
-                                               Foreground="White"
-                                               FontSize="12"/>
+                                <TextBlock x:Name="RecipeImagePlaceholder" Text="🍳" FontSize="80" Foreground="#999" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="CategoryBadge" Background="#1A5D34" CornerRadius="5" Padding="10,5" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Visibility="Collapsed">
+                                    <TextBlock x:Name="CategoryBadgeText" Foreground="White" FontSize="12"/>
                                 </Border>
                             </Grid>
                         </Border>
 
-                        <!-- Информация о рецепте -->
-                        <StackPanel Grid.Column="2" 
-                                    VerticalAlignment="Top">
+                        <StackPanel Grid.Column="2" VerticalAlignment="Top">
+                            <TextBlock x:Name="RecipeTitleText" FontSize="32" FontWeight="Bold" Foreground="#1A5D34" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                            <!-- Название -->
-                            <TextBlock x:Name="RecipeTitleText" 
-                                       FontSize="32" 
-                                       FontWeight="Bold" 
-                                       Foreground="#1A5D34"
-                                       TextWrapping="Wrap"
-                                       Margin="0,0,0,15"/>
-
-                            <!-- Время и категория -->
                             <WrapPanel Margin="0,0,0,15">
-                                <Border Background="#FFF8FC"
-                                        CornerRadius="10"
-                                        Padding="12,8"
-                                        Margin="0,0,10,5">
+                                <Border Background="#FFF8FC" CornerRadius="10" Padding="12,8" Margin="0,0,10,5">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="⏱️" FontSize="16" Margin="0,0,8,0"/>
-                                        <TextBlock x:Name="CookingTimeText" 
-                                                   FontSize="14" 
-                                                   Foreground="#1A5D34"
-                                                   FontWeight="Medium"/>
+                                        <TextBlock x:Name="CookingTimeText" FontSize="14" Foreground="#1A5D34" FontWeight="Medium"/>
                                     </StackPanel>
                                 </Border>
 
-                                <Border Background="#FFF8FC"
-                                        CornerRadius="10"
-                                        Padding="12,8"
-                                        Margin="0,0,10,5">
+                                <Border Background="#FFF8FC" CornerRadius="10" Padding="12,8" Margin="0,0,10,5">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="🍽️" FontSize="16" Margin="0,0,8,0"/>
-                                        <TextBlock x:Name="CategoryText" 
-                                                   FontSize="14" 
-                                                   Foreground="#1A5D34"
-                                                   FontWeight="Medium"/>
+                                        <TextBlock x:Name="CategoryText" FontSize="14" Foreground="#1A5D34" FontWeight="Medium"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border x:Name="MealCategoryBorder" Background="#FFF8FC" CornerRadius="10" Padding="12,8" Margin="0,0,10,5" Visibility="Collapsed">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="MealCategoryIcon" FontSize="16" Margin="0,0,8,0"/>
+                                        <TextBlock x:Name="MealCategoryText" FontSize="14" Foreground="#1A5D34" FontWeight="Medium"/>
                                     </StackPanel>
                                 </Border>
                             </WrapPanel>
 
-                            <!-- Описание -->
-                            <Border Background="#F9F9F9"
-                                    CornerRadius="10"
-                                    Padding="15"
-                                    Margin="0,0,0,15">
-                                <TextBlock x:Name="RecipeDescriptionText" 
-                                           FontSize="15" 
-                                           Foreground="#555"
-                                           TextWrapping="Wrap"
-                                           LineHeight="22"/>
+                            <Border Background="#F9F9F9" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                                <TextBlock x:Name="RecipeDescriptionText" FontSize="15" Foreground="#555" TextWrapping="Wrap" LineHeight="22"/>
                             </Border>
 
-                            <!-- Кнопка "В готовку" -->
-                            <Button x:Name="StartCookingButton"
-                                    Content="🍳 Начать готовку" 
-                                    Style="{StaticResource GreenButtonStyle}"
-                                    HorizontalAlignment="Left"
-                                    Width="200"/>
+                            <WrapPanel>
+                                <Button x:Name="StartCookingButton" Content="🍳 Начать готовку" Style="{StaticResource GreenButtonStyle}" Width="200" Margin="0,0,10,0" Click="StartCookingButton_Click"/>
+                                <Button x:Name="AddRecipeToShoppingListButton" Content="🛒 В список покупок" Style="{StaticResource SecondaryButtonStyle}" Padding="15,12" Click="AddRecipeToShoppingListButton_Click"/>
+                            </WrapPanel>
                         </StackPanel>
                     </Grid>
 
-                    <!-- Ингредиенты -->
-                    <Border Style="{StaticResource CardStyle}"
-                            Margin="0,0,0,20">
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,20">
                         <StackPanel Orientation="Vertical">
-
-                            <!-- Заголовок с подсказкой -->
                             <Grid Margin="0,0,0,20">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <TextBlock Text="📝 ИНГРЕДИЕНТЫ" 
-                                               FontSize="20" 
-                                               FontWeight="Bold" 
-                                               Foreground="#1A5D34"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Text=" (отметьте, что нужно купить)" 
-                                               FontSize="14" 
-                                               Foreground="#666"
-                                               VerticalAlignment="Center"
-                                               Margin="10,0,0,0"/>
+                                    <TextBlock Text="📝 ИНГРЕДИЕНТЫ" FontSize="20" FontWeight="Bold" Foreground="#1A5D34" VerticalAlignment="Center"/>
+                                    <TextBlock Text=" (отметьте для покупки)" FontSize="14" Foreground="#666" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                 </StackPanel>
-
-                                <!-- Кнопка "Добавить отмеченное" -->
-                                <Button Grid.Column="1"
-                                        x:Name="AddToShoppingListButton"
-                                        Content="🛒 Добавить отмеченное"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        Padding="15,8"
-                                        FontSize="12"/>
+                                <Button x:Name="AddSelectedToShoppingListButton" Grid.Column="1" Content="🛒 Добавить отмеченное" Style="{StaticResource SecondaryButtonStyle}" Padding="15,8" FontSize="12" Click="AddSelectedToShoppingListButton_Click" Visibility="Collapsed"/>
                             </Grid>
-
-                            <!-- Список ингредиентов -->
-                            <ScrollViewer MaxHeight="400"
-                                          VerticalScrollBarVisibility="Auto">
-                                <StackPanel x:Name="IngredientsPanel" 
-                                            Orientation="Vertical"
-                                            Margin="0,0,10,0"/>
+                            <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                                <StackPanel x:Name="IngredientsPanel" Orientation="Vertical" Margin="0,0,10,0"/>
                             </ScrollViewer>
-
-                            <!-- Нижняя подсказка -->
-                            <Border Background="#FFF8FC"
-                                    CornerRadius="10"
-                                    Padding="15"
-                                    Margin="0,20,0,0">
-                                <TextBlock Text="💡 Выберите продукты, которые нужно купить, и нажмите кнопку выше"
-                                           FontSize="13"
-                                           Foreground="#666"
-                                           TextAlignment="Center"/>
+                            <Border Background="#FFF8FC" CornerRadius="10" Padding="15" Margin="0,20,0,0">
+                                <TextBlock Text="💡 Выберите продукты, которые нужно купить, и нажмите кнопку выше" FontSize="13" Foreground="#666" TextAlignment="Center"/>
                             </Border>
                         </StackPanel>
                     </Border>
 
-                    <!-- Шаги приготовления -->
                     <Border Style="{StaticResource CardStyle}">
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="👩‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ" 
-                                       FontSize="20" 
-                                       FontWeight="Bold" 
-                                       Foreground="#1A5D34"
-                                       Margin="0,0,0,20"/>
-
-                            <StackPanel x:Name="StepsPanel" 
-                                        Orientation="Vertical"/>
+                            <TextBlock Text="👩‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ" FontSize="20" FontWeight="Bold" Foreground="#1A5D34" Margin="0,0,0,20"/>
+                            <StackPanel x:Name="StepsPanel" Orientation="Vertical"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
