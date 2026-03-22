@@ -10,7 +10,6 @@
       Background="#FFF8FC">
 
     <Page.Resources>
-        <!-- Стиль для основных кнопок -->
         <Style x:Key="MainButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -35,32 +34,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для карточек -->
-        <Style x:Key="CardButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="12"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFF0F5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Стиль для навигационных кнопок -->
         <Style x:Key="NavigationButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1A5D34"/>
             <Setter Property="Foreground" Value="White"/>
@@ -91,7 +64,6 @@
             </Setter>
         </Style>
 
-        <!-- Стиль для таймера -->
         <Style x:Key="TimerButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1A5D34"/>
             <Setter Property="Foreground" Value="White"/>
@@ -123,7 +95,6 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Фон с градиентом -->
         <Rectangle>
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -144,76 +115,99 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Кнопка закрытия -->
                     <Button x:Name="CloseButton"
                             Grid.Column="0"
                             Style="{StaticResource MainButtonStyle}"
                             Click="CloseButton_Click">
-                        <Border Background="White" 
-                                CornerRadius="10" 
-                                Padding="15,10">
+                        <Border Background="White" CornerRadius="10" Padding="15,10">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                             </Border.Effect>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="←" 
-                                           FontSize="18" 
-                                           Margin="0,0,8,0"/>
-                                <TextBlock Text="Закрыть" 
-                                           FontSize="14" 
-                                           FontWeight="SemiBold" 
-                                           Foreground="#1A5D34"/>
+                                <TextBlock Text="←" FontSize="18" Margin="0,0,8,0"/>
+                                <TextBlock Text="Закрыть" FontSize="14" FontWeight="SemiBold" Foreground="#1A5D34"/>
                             </StackPanel>
                         </Border>
                     </Button>
 
-                    <!-- Прогресс -->
-                    <Border Grid.Column="2"
-                            Background="White" 
-                            CornerRadius="15" 
+                    <!-- Прогресс — скрывается когда шагов нет -->
+                    <Border x:Name="ProgressBorder"
+                            Grid.Column="2"
+                            Background="White"
+                            CornerRadius="15"
                             Padding="20,15"
                             HorizontalAlignment="Right">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Шаг 3 из 8" 
-                                       FontSize="14" 
-                                       Foreground="#666"
+                            <TextBlock x:Name="StepProgressText"
+                                       Text="Шаг 1 из 1"
+                                       FontSize="14" Foreground="#666"
                                        HorizontalAlignment="Right"/>
-                            <TextBlock Text="75%" 
-                                       FontSize="18" 
-                                       FontWeight="Bold" 
+                            <TextBlock x:Name="StepPercentText"
+                                       Text="0%"
+                                       FontSize="18" FontWeight="Bold"
                                        Foreground="#1A5D34"
                                        HorizontalAlignment="Right"/>
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <!-- Основной контент -->
-                <StackPanel Orientation="Vertical" 
-                            HorizontalAlignment="Center" 
-                            Margin="0,40,0,0">
+                <!-- ЗАГЛУШКА — показывается когда шагов нет -->
+                <Border x:Name="NoStepsPanel"
+                        Visibility="Collapsed"
+                        Background="White"
+                        CornerRadius="15"
+                        Padding="40"
+                        Margin="0,20,0,30"
+                        HorizontalAlignment="Center"
+                        Width="500">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="📋"
+                                   FontSize="48"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,15"/>
+                        <TextBlock Text="У этого рецепта нет шагов приготовления"
+                                   FontSize="16" Foreground="#999"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Text="Запустите таймер и готовьте по своему усмотрению"
+                                   FontSize="13" Foreground="#BBB"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ОСНОВНОЙ КОНТЕНТ — скрывается когда шагов нет -->
+                <StackPanel x:Name="MainContentPanel"
+                            Orientation="Vertical"
+                            HorizontalAlignment="Center">
 
                     <!-- Номер шага -->
-                    <Border Background="#1A5D34" 
-                            CornerRadius="15" 
+                    <Border Background="#1A5D34"
+                            CornerRadius="15"
                             Padding="30,20"
                             Margin="0,0,0,30"
                             Width="200">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.15" ShadowDepth="3"/>
                         </Border.Effect>
-                        <TextBlock Text="ШАГ 3" 
-                                   FontSize="28" 
-                                   FontWeight="Bold" 
+                        <TextBlock x:Name="StepNumberText"
+                                   Text="ШАГ 1"
+                                   FontSize="28" FontWeight="Bold"
                                    Foreground="White"
                                    HorizontalAlignment="Center"/>
                     </Border>
 
                     <!-- Описание шага -->
-                    <Border Background="White" 
-                            CornerRadius="15" 
+                    <Border Background="White"
+                            CornerRadius="15"
                             Padding="30"
                             Margin="0,0,0,30"
                             Width="500"
@@ -222,194 +216,113 @@
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
-                        <TextBlock Text="Добавьте сливки к бекону и тушите на медленном огне 5 минут" 
-                                   FontSize="18" 
-                                   FontWeight="SemiBold"
+                        <TextBlock x:Name="StepDescriptionText"
+                                   Text="Загрузка..."
+                                   FontSize="18" FontWeight="SemiBold"
                                    Foreground="#333"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap"
                                    LineHeight="28"/>
                     </Border>
 
-                    <!-- Таймер -->
-                    <Border Background="White" 
-                            CornerRadius="15" 
-                            Padding="30"
-                            Margin="0,0,0,30"
-                            Width="400"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
-                        </Border.Effect>
-                        <StackPanel Orientation="Vertical" 
-                                    HorizontalAlignment="Center">
+                </StackPanel>
 
-                            <StackPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Center"
-                                        Margin="0,0,0,20">
-                                <TextBlock Text="⏰" 
-                                           FontSize="24"
-                                           Margin="0,0,15,0"
-                                           Foreground="#CFA1C1"/>
-                                <TextBlock x:Name="TimerText"
-                                           Text="05:00" 
-                                           FontSize="32" 
-                                           FontWeight="Bold" 
-                                           Foreground="#1A5D34"/>
-                            </StackPanel>
+                <!-- ТАЙМЕР — виден всегда -->
+                <Border Background="White"
+                        CornerRadius="15"
+                        Padding="30"
+                        Margin="0,0,0,30"
+                        Width="400"
+                        HorizontalAlignment="Center"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
 
-                            <StackPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Center">
-                                <Button x:Name="StartTimerButton"
-                                        Content="▶" 
-                                        Style="{StaticResource TimerButtonStyle}"
-                                        Width="80"
-                                        Margin="0,0,15,0"
-                                        Click="StartTimerButton_Click"/>
-
-                                <Button x:Name="PauseTimerButton"
-                                        Content="⏸" 
-                                        Style="{StaticResource TimerButtonStyle}"
-                                        Width="80"
-                                        Background="#CFA1C1"
-                                        Click="PauseTimerButton_Click"/>
-                            </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,20">
+                            <TextBlock Text="⏰"
+                                       FontSize="24"
+                                       Margin="0,0,15,0"
+                                       Foreground="#CFA1C1"/>
+                            <TextBlock x:Name="TimerText"
+                                       Text="00:00"
+                                       FontSize="32" FontWeight="Bold"
+                                       Foreground="#1A5D34"/>
                         </StackPanel>
-                    </Border>
 
-                    <!-- Ингредиенты для шага -->
-                    <Border Background="White" 
-                            CornerRadius="15" 
-                            Padding="25"
-                            Margin="0,0,0,40"
-                            Width="500"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
-                        </Border.Effect>
-                        <StackPanel Orientation="Vertical">
-
-                            <TextBlock Text="Ингредиенты для этого шага:" 
-                                       FontSize="16" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#1A5D34"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,20"/>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Левый ингредиент -->
-                                <Border Grid.Column="0"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="20"
-                                        Margin="5"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
-                                    <StackPanel Orientation="Vertical" 
-                                                HorizontalAlignment="Center">
-                                        <TextBlock Text="🥛" 
-                                                   FontSize="28"
-                                                   HorizontalAlignment="Center"
-                                                   Margin="0,0,0,10"/>
-                                        <TextBlock Text="Сливки" 
-                                                   FontSize="16" 
-                                                   FontWeight="SemiBold" 
-                                                   Foreground="#1A5D34"
-                                                   HorizontalAlignment="Center"/>
-                                        <TextBlock Text="200 мл" 
-                                                   FontSize="14" 
-                                                   Foreground="#666"
-                                                   HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- Плюсик -->
-                                <TextBlock Grid.Column="1"
-                                           Text="+" 
-                                           FontSize="24" 
-                                           FontWeight="Bold" 
-                                           Foreground="#CFA1C1"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Margin="20,0"/>
-
-                                <!-- Правый ингредиент -->
-                                <Border Grid.Column="2"
-                                        Background="#FFF8FC" 
-                                        CornerRadius="10" 
-                                        Padding="20"
-                                        Margin="5"
-                                        BorderBrush="#CFA1C1"
-                                        BorderThickness="1">
-                                    <StackPanel Orientation="Vertical" 
-                                                HorizontalAlignment="Center">
-                                        <TextBlock Text="🥓" 
-                                                   FontSize="28"
-                                                   HorizontalAlignment="Center"
-                                                   Margin="0,0,0,10"/>
-                                        <TextBlock Text="Бекон" 
-                                                   FontSize="16" 
-                                                   FontWeight="SemiBold" 
-                                                   Foreground="#1A5D34"
-                                                   HorizontalAlignment="Center"/>
-                                        <TextBlock Text="200 г" 
-                                                   FontSize="14" 
-                                                   Foreground="#666"
-                                                   HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="StartTimerButton"
+                                    Content="▶"
+                                    Style="{StaticResource TimerButtonStyle}"
+                                    Width="80"
+                                    Margin="0,0,15,0"
+                                    Click="StartTimerButton_Click"/>
+                            <Button x:Name="PauseTimerButton"
+                                    Content="⏸"
+                                    Style="{StaticResource TimerButtonStyle}"
+                                    Width="80"
+                                    Background="#CFA1C1"
+                                    Click="PauseTimerButton_Click"/>
                         </StackPanel>
-                    </Border>
-
-                    <!-- Кнопки навигации -->
-                    <StackPanel Orientation="Horizontal" 
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,40">
-
-                        <Button x:Name="BackButton"
-                                Content="← Назад" 
-                                Style="{StaticResource NavigationButtonStyle}"
-                                Background="White"
-                                Foreground="#1A5D34"
-                                BorderBrush="#1A5D34"
-                                BorderThickness="1"
-                                Margin="0,0,15,0"
-                                Click="BackButton_Click">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-
-                        <Button x:Name="PauseButton"
-                                Content="⏸ Пауза" 
-                                Style="{StaticResource NavigationButtonStyle}"
-                                Background="#CFA1C1"
-                                Foreground="White"
-                                Margin="0,0,15,0"
-                                Click="PauseButton_Click"/>
-
-                        <Button x:Name="NextButton"
-                                Content="Далее →" 
-                                Style="{StaticResource NavigationButtonStyle}"
-                                Click="NextButton_Click"/>
-
                     </StackPanel>
+                </Border>
+
+                <!-- ИНГРЕДИЕНТЫ ШАГА — скрывается когда шагов нет или нет ингредиентов -->
+                <Border x:Name="StepIngredientsBlock"
+                        Visibility="Collapsed"
+                        Background="White"
+                        CornerRadius="15"
+                        Padding="25"
+                        Margin="0,0,0,40"
+                        Width="500"
+                        HorizontalAlignment="Center"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Ингредиенты для этого шага:"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="#1A5D34"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,20"/>
+                        <Grid x:Name="StepIngredientsGrid"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- КНОПКИ НАВИГАЦИИ — скрываются когда шагов нет -->
+                <StackPanel x:Name="NavigationPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,40">
+
+                    <Button x:Name="BackButton"
+                            Content="← Назад"
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Background="White"
+                            Foreground="#1A5D34"
+                            BorderBrush="#1A5D34"
+                            BorderThickness="1"
+                            Margin="0,0,15,0"
+                            Click="BackButton_Click"/>
+
+                    <Button x:Name="PauseButton"
+                            Content="⏸ Пауза"
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Background="#CFA1C1"
+                            Foreground="White"
+                            Margin="0,0,15,0"
+                            Click="PauseButton_Click"/>
+
+                    <Button x:Name="NextButton"
+                            Content="Далее →"
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Click="NextButton_Click"/>
 
                 </StackPanel>
 

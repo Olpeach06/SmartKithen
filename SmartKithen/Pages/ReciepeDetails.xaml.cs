@@ -156,7 +156,10 @@ namespace SmartKithen.Pages
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e) => NavigationService.GoBack();
-        private void StartCookingButton_Click(object sender, RoutedEventArgs e) => NavigationService.Navigate(new CookingMode());
+        private void StartCookingButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new CookingMode(_recipeId));
+        }
         private void ShareButton_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText($"{_recipe.Title}\n\n{_recipe.Description}");

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="497f8fb51aba4d8b93a08689e156f480" Name="Diagram1" ZoomLevel="66">
+      <Diagram DiagramId="497f8fb51aba4d8b93a08689e156f480" Name="Diagram1" ZoomLevel="97">
         <EntityTypeShape EntityType="SmartKitchenModel.Categories" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="SmartKitchenModel.FridgeItems" Width="1.5" PointX="5.25" PointY="5.5" IsExpanded="true" />
         <EntityTypeShape EntityType="SmartKitchenModel.Ingredients" Width="1.5" PointX="8.25" PointY="11" IsExpanded="true" />
@@ -31,6 +31,9 @@
         <AssociationConnector Association="SmartKitchenModel.FK_FavoriteRecipes_Users" />
         <AssociationConnector Association="SmartKitchenModel.FK_RecipeHistory_Recipes" />
         <AssociationConnector Association="SmartKitchenModel.FK_RecipeHistory_Users" />
+        <EntityTypeShape EntityType="SmartKitchenModel.StepIngredients" Width="1.5" PointX="10.5" PointY="15.375" />
+        <AssociationConnector Association="SmartKitchenModel.FK_StepIngredients_Ingredients" />
+        <AssociationConnector Association="SmartKitchenModel.FK_StepIngredients_Steps" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

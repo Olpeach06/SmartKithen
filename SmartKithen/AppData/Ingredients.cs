@@ -14,6 +14,12 @@ namespace SmartKithen.AppData
     
     public partial class Ingredients
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Ingredients()
+        {
+            this.StepIngredients = new HashSet<StepIngredients>();
+        }
+    
         public int Id { get; set; }
         public int RecipeId { get; set; }
         public int ProductId { get; set; }
@@ -22,5 +28,7 @@ namespace SmartKithen.AppData
     
         public virtual Products Products { get; set; }
         public virtual Recipes Recipes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StepIngredients> StepIngredients { get; set; }
     }
 }

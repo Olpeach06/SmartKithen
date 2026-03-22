@@ -12,21 +12,13 @@ namespace SmartKithen.AppData
     using System;
     using System.Collections.Generic;
     
-    public partial class RecipeSteps
+    public partial class StepIngredients
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RecipeSteps()
-        {
-            this.StepIngredients = new HashSet<StepIngredients>();
-        }
-    
         public int Id { get; set; }
-        public int RecipeId { get; set; }
-        public int StepNumber { get; set; }
-        public string Description { get; set; }
+        public int StepId { get; set; }
+        public int IngredientId { get; set; }
     
-        public virtual Recipes Recipes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StepIngredients> StepIngredients { get; set; }
+        public virtual Ingredients Ingredients { get; set; }
+        public virtual RecipeSteps RecipeSteps { get; set; }
     }
 }

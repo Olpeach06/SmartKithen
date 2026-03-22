@@ -21,6 +21,16 @@ namespace SmartKithen.Pages
         private void CreatingReciepe_Loaded(object sender, RoutedEventArgs e)
         {
             LoadCategories();
+
+            // Создаём три начальных ингредиента
+            IngredientsPanel.Children.Add(CreateIngredientRow());
+            IngredientsPanel.Children.Add(CreateIngredientRow());
+            IngredientsPanel.Children.Add(CreateIngredientRow());
+
+            // Убрали создание начальных шагов — пользователь добавляет сам
+            _stepCount = 0;
+
+            RefreshIngredientCheckboxes();
         }
 
         private void LoadCategories()
@@ -54,9 +64,94 @@ namespace SmartKithen.Pages
             }
         }
 
+        // Собираем текущие названия ингредиентов из панели
+        private List<string> GetCurrentIngredientNames()
+        {
+            var names = new List<string>();
+
+            foreach (var child in IngredientsPanel.Children)
+            {
+                if (!(child is Grid row)) continue;
+                var nameBox = GetTextBoxFromBorder(row, 0);
+                var name = nameBox?.Text.Trim();
+                if (!string.IsNullOrEmpty(name))
+                    names.Add(name);
+            }
+
+            return names;
+        }
+
+        // Обновляем чекбоксы ингредиентов во всех шагах
+        private void RefreshIngredientCheckboxes()
+        {
+            var ingredientNames = GetCurrentIngredientNames();
+
+            foreach (var child in StepsPanel.Children)
+            {
+                if (!(child is Grid stepRow)) continue;
+                UpdateCheckboxesInStep(stepRow, ingredientNames);
+            }
+        }
+
+        // Обновляем чекбоксы в конкретном шаге
+        private void UpdateCheckboxesInStep(Grid stepRow, List<string> ingredientNames)
+        {
+            // Чекбоксы хранятся в WrapPanel — это последний элемент строки шага
+            WrapPanel checkboxPanel = null;
+            foreach (var child in stepRow.Children)
+            {
+                if (child is WrapPanel wp)
+                {
+                    checkboxPanel = wp;
+                    break;
+                }
+            }
+
+            if (checkboxPanel == null) return;
+
+            // Запоминаем уже отмеченные
+            var checkedNames = new HashSet<string>();
+            foreach (var cb in checkboxPanel.Children)
+            {
+                if (cb is CheckBox checkbox && checkbox.IsChecked == true)
+                    checkedNames.Add(checkbox.Content?.ToString() ?? "");
+            }
+
+            checkboxPanel.Children.Clear();
+
+            foreach (var name in ingredientNames)
+            {
+                var checkbox = new CheckBox
+                {
+                    Content = name,
+                    FontSize = 12,
+                    Margin = new Thickness(0, 0, 10, 6),
+                    IsChecked = checkedNames.Contains(name),
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#555"))
+                };
+                checkboxPanel.Children.Add(checkbox);
+            }
+
+            // Если ингредиентов нет — показываем подсказку
+            if (ingredientNames.Count == 0)
+            {
+                checkboxPanel.Children.Add(new TextBlock
+                {
+                    Text = "Сначала добавьте ингредиенты",
+                    FontSize = 12,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#999")),
+                    FontStyle = FontStyles.Italic
+                });
+            }
+        }
+
         private void AddIngredientButton_Click(object sender, RoutedEventArgs e)
         {
             IngredientsPanel.Children.Add(CreateIngredientRow());
+            // Обновляем чекбоксы во всех шагах после добавления ингредиента
+            RefreshIngredientCheckboxes();
         }
 
         private void AddStepButton_Click(object sender, RoutedEventArgs e)
@@ -67,14 +162,14 @@ namespace SmartKithen.Pages
 
         private Grid CreateIngredientRow()
         {
-            var row = new Grid { Margin = new Thickness(0, 0, 0, 15) };
+            var row = new Grid { Margin = new Thickness(0, 0, 0, 12) };
             row.ColumnDefinitions.Add(new ColumnDefinition
             {
                 Width = new GridLength(1, GridUnitType.Star)
             });
-            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
-            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(36) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });
 
             // Название
             var nameBorder = new Border
@@ -82,18 +177,23 @@ namespace SmartKithen.Pages
                 Background = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#FFF8FC")),
                 CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(10),
+                Padding = new Thickness(8),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
                 BorderThickness = new Thickness(1)
             };
-            nameBorder.Child = new TextBox
+
+            var nameBox = new TextBox
             {
-                FontSize = 14,
-                Padding = new Thickness(8),
+                FontSize = 13,
+                Padding = new Thickness(6),
                 BorderThickness = new Thickness(0),
-                Background = Brushes.Transparent
+                Background = Brushes.Transparent,
+                VerticalContentAlignment = VerticalAlignment.Center
             };
+
+            nameBox.TextChanged += (s, e) => RefreshIngredientCheckboxes();
+            nameBorder.Child = nameBox;
             Grid.SetColumn(nameBorder, 0);
 
             // Количество
@@ -102,18 +202,20 @@ namespace SmartKithen.Pages
                 Background = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#FFF8FC")),
                 CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(10),
-                Margin = new Thickness(10, 0, 10, 0),
+                Padding = new Thickness(8),
+                Margin = new Thickness(8, 0, 8, 0),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
                 BorderThickness = new Thickness(1)
             };
             qtyBorder.Child = new TextBox
             {
-                FontSize = 14,
-                Padding = new Thickness(8),
+                FontSize = 13,
+                Padding = new Thickness(6),
                 BorderThickness = new Thickness(0),
-                Background = Brushes.Transparent
+                Background = Brushes.Transparent,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center
             };
             Grid.SetColumn(qtyBorder, 1);
 
@@ -123,17 +225,17 @@ namespace SmartKithen.Pages
                 Background = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#FFF8FC")),
                 CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(10),
+                Padding = new Thickness(4),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
                 BorderThickness = new Thickness(1)
             };
             var unitCombo = new ComboBox
             {
-                FontSize = 14,
-                Padding = new Thickness(4),
+                FontSize = 12,
                 BorderThickness = new Thickness(0),
-                Background = Brushes.Transparent
+                Background = Brushes.Transparent,
+                VerticalContentAlignment = VerticalAlignment.Center
             };
             foreach (var unit in new[] { "г", "кг", "мл", "л", "шт", "ч.л.", "ст.л." })
                 unitCombo.Items.Add(new ComboBoxItem { Content = unit });
@@ -145,13 +247,13 @@ namespace SmartKithen.Pages
             var deleteBtn = new Button
             {
                 Content = "✕",
-                FontSize = 14,
+                FontSize = 13,
                 Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
                 Foreground = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#CFA1C1")),
                 Cursor = System.Windows.Input.Cursors.Hand,
-                Margin = new Thickness(8, 0, 0, 0),
+                Margin = new Thickness(6, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
@@ -160,6 +262,7 @@ namespace SmartKithen.Pages
             deleteBtn.Click += (s, e) =>
             {
                 IngredientsPanel.Children.Remove(capturedRow);
+                RefreshIngredientCheckboxes();
             };
             Grid.SetColumn(deleteBtn, 3);
 
@@ -173,13 +276,16 @@ namespace SmartKithen.Pages
 
         private Grid CreateStepRow(int stepNumber)
         {
-            var row = new Grid { Margin = new Thickness(0, 0, 0, 15) };
+            var row = new Grid { Margin = new Thickness(0, 0, 0, 20) };
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             row.ColumnDefinitions.Add(new ColumnDefinition
             {
                 Width = new GridLength(1, GridUnitType.Star)
             });
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(36) });
+
+            row.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            row.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             // Номер шага
             var numberBorder = new Border
@@ -202,15 +308,16 @@ namespace SmartKithen.Pages
                 VerticalAlignment = VerticalAlignment.Center
             };
             Grid.SetColumn(numberBorder, 0);
+            Grid.SetRow(numberBorder, 0);
 
-            // Поле текста
+            // Поле текста шага
             var textBorder = new Border
             {
                 Background = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#FFF8FC")),
                 CornerRadius = new CornerRadius(10),
                 Padding = new Thickness(15),
-                Margin = new Thickness(10, 0, 0, 0),
+                Margin = new Thickness(10, 0, 0, 6),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
                 BorderThickness = new Thickness(1)
@@ -221,12 +328,13 @@ namespace SmartKithen.Pages
                 Padding = new Thickness(8),
                 BorderThickness = new Thickness(0),
                 Background = Brushes.Transparent,
-                Height = 80,
+                Height = 70,
                 TextWrapping = TextWrapping.Wrap,
                 AcceptsReturn = true,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             };
             Grid.SetColumn(textBorder, 1);
+            Grid.SetRow(textBorder, 0);
 
             // Кнопка удаления
             var deleteBtn = new Button
@@ -250,10 +358,77 @@ namespace SmartKithen.Pages
                 RenumberSteps();
             };
             Grid.SetColumn(deleteBtn, 2);
+            Grid.SetRow(deleteBtn, 0);
+
+            // Панель чекбоксов ингредиентов
+            var checkboxesContainer = new Border
+            {
+                Margin = new Thickness(45, 0, 36, 0),
+                Padding = new Thickness(10, 8, 10, 8),
+                Background = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#F5FFF9")),
+                CornerRadius = new CornerRadius(8),
+                BorderBrush = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#C8E6C9")),
+                BorderThickness = new Thickness(1)
+            };
+
+            var checkboxesInner = new StackPanel { Orientation = Orientation.Vertical };
+
+            checkboxesInner.Children.Add(new TextBlock
+            {
+                Text = "Ингредиенты этого шага:",
+                FontSize = 11,
+                Foreground = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                FontWeight = FontWeights.Medium,
+                Margin = new Thickness(0, 0, 0, 6)
+            });
+
+            var checkboxWrap = new WrapPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            // Наполняем текущими ингредиентами
+            var currentIngredients = GetCurrentIngredientNames();
+            if (currentIngredients.Count == 0)
+            {
+                checkboxWrap.Children.Add(new TextBlock
+                {
+                    Text = "Сначала добавьте ингредиенты",
+                    FontSize = 12,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#999")),
+                    FontStyle = FontStyles.Italic
+                });
+            }
+            else
+            {
+                foreach (var name in currentIngredients)
+                {
+                    checkboxWrap.Children.Add(new CheckBox
+                    {
+                        Content = name,
+                        FontSize = 12,
+                        Margin = new Thickness(0, 0, 10, 4),
+                        Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#555"))
+                    });
+                }
+            }
+
+            checkboxesInner.Children.Add(checkboxWrap);
+            checkboxesContainer.Child = checkboxesInner;
+
+            Grid.SetColumn(checkboxesContainer, 0);
+            Grid.SetColumnSpan(checkboxesContainer, 3);
+            Grid.SetRow(checkboxesContainer, 1);
 
             row.Children.Add(numberBorder);
             row.Children.Add(textBorder);
             row.Children.Add(deleteBtn);
+            row.Children.Add(checkboxesContainer);
 
             return row;
         }
@@ -264,19 +439,42 @@ namespace SmartKithen.Pages
             foreach (var child in StepsPanel.Children)
             {
                 if (!(child is Grid row)) continue;
-                if (row.Children.Count == 0) continue;
 
                 var numberBorder = row.Children[0] as Border;
-                if (numberBorder == null) continue;
-
-                var textBlock = numberBorder.Child as TextBlock;
+                var textBlock = numberBorder?.Child as TextBlock;
                 if (textBlock != null)
                     textBlock.Text = number.ToString();
 
                 number++;
             }
-
             _stepCount = number - 1;
+        }
+
+        // Собираем выбранные ингредиенты для конкретного шага
+        private List<string> GetCheckedIngredients(Grid stepRow)
+        {
+            var result = new List<string>();
+
+            foreach (var child in stepRow.Children)
+            {
+                if (!(child is Border container)) continue;
+
+                var innerStack = container.Child as StackPanel;
+                if (innerStack == null) continue;
+
+                foreach (var innerChild in innerStack.Children)
+                {
+                    if (!(innerChild is WrapPanel wrap)) continue;
+
+                    foreach (var item in wrap.Children)
+                    {
+                        if (item is CheckBox cb && cb.IsChecked == true)
+                            result.Add(cb.Content?.ToString() ?? "");
+                    }
+                }
+            }
+
+            return result;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -304,17 +502,18 @@ namespace SmartKithen.Pages
                 }
             }
 
-            var ingredients = CollectIngredients();
-            var steps = CollectSteps();
-
             int? categoryId = null;
             if (CategoryComboBox.SelectedItem is ComboBoxItem selectedCat)
                 categoryId = (int)selectedCat.Tag;
+
+            var ingredientEntries = CollectIngredients();
+            var stepRows = StepsPanel.Children.OfType<Grid>().ToList();
 
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
+                    // Сохраняем рецепт
                     var recipe = new Recipes
                     {
                         Title = title,
@@ -323,11 +522,13 @@ namespace SmartKithen.Pages
                         CategoryId = categoryId,
                         Instructions = ""
                     };
-
                     context.Recipes.Add(recipe);
                     context.SaveChanges();
 
-                    foreach (var ing in ingredients)
+                    // Сохраняем ингредиенты и запоминаем name -> Ingredients объект
+                    var savedIngredients = new Dictionary<string, Ingredients>();
+
+                    foreach (var ing in ingredientEntries)
                     {
                         var product = context.Products
                             .FirstOrDefault(p => p.Name.ToLower() == ing.Name.ToLower());
@@ -344,26 +545,54 @@ namespace SmartKithen.Pages
                             context.SaveChanges();
                         }
 
-                        context.Ingredients.Add(new Ingredients
+                        var ingredient = new Ingredients
                         {
                             RecipeId = recipe.Id,
                             ProductId = product.Id,
                             Quantity = ing.Quantity,
                             Unit = ing.Unit
-                        });
+                        };
+                        context.Ingredients.Add(ingredient);
+                        context.SaveChanges();
+
+                        savedIngredients[ing.Name.ToLower()] = ingredient;
                     }
 
-                    for (int i = 0; i < steps.Count; i++)
+                    // Сохраняем шаги и связи с ингредиентами
+                    for (int i = 0; i < stepRows.Count; i++)
                     {
-                        context.RecipeSteps.Add(new RecipeSteps
+                        var stepRow = stepRows[i];
+                        var textBorder = stepRow.Children
+                            .OfType<Border>()
+                            .FirstOrDefault(b => b.Child is TextBox);
+                        var stepText = (textBorder?.Child as TextBox)?.Text.Trim() ?? "";
+
+                        if (string.IsNullOrEmpty(stepText)) continue;
+
+                        var step = new RecipeSteps
                         {
                             RecipeId = recipe.Id,
                             StepNumber = i + 1,
-                            Description = steps[i]
-                        });
-                    }
+                            Description = stepText
+                        };
+                        context.RecipeSteps.Add(step);
+                        context.SaveChanges();
 
-                    context.SaveChanges();
+                        // Сохраняем связи шага с ингредиентами
+                        var checkedNames = GetCheckedIngredients(stepRow);
+                        foreach (var name in checkedNames)
+                        {
+                            if (savedIngredients.TryGetValue(name.ToLower(), out var ing))
+                            {
+                                context.StepIngredients.Add(new StepIngredients
+                                {
+                                    StepId = step.Id,
+                                    IngredientId = ing.Id
+                                });
+                            }
+                        }
+                        context.SaveChanges();
+                    }
                 }
 
                 MessageBox.Show("Рецепт успешно сохранён!", "Готово",
@@ -390,45 +619,18 @@ namespace SmartKithen.Pages
                 var quantityBox = GetTextBoxFromBorder(row, 1);
                 var unitCombo = GetComboBoxFromBorder(row, 2);
 
-                if (nameBox == null) continue;
-
-                var name = nameBox.Text.Trim();
+                var name = nameBox?.Text.Trim();
                 if (string.IsNullOrEmpty(name)) continue;
 
-                if (!decimal.TryParse(quantityBox?.Text.Trim(), out decimal quantity))
-                    quantity = 1;
-
+                decimal.TryParse(quantityBox?.Text.Trim(), out decimal quantity);
                 var unit = (unitCombo?.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "г";
 
                 result.Add(new IngredientEntry
                 {
                     Name = name,
-                    Quantity = quantity,
+                    Quantity = quantity > 0 ? quantity : 1,
                     Unit = unit
                 });
-            }
-
-            return result;
-        }
-
-        private List<string> CollectSteps()
-        {
-            var result = new List<string>();
-
-            foreach (var child in StepsPanel.Children)
-            {
-                if (!(child is Grid row)) continue;
-                if (row.Children.Count < 2) continue;
-
-                var textBorder = row.Children[1] as Border;
-                if (textBorder == null) continue;
-
-                var textBox = textBorder.Child as TextBox;
-                if (textBox == null) continue;
-
-                var text = textBox.Text.Trim();
-                if (!string.IsNullOrEmpty(text))
-                    result.Add(text);
             }
 
             return result;
