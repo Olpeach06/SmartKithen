@@ -265,7 +265,7 @@ namespace SmartKithen.Pages
         }
 
         private void btnRecipes_Click(object sender, RoutedEventArgs e) =>
-            NavigationService?.Navigate(new MyRecipes());
+            NavigationService?.Navigate(new GuestReciepe());
 
         private void btnShoppingList_Click(object sender, RoutedEventArgs e) =>
             NavigationService?.Navigate(new ListProducts());
