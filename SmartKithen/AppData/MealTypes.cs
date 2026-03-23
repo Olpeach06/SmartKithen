@@ -12,17 +12,19 @@ namespace SmartKithen.AppData
     using System;
     using System.Collections.Generic;
     
-    public partial class MenuPlans
+    public partial class MealTypes
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public System.DateTime Date { get; set; }
-        public int RecipeId { get; set; }
-        public string MealType { get; set; }
-        public Nullable<int> MealTypeId { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MealTypes()
+        {
+            this.MenuPlans = new HashSet<MenuPlans>();
+        }
     
-        public virtual Recipes Recipes { get; set; }
-        public virtual Users Users { get; set; }
-        public virtual MealTypes MealTypes { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MenuPlans> MenuPlans { get; set; }
     }
 }

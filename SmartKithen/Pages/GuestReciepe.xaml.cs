@@ -322,7 +322,7 @@ namespace SmartKithen.Pages
             }
             else
             {
-                NavigationService?.Navigate(new CreatingGuestReciepe());
+                NavigationService?.Navigate(new CreatingReciepe());
             }
         }
 

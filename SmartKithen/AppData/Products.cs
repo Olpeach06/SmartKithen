@@ -25,6 +25,11 @@ namespace SmartKithen.AppData
         public string Name { get; set; }
         public int CategoryId { get; set; }
         public string DefaultUnit { get; set; }
+        public Nullable<int> UnitId { get; set; }
+        public Nullable<decimal> Calories { get; set; }
+        public Nullable<decimal> Proteins { get; set; }
+        public Nullable<decimal> Fats { get; set; }
+        public Nullable<decimal> Carbs { get; set; }
     
         public virtual Categories Categories { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -32,5 +37,6 @@ namespace SmartKithen.AppData
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Ingredients> Ingredients { get; set; }
         public virtual NutritionFacts NutritionFacts { get; set; }
+        public virtual Units Units { get; set; }
     }
 }

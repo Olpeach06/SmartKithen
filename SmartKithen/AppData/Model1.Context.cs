@@ -38,5 +38,8 @@ namespace SmartKithen.AppData
         public virtual DbSet<RecipeHistory> RecipeHistory { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<StepIngredients> StepIngredients { get; set; }
+        public virtual DbSet<MealCategories> MealCategories { get; set; }
+        public virtual DbSet<MealTypes> MealTypes { get; set; }
+        public virtual DbSet<Units> Units { get; set; }
     }
 }

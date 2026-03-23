@@ -19,6 +19,7 @@ namespace SmartKithen.AppData
         public int ProductId { get; set; }
         public decimal Quantity { get; set; }
         public System.DateTime ExpiryDate { get; set; }
+        public Nullable<System.DateTime> ManufactureDate { get; set; }
     
         public virtual Products Products { get; set; }
         public virtual Users Users { get; set; }

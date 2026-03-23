@@ -55,6 +55,7 @@ namespace SmartKithen.Pages
                 {
                     var recipe = context.Recipes
                         .Include("RecipeSteps")
+                        .Include("RecipeSteps.StepIngredients.Ingredients.Products.Units")  // ← ключевое добавление
                         .FirstOrDefault(r => r.Id == _recipeId);
 
                     if (recipe == null)
@@ -63,11 +64,11 @@ namespace SmartKithen.Pages
                         return;
                     }
 
-                    // Устанавливаем таймер — всё время рецепта целиком
+                    // Таймер — общее время рецепта
                     if (recipe.CookingTime.HasValue && recipe.CookingTime.Value > 0)
                         _secondsLeft = recipe.CookingTime.Value * 60;
                     else
-                        _secondsLeft = 30 * 60; // 30 минут по умолчанию
+                        _secondsLeft = 30 * 60; // дефолт 30 мин
 
                     _steps = recipe.RecipeSteps
                         .OrderBy(s => s.StepNumber)
@@ -75,7 +76,6 @@ namespace SmartKithen.Pages
 
                     if (_steps.Count == 0)
                     {
-                        // Шагов нет — показываем заглушку но таймер работает
                         ShowNoStepsMessage();
                         UpdateTimerDisplay();
                         return;
@@ -145,9 +145,9 @@ namespace SmartKithen.Pages
                 using (var context = new SmartKitchenEntities())
                 {
                     var stepIngredients = context.StepIngredients
-                        .Include("Ingredients")
-                        .Include("Ingredients.Products")
+                        .Include("Ingredients.Products.Units")   // ← важно!
                         .Where(si => si.StepId == stepId)
+                        .Select(si => si.Ingredients)
                         .ToList();
 
                     StepIngredientsGrid.Children.Clear();
@@ -161,6 +161,7 @@ namespace SmartKithen.Pages
 
                     StepIngredientsBlock.Visibility = Visibility.Visible;
 
+                    // Настраиваем колонки (по одной на ингредиент + разделитель "+")
                     for (int i = 0; i < stepIngredients.Count; i++)
                     {
                         StepIngredientsGrid.ColumnDefinitions.Add(new ColumnDefinition
@@ -176,9 +177,9 @@ namespace SmartKithen.Pages
                     }
 
                     int colIndex = 0;
-                    foreach (var si in stepIngredients)
+                    foreach (var ing in stepIngredients)
                     {
-                        var card = BuildIngredientCard(si.Ingredients);
+                        var card = BuildIngredientCard(ing);
                         Grid.SetColumn(card, colIndex);
                         StepIngredientsGrid.Children.Add(card);
                         colIndex++;
@@ -190,8 +191,7 @@ namespace SmartKithen.Pages
                                 Text = "+",
                                 FontSize = 24,
                                 FontWeight = FontWeights.Bold,
-                                Foreground = new SolidColorBrush(
-                                    (Color)ColorConverter.ConvertFromString("#CFA1C1")),
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CFA1C1")),
                                 HorizontalAlignment = HorizontalAlignment.Center,
                                 VerticalAlignment = VerticalAlignment.Center,
                                 Margin = new Thickness(10, 0, 10, 0)
@@ -213,13 +213,11 @@ namespace SmartKithen.Pages
         {
             var card = new Border
             {
-                Background = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString("#FFF8FC")),
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF8FC")),
                 CornerRadius = new CornerRadius(10),
                 Padding = new Thickness(20),
                 Margin = new Thickness(5),
-                BorderBrush = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString("#CFA1C1")),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CFA1C1")),
                 BorderThickness = new Thickness(1)
             };
 
@@ -242,17 +240,20 @@ namespace SmartKithen.Pages
                 Text = ing?.Products?.Name ?? "Продукт",
                 FontSize = 16,
                 FontWeight = FontWeights.SemiBold,
-                Foreground = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString("#1A5D34")),
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A5D34")),
                 HorizontalAlignment = HorizontalAlignment.Center
             });
 
+            // ← Главное изменение здесь
+            string unitDisplay = ing?.Products?.Units?.ShortName;
+            if (string.IsNullOrEmpty(unitDisplay))
+                unitDisplay = ing?.Unit ?? "г";  // fallback на старую строку или граммы
+
             stack.Children.Add(new TextBlock
             {
-                Text = $"{ing?.Quantity} {ing?.Unit}",
+                Text = $"{ing?.Quantity:N2} {unitDisplay}",
                 FontSize = 14,
-                Foreground = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString("#666")),
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666")),
                 HorizontalAlignment = HorizontalAlignment.Center
             });
 

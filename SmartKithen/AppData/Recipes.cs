@@ -31,6 +31,7 @@ namespace SmartKithen.AppData
         public string ImagePath { get; set; }
         public Nullable<int> CookingTime { get; set; }
         public Nullable<int> CategoryId { get; set; }
+        public Nullable<int> MealCategoryId { get; set; }
     
         public virtual Categories Categories { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -43,5 +44,6 @@ namespace SmartKithen.AppData
         public virtual ICollection<FavoriteRecipes> FavoriteRecipes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RecipeHistory> RecipeHistory { get; set; }
+        public virtual MealCategories MealCategories { get; set; }
     }
 }

@@ -46,6 +46,8 @@ namespace SmartKithen.Pages
         private void LoadIngredients()
         {
             IngredientsPanel.Children.Clear();
+            SelectedIds.Clear();
+
             foreach (var ing in _recipe.Ingredients.OrderBy(i => i.Id))
             {
                 var row = new Grid();
@@ -54,15 +56,40 @@ namespace SmartKithen.Pages
                 row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
                 row.Margin = new Thickness(0, 0, 0, 12);
 
-                var cb = new CheckBox { Margin = new Thickness(0, 0, 15, 0), Tag = ing.Id, VerticalAlignment = VerticalAlignment.Center };
+                var cb = new CheckBox
+                {
+                    Margin = new Thickness(0, 0, 15, 0),
+                    Tag = ing.Id,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
                 cb.Checked += (s, e) => SelectedIds.Add((int)((CheckBox)s).Tag);
                 cb.Unchecked += (s, e) => SelectedIds.Remove((int)((CheckBox)s).Tag);
 
-                var name = new TextBlock { Text = ing.Products?.Name ?? "Неизвестный продукт", FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
-                var qty = new TextBlock { Text = $"{ing.Quantity} {ing.Unit ?? "шт."}", FontSize = 13, Foreground = Brushes.Gray, HorizontalAlignment = HorizontalAlignment.Right };
+                var name = new TextBlock
+                {
+                    Text = ing.Products?.Name ?? "Неизвестный продукт",
+                    FontSize = 14,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
 
-                Grid.SetColumn(cb, 0); Grid.SetColumn(name, 1); Grid.SetColumn(qty, 2);
-                row.Children.Add(cb); row.Children.Add(name); row.Children.Add(qty);
+                // ← Вот главное изменение
+                string unit = ing.Products?.Units?.ShortName ?? ing.Unit ?? "г";
+                var qty = new TextBlock
+                {
+                    Text = $"{ing.Quantity:N2} {unit}",
+                    FontSize = 13,
+                    Foreground = Brushes.Gray,
+                    HorizontalAlignment = HorizontalAlignment.Right
+                };
+
+                Grid.SetColumn(cb, 0);
+                Grid.SetColumn(name, 1);
+                Grid.SetColumn(qty, 2);
+
+                row.Children.Add(cb);
+                row.Children.Add(name);
+                row.Children.Add(qty);
+
                 IngredientsPanel.Children.Add(row);
             }
         }

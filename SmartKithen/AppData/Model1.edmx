@@ -30,6 +30,7 @@
           <Property Name="ProductId" Type="int" Nullable="false" />
           <Property Name="Quantity" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="ExpiryDate" Type="date" Nullable="false" />
+          <Property Name="ManufactureDate" Type="date" />
         </EntityType>
         <EntityType Name="Ingredients">
           <Key>
@@ -41,6 +42,24 @@
           <Property Name="Quantity" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="Unit" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="MealCategories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Icon" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MealTypes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="MenuPlans">
           <Key>
             <PropertyRef Name="Id" />
@@ -50,6 +69,7 @@
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="RecipeId" Type="int" Nullable="false" />
           <Property Name="MealType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MealTypeId" Type="int" />
         </EntityType>
         <EntityType Name="NutritionFacts">
           <Key>
@@ -69,6 +89,11 @@
           <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="DefaultUnit" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="UnitId" Type="int" />
+          <Property Name="Calories" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Proteins" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Fats" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Carbs" Type="decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="RecipeHistory">
           <Key>
@@ -90,6 +115,7 @@
           <Property Name="ImagePath" Type="nvarchar" MaxLength="255" />
           <Property Name="CookingTime" Type="int" />
           <Property Name="CategoryId" Type="int" />
+          <Property Name="MealCategoryId" Type="int" />
         </EntityType>
         <EntityType Name="RecipeSteps">
           <Key>
@@ -117,6 +143,15 @@
           <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Units">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ShortName" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -199,6 +234,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MenuPlans_MealTypes">
+          <End Role="MealTypes" Type="Self.MealTypes" Multiplicity="0..1" />
+          <End Role="MenuPlans" Type="Self.MenuPlans" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealTypes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MenuPlans">
+              <PropertyRef Name="MealTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MenuPlans_Recipes">
           <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
           <End Role="MenuPlans" Type="Self.MenuPlans" Multiplicity="*" />
@@ -247,6 +294,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Products_Units">
+          <End Role="Units" Type="Self.Units" Multiplicity="0..1" />
+          <End Role="Products" Type="Self.Products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Units">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Products">
+              <PropertyRef Name="UnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_RecipeHistory_Recipes">
           <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
           <End Role="RecipeHistory" Type="Self.RecipeHistory" Multiplicity="*" />
@@ -280,6 +339,18 @@
             </Principal>
             <Dependent Role="Recipes">
               <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Recipes_MealCategories">
+          <End Role="MealCategories" Type="Self.MealCategories" Multiplicity="0..1" />
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealCategories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Recipes">
+              <PropertyRef Name="MealCategoryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -324,6 +395,8 @@
           <EntitySet Name="FavoriteRecipes" EntityType="Self.FavoriteRecipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FridgeItems" EntityType="Self.FridgeItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealCategories" EntityType="Self.MealCategories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MealTypes" EntityType="Self.MealTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MenuPlans" EntityType="Self.MenuPlans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NutritionFacts" EntityType="Self.NutritionFacts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
@@ -332,6 +405,7 @@
           <EntitySet Name="RecipeSteps" EntityType="Self.RecipeSteps" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StepIngredients" EntityType="Self.StepIngredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Units" EntityType="Self.Units" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_FavoriteRecipes_Recipes" Association="Self.FK_FavoriteRecipes_Recipes">
             <End Role="Recipes" EntitySet="Recipes" />
@@ -357,6 +431,10 @@
             <End Role="Recipes" EntitySet="Recipes" />
             <End Role="Ingredients" EntitySet="Ingredients" />
           </AssociationSet>
+          <AssociationSet Name="FK_MenuPlans_MealTypes" Association="Self.FK_MenuPlans_MealTypes">
+            <End Role="MealTypes" EntitySet="MealTypes" />
+            <End Role="MenuPlans" EntitySet="MenuPlans" />
+          </AssociationSet>
           <AssociationSet Name="FK_MenuPlans_Recipes" Association="Self.FK_MenuPlans_Recipes">
             <End Role="Recipes" EntitySet="Recipes" />
             <End Role="MenuPlans" EntitySet="MenuPlans" />
@@ -373,6 +451,10 @@
             <End Role="Categories" EntitySet="Categories" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
+          <AssociationSet Name="FK_Products_Units" Association="Self.FK_Products_Units">
+            <End Role="Units" EntitySet="Units" />
+            <End Role="Products" EntitySet="Products" />
+          </AssociationSet>
           <AssociationSet Name="FK_RecipeHistory_Recipes" Association="Self.FK_RecipeHistory_Recipes">
             <End Role="Recipes" EntitySet="Recipes" />
             <End Role="RecipeHistory" EntitySet="RecipeHistory" />
@@ -383,6 +465,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_Recipes_Categories" Association="Self.FK_Recipes_Categories">
             <End Role="Categories" EntitySet="Categories" />
+            <End Role="Recipes" EntitySet="Recipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Recipes_MealCategories" Association="Self.FK_Recipes_MealCategories">
+            <End Role="MealCategories" EntitySet="MealCategories" />
             <End Role="Recipes" EntitySet="Recipes" />
           </AssociationSet>
           <AssociationSet Name="FK_RecipeSteps_Recipes" Association="Self.FK_RecipeSteps_Recipes">
@@ -422,6 +508,7 @@
           <Property Name="ExpiryDate" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="Products" Relationship="Self.FK_FridgeItems_Products" FromRole="FridgeItems" ToRole="Products" />
           <NavigationProperty Name="Users" Relationship="Self.FK_FridgeItems_Users" FromRole="FridgeItems" ToRole="Users" />
+          <Property Name="ManufactureDate" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="Ingredients">
           <Key>
@@ -447,6 +534,8 @@
           <Property Name="MealType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Recipes" Relationship="Self.FK_MenuPlans_Recipes" FromRole="MenuPlans" ToRole="Recipes" />
           <NavigationProperty Name="Users" Relationship="Self.FK_MenuPlans_Users" FromRole="MenuPlans" ToRole="Users" />
+          <Property Name="MealTypeId" Type="Int32" />
+          <NavigationProperty Name="MealTypes" Relationship="SmartKitchenModel.FK_MenuPlans_MealTypes" FromRole="MenuPlans" ToRole="MealTypes" />
         </EntityType>
         <EntityType Name="NutritionFacts">
           <Key>
@@ -471,6 +560,12 @@
           <NavigationProperty Name="FridgeItems" Relationship="Self.FK_FridgeItems_Products" FromRole="Products" ToRole="FridgeItems" />
           <NavigationProperty Name="Ingredients" Relationship="Self.FK_Ingredients_Products" FromRole="Products" ToRole="Ingredients" />
           <NavigationProperty Name="NutritionFacts" Relationship="Self.FK_NutritionFacts_Products" FromRole="Products" ToRole="NutritionFacts" />
+          <Property Name="UnitId" Type="Int32" />
+          <Property Name="Calories" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Proteins" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Fats" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Carbs" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Units" Relationship="SmartKitchenModel.FK_Products_Units" FromRole="Products" ToRole="Units" />
         </EntityType>
         <EntityType Name="Recipes">
           <Key>
@@ -489,6 +584,8 @@
           <NavigationProperty Name="RecipeSteps" Relationship="Self.FK_RecipeSteps_Recipes" FromRole="Recipes" ToRole="RecipeSteps" />
           <NavigationProperty Name="FavoriteRecipes" Relationship="SmartKitchenModel.FK_FavoriteRecipes_Recipes" FromRole="Recipes" ToRole="FavoriteRecipes" />
           <NavigationProperty Name="RecipeHistory" Relationship="SmartKitchenModel.FK_RecipeHistory_Recipes" FromRole="Recipes" ToRole="RecipeHistory" />
+          <Property Name="MealCategoryId" Type="Int32" />
+          <NavigationProperty Name="MealCategories" Relationship="SmartKitchenModel.FK_Recipes_MealCategories" FromRole="Recipes" ToRole="MealCategories" />
         </EntityType>
         <EntityType Name="RecipeSteps">
           <Key>
@@ -712,6 +809,21 @@
             <End Role="RecipeSteps" EntitySet="RecipeSteps" />
             <End Role="StepIngredients" EntitySet="StepIngredients" />
           </AssociationSet>
+          <EntitySet Name="MealCategories" EntityType="SmartKitchenModel.MealCategories" />
+          <EntitySet Name="MealTypes" EntityType="SmartKitchenModel.MealTypes" />
+          <EntitySet Name="Units" EntityType="SmartKitchenModel.Units" />
+          <AssociationSet Name="FK_Recipes_MealCategories" Association="SmartKitchenModel.FK_Recipes_MealCategories">
+            <End Role="MealCategories" EntitySet="MealCategories" />
+            <End Role="Recipes" EntitySet="Recipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MenuPlans_MealTypes" Association="SmartKitchenModel.FK_MenuPlans_MealTypes">
+            <End Role="MealTypes" EntitySet="MealTypes" />
+            <End Role="MenuPlans" EntitySet="MenuPlans" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Products_Units" Association="SmartKitchenModel.FK_Products_Units">
+            <End Role="Units" EntitySet="Units" />
+            <End Role="Products" EntitySet="Products" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="FavoriteRecipes">
           <Key>
@@ -827,6 +939,72 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="MealCategories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Icon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Recipes" Relationship="SmartKitchenModel.FK_Recipes_MealCategories" FromRole="MealCategories" ToRole="Recipes" />
+        </EntityType>
+        <EntityType Name="MealTypes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="MenuPlans" Relationship="SmartKitchenModel.FK_MenuPlans_MealTypes" FromRole="MealTypes" ToRole="MenuPlans" />
+        </EntityType>
+        <EntityType Name="Units">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShortName" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Products" Relationship="SmartKitchenModel.FK_Products_Units" FromRole="Units" ToRole="Products" />
+        </EntityType>
+        <Association Name="FK_Recipes_MealCategories">
+          <End Type="SmartKitchenModel.MealCategories" Role="MealCategories" Multiplicity="0..1" />
+          <End Type="SmartKitchenModel.Recipes" Role="Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealCategories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Recipes">
+              <PropertyRef Name="MealCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MenuPlans_MealTypes">
+          <End Type="SmartKitchenModel.MealTypes" Role="MealTypes" Multiplicity="0..1" />
+          <End Type="SmartKitchenModel.MenuPlans" Role="MenuPlans" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MealTypes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MenuPlans">
+              <PropertyRef Name="MealTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Products_Units">
+          <End Type="SmartKitchenModel.Units" Role="Units" Multiplicity="0..1" />
+          <End Type="SmartKitchenModel.Products" Role="Products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Units">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Products">
+              <PropertyRef Name="UnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -844,6 +1022,7 @@
           <EntitySetMapping Name="FridgeItems">
             <EntityTypeMapping TypeName="SmartKitchenModel.FridgeItems">
               <MappingFragment StoreEntitySet="FridgeItems">
+                <ScalarProperty Name="ManufactureDate" ColumnName="ManufactureDate" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
@@ -866,6 +1045,7 @@
           <EntitySetMapping Name="MenuPlans">
             <EntityTypeMapping TypeName="SmartKitchenModel.MenuPlans">
               <MappingFragment StoreEntitySet="MenuPlans">
+                <ScalarProperty Name="MealTypeId" ColumnName="MealTypeId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
@@ -888,6 +1068,11 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="SmartKitchenModel.Products">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="Carbs" ColumnName="Carbs" />
+                <ScalarProperty Name="Fats" ColumnName="Fats" />
+                <ScalarProperty Name="Proteins" ColumnName="Proteins" />
+                <ScalarProperty Name="Calories" ColumnName="Calories" />
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
@@ -898,6 +1083,7 @@
           <EntitySetMapping Name="Recipes">
             <EntityTypeMapping TypeName="SmartKitchenModel.Recipes">
               <MappingFragment StoreEntitySet="Recipes">
+                <ScalarProperty Name="MealCategoryId" ColumnName="MealCategoryId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -964,6 +1150,36 @@
               <MappingFragment StoreEntitySet="StepIngredients">
                 <ScalarProperty Name="IngredientId" ColumnName="IngredientId" />
                 <ScalarProperty Name="StepId" ColumnName="StepId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealCategories">
+            <EntityTypeMapping TypeName="SmartKitchenModel.MealCategories">
+              <MappingFragment StoreEntitySet="MealCategories">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MealTypes">
+            <EntityTypeMapping TypeName="SmartKitchenModel.MealTypes">
+              <MappingFragment StoreEntitySet="MealTypes">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Units">
+            <EntityTypeMapping TypeName="SmartKitchenModel.Units">
+              <MappingFragment StoreEntitySet="Units">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
