@@ -31,18 +31,20 @@ namespace SmartKithen.Pages
         private void MyRecipes_Loaded(object sender, RoutedEventArgs e)
         {
             HeaderUserName.Text = SessionManager.CurrentUserName.Split(' ')[0];
-            LoadCategories();
+            LoadMealCategories();
             LoadRecipes();
         }
 
-        private void LoadCategories()
+        private void LoadMealCategories()
         {
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    var categories = context.Categories
-                        .OrderBy(c => c.Name)
+                    // Загружаем только активные категории блюд
+                    var mealCategories = context.MealCategories
+                        .Where(mc => mc.IsActive == true)
+                        .OrderBy(mc => mc.Name)
                         .ToList();
 
                     CategoryFilter.Items.Clear();
@@ -52,7 +54,7 @@ namespace SmartKithen.Pages
                         Tag = 0
                     });
 
-                    foreach (var cat in categories)
+                    foreach (var cat in mealCategories)
                     {
                         CategoryFilter.Items.Add(new ComboBoxItem
                         {
@@ -66,7 +68,7 @@ namespace SmartKithen.Pages
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки категорий: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки категорий блюд: {ex.Message}");
             }
         }
 
@@ -76,23 +78,30 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    var query = context.Recipes
-                        .Include("Categories")
-                        .AsQueryable();
+                    // Загружаем рецепты
+                    var recipes = context.Recipes.ToList();
 
-                    // Фильтр по категории
+                    // Загружаем связанные данные вручную
+                    foreach (var recipe in recipes)
+                    {
+                        context.Entry(recipe).Reference(r => r.MealCategories).Load();
+                    }
+
+                    var query = recipes.AsQueryable();
+
+                    // Фильтр по категории блюда (MealCategoryId)
                     var selectedCategory = CategoryFilter.SelectedItem as ComboBoxItem;
                     if (selectedCategory != null && (int)selectedCategory.Tag != 0)
                     {
                         var categoryId = (int)selectedCategory.Tag;
-                        query = query.Where(r => r.CategoryId == categoryId);
+                        query = query.Where(r => r.MealCategoryId == categoryId);
                     }
 
                     // Фильтр по поиску
                     var searchText = _searchPlaceholder ? "" : SearchBox.Text.Trim();
                     if (!string.IsNullOrEmpty(searchText))
                     {
-                        query = query.Where(r => r.Title.Contains(searchText));
+                        query = query.Where(r => r.Title.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0);
                     }
 
                     // Сортировка
@@ -196,12 +205,16 @@ namespace SmartKithen.Pages
             topRow.Children.Add(timeBadge);
             content.Children.Add(topRow);
 
-            // Категория
+            // Категория блюда (MealCategory)
+            string categoryName = recipe.MealCategories?.Name ?? "Без категории";
+            string categoryIcon = recipe.MealCategories?.Icon ?? "";
+
             content.Children.Add(new TextBlock
             {
-                Text = recipe.Categories?.Name ?? "Без категории",
+                Text = string.IsNullOrEmpty(categoryIcon) ? categoryName : $"{categoryIcon} {categoryName}",
                 FontSize = 12,
-                Foreground = Brushes.Gray,
+                Foreground = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#CFA1C1")),
                 Margin = new Thickness(0, 0, 0, 5)
             });
 
@@ -217,16 +230,16 @@ namespace SmartKithen.Pages
                 Margin = new Thickness(0, 0, 0, 15)
             });
 
-            // Время и рейтинг
+            // Время
             var infoRow = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 10)
             };
 
-            var timeText = recipe.CookingTime.HasValue
+            var timeText = recipe.CookingTime.HasValue && recipe.CookingTime > 0
                 ? $"{recipe.CookingTime.Value} мин"
-                : "— мин";
+                : "Время не указано";
 
             infoRow.Children.Add(new TextBlock
             {
@@ -235,19 +248,10 @@ namespace SmartKithen.Pages
                 Foreground = Brushes.Gray
             });
 
-            infoRow.Children.Add(new TextBlock
-            {
-                Text = " ★★★★",
-                FontSize = 12,
-                Foreground = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString("#FFA500")),
-                Margin = new Thickness(10, 0, 0, 0)
-            });
-
             content.Children.Add(infoRow);
 
-            // Плашка автора
-            var authorBadge = new Border
+            // Плашка с информацией (убираем автора, так как нет привязки к пользователю)
+            var infoBadge = new Border
             {
                 Background = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#FFF8FC")),
@@ -257,14 +261,23 @@ namespace SmartKithen.Pages
                     (Color)ColorConverter.ConvertFromString("#CFA1C1")),
                 BorderThickness = new Thickness(1)
             };
-            authorBadge.Child = new TextBlock
+
+            // Показываем количество ингредиентов или просто иконку
+            int ingredientsCount = 0;
+            using (var context = new SmartKitchenEntities())
             {
-                Text = $"⌛ {SessionManager.CurrentUserName.Split(' ')[0]}",
+                context.Entry(recipe).Collection(r => r.Ingredients).Load();
+                ingredientsCount = recipe.Ingredients?.Count ?? 0;
+            }
+
+            infoBadge.Child = new TextBlock
+            {
+                Text = $"📝 {ingredientsCount} ингр.",
                 FontSize = 11,
                 Foreground = Brushes.Gray,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            content.Children.Add(authorBadge);
+            content.Children.Add(infoBadge);
 
             card.Child = content;
 

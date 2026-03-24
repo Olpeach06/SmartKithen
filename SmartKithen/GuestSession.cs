@@ -32,6 +32,7 @@ namespace SmartKithen
         public int? CategoryId { get; set; }
         public List<GuestIngredient> Ingredients { get; set; } = new List<GuestIngredient>();
         public List<string> Steps { get; set; } = new List<string>();
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
     public class GuestIngredient

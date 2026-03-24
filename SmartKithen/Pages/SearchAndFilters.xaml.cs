@@ -13,7 +13,7 @@ namespace SmartKithen.Pages
     public partial class SearchAndFilters : Page
     {
         private List<Recipes> _allRecipes = new List<Recipes>();
-        private List<Categories> _allCategories = new List<Categories>();
+        private List<MealCategories> _allMealCategories = new List<MealCategories>();
 
         public SearchAndFilters()
         {
@@ -24,7 +24,7 @@ namespace SmartKithen.Pages
         private void SearchAndFilters_Loaded(object sender, RoutedEventArgs e)
         {
             LoadAllRecipes();
-            LoadCategories();
+            LoadMealCategories();
             ApplyFilters();
         }
 
@@ -35,7 +35,7 @@ namespace SmartKithen.Pages
                 using (var context = new SmartKitchenEntities())
                 {
                     _allRecipes = context.Recipes
-                        .Include("Categories")
+                        .Include("MealCategories")
                         .OrderBy(r => r.Title)
                         .ToList();
                 }
@@ -46,14 +46,16 @@ namespace SmartKithen.Pages
             }
         }
 
-        private void LoadCategories()
+        private void LoadMealCategories()
         {
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    _allCategories = context.Categories
-                        .OrderBy(c => c.Name)
+                    // Загружаем только активные категории блюд
+                    _allMealCategories = context.MealCategories
+                        .Where(mc => mc.IsActive == true)
+                        .OrderBy(mc => mc.Name)
                         .ToList();
 
                     CategoriesPanel.Children.Clear();
@@ -74,8 +76,8 @@ namespace SmartKithen.Pages
                     allRadio.Checked += CategoryRadio_Checked;
                     CategoriesPanel.Children.Add(allRadio);
 
-                    // Категории из БД
-                    foreach (var cat in _allCategories)
+                    // Категории блюд из БД
+                    foreach (var cat in _allMealCategories)
                     {
                         var radio = new RadioButton
                         {
@@ -94,7 +96,7 @@ namespace SmartKithen.Pages
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки категорий: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки категорий блюд: {ex.Message}");
             }
         }
 
@@ -139,11 +141,11 @@ namespace SmartKithen.Pages
                     });
                 }
 
-                // Фильтр по категории
+                // Фильтр по категории блюда (MealCategoryId)
                 var selectedCategoryId = GetSelectedCategoryId();
                 if (selectedCategoryId != 0)
                 {
-                    results = results.Where(r => r.CategoryId == selectedCategoryId);
+                    results = results.Where(r => r.MealCategoryId == selectedCategoryId);
                 }
 
                 var finalList = results.ToList();
@@ -226,8 +228,8 @@ namespace SmartKithen.Pages
 
             var content = new StackPanel { Orientation = Orientation.Vertical };
 
-            // Эмодзи по категории
-            var emoji = GetCategoryEmoji(recipe.Categories?.Name);
+            // Эмодзи по категории блюда
+            var emoji = GetMealCategoryEmoji(recipe.MealCategories?.Name);
             content.Children.Add(new TextBlock
             {
                 Text = emoji,
@@ -263,12 +265,17 @@ namespace SmartKithen.Pages
                 Margin = new Thickness(0, 0, 0, 4)
             });
 
-            // Категория
-            if (recipe.Categories != null)
+            // Категория блюда
+            if (recipe.MealCategories != null)
             {
+                // Если есть иконка, показываем её
+                var categoryText = string.IsNullOrEmpty(recipe.MealCategories.Icon)
+                    ? $"• {recipe.MealCategories.Name}"
+                    : $"{recipe.MealCategories.Icon} {recipe.MealCategories.Name}";
+
                 content.Children.Add(new TextBlock
                 {
-                    Text = $"• {recipe.Categories.Name}",
+                    Text = categoryText,
                     FontSize = 11,
                     Foreground = new SolidColorBrush(
                         (Color)ColorConverter.ConvertFromString("#CFA1C1")),
@@ -287,28 +294,22 @@ namespace SmartKithen.Pages
             return card;
         }
 
-        private string GetCategoryEmoji(string categoryName)
+        private string GetMealCategoryEmoji(string categoryName)
         {
             if (string.IsNullOrEmpty(categoryName)) return "🍽️";
 
             switch (categoryName)
             {
-                case "Мясо": return "🥩";
-                case "Рыба":
-                case "Морепродукты": return "🐟";
-                case "Овощи": return "🥦";
-                case "Фрукты": return "🍎";
-                case "Молочные продукты": return "🧀";
-                case "Крупы": return "🌾";
-                case "Хлебобулочные изделия": return "🍞";
-                case "Десерты":
-                case "Сладости": return "🍰";
-                case "Супы": return "🍲";
+                case "Супы": return "🥣";
+                case "Салаты": return "🥗";
+                case "Горячие блюда": return "🍲";
+                case "Паста и каши": return "🍝";
+                case "Выпечка": return "🥐";
+                case "Десерты": return "🍰";
                 case "Напитки": return "🥤";
+                case "Закуски": return "🍢";
                 case "Соусы": return "🥫";
-                case "Специи": return "🧂";
-                case "Бакалея": return "📦";
-                case "Замороженные продукты": return "❄️";
+                case "Вегетарианские": return "🥬";
                 default: return "🍽️";
             }
         }

@@ -54,7 +54,7 @@ namespace SmartKithen.Pages
         private void ShowGuestDataNotification()
         {
             var summary = SessionManager.GetGuestDataSummary();
-            var result = MessageBox.Show(
+            MessageBox.Show(
                 $"У вас есть временные данные в гостевом режиме:\n{summary}\n\n" +
                 "После регистрации они будут автоматически перенесены в ваш аккаунт.",
                 "Перенос данных",
@@ -152,7 +152,10 @@ namespace SmartKithen.Pages
                 if (!ValidateRegistration())
                     return;
 
-                if (!IsLoginUnique(tbEmail.Text))
+                string login = tbEmail.Text.Trim();
+                string password = GetPassword();
+
+                if (!IsLoginUnique(login))
                 {
                     MessageBox.Show("Этот логин уже занят. Пожалуйста, выберите другой.",
                         "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -162,7 +165,15 @@ namespace SmartKithen.Pages
                 }
 
                 // Создание нового пользователя
-                Users newUser = CreateNewUser();
+                string fullName = $"{tbFirstName.Text.Trim()} {tbLastName.Text.Trim()}".Trim();
+
+                Users newUser = new Users
+                {
+                    Login = login,
+                    PasswordHash = password, // TODO: Добавить хэширование пароля
+                    Name = fullName
+                };
+
                 int newUserId = 0;
 
                 // Сохранение пользователя в БД
@@ -189,7 +200,7 @@ namespace SmartKithen.Pages
 
                         string message = _fromGuestMode
                             ? $"Регистрация успешна! Ваши временные данные перенесены в аккаунт."
-                            : $"Регистрация успешна! Добро пожаловать, {newUser.Name}!";
+                            : $"Регистрация успешна! Добро пожаловать, {fullName}!";
 
                         MessageBox.Show(message, "Успех",
                             MessageBoxButton.OK, MessageBoxImage.Information);
@@ -208,7 +219,13 @@ namespace SmartKithen.Pages
             }
         }
 
-        // ИСПРАВЛЕННЫЙ МЕТОД: Перенос данных гостя в аккаунт пользователя
+        // Получение пароля в зависимости от видимости
+        private string GetPassword()
+        {
+            return _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
+        }
+
+        // Перенос данных гостя в аккаунт пользователя
         private void TransferGuestData(SmartKitchenEntities context, int newUserId)
         {
             try
@@ -291,6 +308,7 @@ namespace SmartKithen.Pages
 
         private bool ValidateRegistration()
         {
+            // Проверка имени
             if (string.IsNullOrWhiteSpace(tbFirstName.Text))
             {
                 MessageBox.Show("Введите имя", "Ошибка",
@@ -308,6 +326,7 @@ namespace SmartKithen.Pages
                 return false;
             }
 
+            // Проверка фамилии
             if (string.IsNullOrWhiteSpace(tbLastName.Text))
             {
                 MessageBox.Show("Введите фамилию", "Ошибка",
@@ -325,7 +344,9 @@ namespace SmartKithen.Pages
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(tbEmail.Text))
+            // Проверка логина
+            string login = tbEmail.Text.Trim();
+            if (string.IsNullOrWhiteSpace(login))
             {
                 MessageBox.Show("Введите логин", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -333,7 +354,7 @@ namespace SmartKithen.Pages
                 return false;
             }
 
-            if (tbEmail.Text.Length < 3)
+            if (login.Length < 3)
             {
                 MessageBox.Show("Логин должен содержать минимум 3 символа", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -342,8 +363,18 @@ namespace SmartKithen.Pages
                 return false;
             }
 
-            string password = _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
-            string confirmPassword = _isConfirmPasswordVisible ? tbVisibleConfirmPassword.Text : pbConfirmPassword.Password;
+            // Проверка на допустимые символы в логине
+            if (!System.Text.RegularExpressions.Regex.IsMatch(login, @"^[a-zA-Z0-9_@.-]+$"))
+            {
+                MessageBox.Show("Логин может содержать только буквы, цифры и символы _ @ . -",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbEmail.Focus();
+                tbEmail.SelectAll();
+                return false;
+            }
+
+            // Проверка пароля
+            string password = GetPassword();
 
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -371,6 +402,9 @@ namespace SmartKithen.Pages
                 }
                 return false;
             }
+
+            // Проверка подтверждения пароля
+            string confirmPassword = _isConfirmPasswordVisible ? tbVisibleConfirmPassword.Text : pbConfirmPassword.Password;
 
             if (string.IsNullOrWhiteSpace(confirmPassword))
             {
@@ -409,7 +443,7 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    return !context.Users.Any(u => u.Login == login);
+                    return !context.Users.Any(u => u.Login.ToLower() == login.ToLower());
                 }
             }
             catch (Exception ex)
@@ -420,57 +454,20 @@ namespace SmartKithen.Pages
             }
         }
 
-        private Users CreateNewUser()
-        {
-            string password = _isPasswordVisible ? tbVisiblePassword.Text : pbPassword.Password;
-
-            // В реальном проекте здесь должно быть хэширование пароля!
-            return new Users
-            {
-                Login = tbEmail.Text.Trim(),
-                PasswordHash = password, // TODO: Добавить хэширование
-                Name = $"{tbFirstName.Text.Trim()} {tbLastName.Text.Trim()}".Trim()
-            };
-        }
-
-        private bool SaveUserToDatabase(Users newUser)
-        {
-            try
-            {
-                using (var context = new SmartKitchenEntities())
-                {
-                    context.Users.Add(newUser);
-                    int result = context.SaveChanges();
-                    return result > 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-        }
-
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new Authorization());
         }
 
+        // Обработчики нажатия Enter
         private void TbFirstName_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                tbLastName.Focus();
-            }
+            if (e.Key == Key.Enter) tbLastName.Focus();
         }
 
         private void TbLastName_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                tbEmail.Focus();
-            }
+            if (e.Key == Key.Enter) tbEmail.Focus();
         }
 
         private void TbEmail_KeyDown(object sender, KeyEventArgs e)

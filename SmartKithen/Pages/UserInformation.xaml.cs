@@ -20,6 +20,14 @@ namespace SmartKithen.Pages
 
         private void UserInformation_Loaded(object sender, RoutedEventArgs e)
         {
+            // Проверяем, авторизован ли пользователь
+            if (SessionManager.CurrentUserId == 0)
+            {
+                MessageBox.Show("Пожалуйста, войдите в аккаунт.", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                NavigationService?.Navigate(new Authorization());
+                return;
+            }
             LoadUserData();
         }
 
@@ -114,8 +122,11 @@ namespace SmartKithen.Pages
                     UserLoginDisplay.Text = $"@{login}";
 
                     // Обновляем App.CurrentUser
-                    App.CurrentUser.Name = name;
-                    App.CurrentUser.Login = login;
+                    if (App.CurrentUser != null)
+                    {
+                        App.CurrentUser.Name = name;
+                        App.CurrentUser.Login = login;
+                    }
                 }
 
                 MessageBox.Show("Данные успешно сохранены!", "Готово",
@@ -268,12 +279,21 @@ namespace SmartKithen.Pages
                     var menuPlans = context.MenuPlans.Where(m => m.UserId == id);
                     context.MenuPlans.RemoveRange(menuPlans);
 
-                    
-                    //Если добавили FavoriteRecipes и RecipeHistory через EF — удаляем и их
-                    //var favorites = context.FavoriteRecipes.Where(f => f.UserId == id);
-                    //context.FavoriteRecipes.RemoveRange(favorites);
-                    //var history = context.RecipeHistory.Where(r => r.UserId == id);
-                    //context.RecipeHistory.RemoveRange(history);
+                    // Удаляем избранные рецепты, если таблица есть в контексте
+                    if (context.FavoriteRecipes != null)
+                    {
+                        var favorites = context.FavoriteRecipes.Where(f => f.UserId == id);
+                        if (favorites.Any())
+                            context.FavoriteRecipes.RemoveRange(favorites);
+                    }
+
+                    // Удаляем историю просмотров, если таблица есть в контексте
+                    if (context.RecipeHistory != null)
+                    {
+                        var history = context.RecipeHistory.Where(r => r.UserId == id);
+                        if (history.Any())
+                            context.RecipeHistory.RemoveRange(history);
+                    }
 
                     var user = context.Users.FirstOrDefault(u => u.Id == id);
                     if (user != null)
@@ -282,7 +302,10 @@ namespace SmartKithen.Pages
                     context.SaveChanges();
                 }
 
+                // Очищаем сессию
                 App.CurrentUser = null;
+                SessionManager.ClearGuestData();
+
                 MessageBox.Show("Аккаунт удалён.", "Готово",
                     MessageBoxButton.OK, MessageBoxImage.Information);
 
