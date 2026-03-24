@@ -232,9 +232,13 @@
                     <Button x:Name="AddPhotoButton"
                             Style="{StaticResource CardButtonStyle}"
                             Click="AddPhotoButton_Click">
-                        <StackPanel Orientation="Vertical" 
+                        <StackPanel Orientation="Horizontal" 
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
+                            <Image x:Name="RecipeImage"
+                                    Height="180"
+                                    Stretch="UniformToFill"
+                                    Visibility="Visible"/>
                             <TextBlock Text="📷" 
                                        FontSize="40" 
                                        Foreground="#CFA1C1"

@@ -1,16 +1,20 @@
-﻿using SmartKithen.AppData;
+﻿using Microsoft.Win32;
+using SmartKithen.AppData;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace SmartKithen.Pages
 {
     public partial class CreatingReciepe : Page
     {
         private int _stepCount = 2;
+        private string selectedImagePath;
 
         public CreatingReciepe()
         {
@@ -479,6 +483,8 @@ namespace SmartKithen.Pages
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            string imagePath = selectedImagePath ?? "/Images/default.png";
+
             var title = TitleTextBox.Text.Trim();
             if (string.IsNullOrEmpty(title))
             {
@@ -520,7 +526,8 @@ namespace SmartKithen.Pages
                         Description = DescriptionTextBox.Text.Trim(),
                         CookingTime = cookingTime,
                         CategoryId = categoryId,
-                        Instructions = ""
+                        Instructions = "",
+                        ImagePath = imagePath
                     };
                     context.Recipes.Add(recipe);
                     context.SaveChanges();
@@ -671,9 +678,35 @@ namespace SmartKithen.Pages
 
         private void AddPhotoButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Функция загрузки фото в разработке.", "Информация",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg";
+
+            if (dialog.ShowDialog() == true)
+            {
+                string sourcePath = dialog.FileName;
+
+                string fileName = Path.GetFileName(sourcePath);
+
+                string projectPath = AppDomain.CurrentDomain.BaseDirectory;
+                string imagesFolder = Path.Combine(projectPath, "Images");
+
+                // если папки нет — создаем
+                if (!Directory.Exists(imagesFolder))
+                    Directory.CreateDirectory(imagesFolder);
+
+                string destinationPath = Path.Combine(imagesFolder, fileName);
+
+                // копируем файл
+                File.Copy(sourcePath, destinationPath, true);
+
+                // сохраняем относительный путь
+                selectedImagePath = "/Images/" + fileName;
+
+                // 👇 сразу показываем в UI
+                RecipeImage.Source = new BitmapImage(new Uri(destinationPath));
+            }
         }
+
 
         private class IngredientEntry
         {

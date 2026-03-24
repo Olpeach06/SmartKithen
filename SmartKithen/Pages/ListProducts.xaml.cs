@@ -18,6 +18,8 @@ namespace SmartKithen.Pages
         private Dictionary<int, bool> _selectedShoppingItems = new Dictionary<int, bool>();
         private bool _isGuestMode;
         private int _nextTempId = 1000;
+        private List<Units> _allUnits = new List<Units>();
+        private List<Categories> _allCategories = new List<Categories>();
 
         private class ShoppingItem
         {
@@ -29,6 +31,7 @@ namespace SmartKithen.Pages
             public bool IsFromRecipe { get; set; }
             public int? ProductId { get; set; }
         }
+        
 
         public ListProducts()
         {
