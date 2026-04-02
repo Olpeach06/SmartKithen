@@ -294,5 +294,10 @@ namespace SmartKithen.Pages
 
         private void btnSettingUser_Click(object sender, RoutedEventArgs e) =>
             NavigationService?.Navigate(new UserInformation());
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new SearchAndFilters());
+        }
     }
 }

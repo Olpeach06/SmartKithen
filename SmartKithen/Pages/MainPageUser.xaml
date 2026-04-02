@@ -98,6 +98,21 @@
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
 
+                        <!-- Иконки -->
+                        <Button x:Name="btnSearch"
+                            Style="{StaticResource MainButtonStyle}"
+                            Background="White"
+                            Padding="10"
+                            Margin="0,0,10,0"
+                            Cursor="Hand" Click="btnSearch_Click">
+                            <Button.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
+                            </Button.Effect>
+                            <TextBlock Text="🔍" 
+                               FontSize="16" 
+                               Foreground="#1A5D34"/>
+                        </Button>
+
                         <Border Background="White" CornerRadius="10" Padding="10"
                                 Margin="0,0,10,0" Cursor="Hand">
                             <Border.Effect>
@@ -136,7 +151,7 @@
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
                             </Border.Effect>
-                            <TextBlock Text="🔄" FontSize="16" Foreground="#1A5D34"/>
+                            <TextBlock Text="🚪 Выйти" FontSize="16" Foreground="#1A5D34"/>
                         </Border>
                     </StackPanel>
                 </Grid>
