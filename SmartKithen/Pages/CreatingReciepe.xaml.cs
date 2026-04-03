@@ -24,47 +24,53 @@ namespace SmartKithen.Pages
 
         private void CreatingReciepe_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadCategories();
+            LoadMealCategories();
 
-            // Создаём три начальных ингредиента
             IngredientsPanel.Children.Add(CreateIngredientRow());
             IngredientsPanel.Children.Add(CreateIngredientRow());
             IngredientsPanel.Children.Add(CreateIngredientRow());
 
-            // Убрали создание начальных шагов — пользователь добавляет сам
             _stepCount = 0;
 
             RefreshIngredientCheckboxes();
         }
 
-        private void LoadCategories()
+        private void LoadMealCategories()
         {
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    var categories = context.Categories
-                        .OrderBy(c => c.Name)
+                    var mealCategories = context.MealCategories
+                        .Where(mc => mc.IsActive == true)
+                        .OrderBy(mc => mc.Name)
                         .ToList();
 
-                    CategoryComboBox.Items.Clear();
+                    MealCategoryComboBox.Items.Clear();
 
-                    foreach (var cat in categories)
+                    // Добавляем пустой элемент для необязательного выбора
+                    MealCategoryComboBox.Items.Add(new ComboBoxItem
                     {
-                        CategoryComboBox.Items.Add(new ComboBoxItem
+                        Content = "-- Не выбрано --",
+                        Tag = null
+                    });
+
+                    foreach (var cat in mealCategories)
+                    {
+                        MealCategoryComboBox.Items.Add(new ComboBoxItem
                         {
-                            Content = cat.Name,
+                            Content = $"{cat.Icon} {cat.Name}",
                             Tag = cat.Id
                         });
                     }
 
-                    if (CategoryComboBox.Items.Count > 0)
-                        CategoryComboBox.SelectedIndex = 0;
+                    if (MealCategoryComboBox.Items.Count > 0)
+                        MealCategoryComboBox.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки категорий: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки категорий блюд: {ex.Message}");
             }
         }
 
@@ -508,9 +514,9 @@ namespace SmartKithen.Pages
                 }
             }
 
-            int? categoryId = null;
-            if (CategoryComboBox.SelectedItem is ComboBoxItem selectedCat)
-                categoryId = (int)selectedCat.Tag;
+            int? mealCategoryId = null;
+            if (MealCategoryComboBox.SelectedItem is ComboBoxItem selectedMealCat && selectedMealCat.Tag != null)
+                mealCategoryId = (int)selectedMealCat.Tag;
 
             var ingredientEntries = CollectIngredients();
             var stepRows = StepsPanel.Children.OfType<Grid>().ToList();
@@ -519,15 +525,16 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    // Сохраняем рецепт
+                    // Сохраняем рецепт с UserId
                     var recipe = new Recipes
                     {
                         Title = title,
                         Description = DescriptionTextBox.Text.Trim(),
                         CookingTime = cookingTime,
-                        CategoryId = categoryId,
+                        MealCategoryId = mealCategoryId,
                         Instructions = "",
-                        ImagePath = imagePath
+                        ImagePath = imagePath,
+                        UserId = SessionManager.IsGuestMode ? (int?)null : App.CurrentUser?.Id // Добавляем UserId
                     };
                     context.Recipes.Add(recipe);
                     context.SaveChanges();
@@ -604,6 +611,12 @@ namespace SmartKithen.Pages
 
                 MessageBox.Show("Рецепт успешно сохранён!", "Готово",
                     MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Обновляем страницу "Мои рецепты" перед возвратом
+                if (NavigationService?.Content is GuestReciepe guestReciepe)
+                {
+                    guestReciepe.RefreshRecipes();
+                }
 
                 NavigationService?.GoBack();
             }

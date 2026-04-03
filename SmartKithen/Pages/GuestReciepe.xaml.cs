@@ -85,6 +85,20 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
+                    // Загружаем рецепты, созданные текущим пользователем
+                    _myRecipes = context.Recipes
+                        .Where(r => r.UserId == App.CurrentUser.Id)
+                        .OrderByDescending(r => r.Id)
+                        .ToList();
+
+                    // Загружаем связанные данные для каждого рецепта
+                    foreach (var recipe in _myRecipes)
+                    {
+                        context.Entry(recipe).Reference(r => r.MealCategories).Load();
+                        context.Entry(recipe).Reference(r => r.Categories).Load();
+                    }
+
+                    // Загружаем избранные рецепты
                     var favoriteIds = context.FavoriteRecipes
                         .Where(f => f.UserId == App.CurrentUser.Id)
                         .Select(f => f.RecipeId)
@@ -100,14 +114,13 @@ namespace SmartKithen.Pages
                         foreach (var recipe in _favoriteRecipes)
                         {
                             context.Entry(recipe).Reference(r => r.MealCategories).Load();
+                            context.Entry(recipe).Reference(r => r.Categories).Load();
                         }
                     }
                     else
                     {
                         _favoriteRecipes = new List<Recipes>();
                     }
-
-                    _myRecipes = new List<Recipes>();
                 }
             }
             catch (Exception ex)
@@ -529,7 +542,7 @@ namespace SmartKithen.Pages
             if (_isGuestMode)
             {
                 LoadGuestRecipes();
-                DisplayMyRecipes();
+                DisplayCurrentTab();
             }
             else
             {

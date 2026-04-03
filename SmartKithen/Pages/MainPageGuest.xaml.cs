@@ -16,34 +16,25 @@ namespace SmartKithen.Pages
 
         private void MainPageGuest_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadGuestData();
+            LoadTotalRecipesCount();
             LoadRecommendedRecipes();
         }
 
-        // Загрузка данных для гостя
-        private void LoadGuestData()
+        // Загрузка общего количества рецептов
+        private void LoadTotalRecipesCount()
         {
             try
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    // Загружаем общее количество рецептов
                     var totalRecipes = context.Recipes.Count();
-
-                    // Обновляем счетчик рецептов на кнопке
-                    if (txtRecipeCount != null)
-                    {
-                        txtRecipeCount.Text = totalRecipes.ToString();
-                    }
+                    txtRecipeCount.Text = totalRecipes.ToString();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка загрузки данных: {ex.Message}");
-                if (txtRecipeCount != null)
-                {
-                    txtRecipeCount.Text = "0";
-                }
+                Console.WriteLine($"Ошибка загрузки количества рецептов: {ex.Message}");
+                txtRecipeCount.Text = "0";
             }
         }
 
@@ -59,12 +50,10 @@ namespace SmartKithen.Pages
                         .Take(3)
                         .ToList();
 
-                    // Очищаем Grid с рекомендациями
                     if (RecommendedRecipesGrid != null)
                     {
                         RecommendedRecipesGrid.Children.Clear();
 
-                        // Добавляем каждый рецепт как кнопку
                         foreach (var recipe in recommendedRecipes)
                         {
                             var border = new Border
@@ -131,21 +120,6 @@ namespace SmartKithen.Pages
             ShowRandomRecipeDetail();
         }
 
-        // Показать предложение регистрации
-        private void ShowRegistrationPrompt()
-        {
-            var result = MessageBox.Show(
-                "Хотите зарегистрироваться и получить полный доступ ко всем функциям?",
-                "Регистрация",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                NavigationService?.Navigate(new Registration());
-            }
-        }
-
         // Показать детали случайного рецепта
         private void ShowRandomRecipeDetail()
         {
@@ -159,7 +133,6 @@ namespace SmartKithen.Pages
 
                     if (randomRecipe != null)
                     {
-                        // ИСПРАВЛЕНО: Переход на RecipeDetails вместо MessageBox
                         NavigationService?.Navigate(new RecipeDetails(randomRecipe.Id));
                     }
                     else
@@ -181,15 +154,8 @@ namespace SmartKithen.Pages
         {
             if (sender is Border border && border.Tag is int recipeId)
             {
-                // ИСПРАВЛЕНО: Переход на RecipeDetails
                 NavigationService?.Navigate(new RecipeDetails(recipeId));
             }
-        }
-
-        // Кнопка поиска
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService?.Navigate(new SearchAndFilters());
         }
 
         // Кнопка настроек
@@ -198,16 +164,10 @@ namespace SmartKithen.Pages
             NavigationService?.Navigate(new GuestMode());
         }
 
-        // Кнопка "Рецепты" (переход к списку всех рецептов)
+        // Кнопка "Рецепты" - переход на SearchAndFilters
         private void btnRecipes_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new GuestReciepe());
-        }
-
-        // Кнопка "Добавить рецепт"
-        private void btnAddRecipe_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService?.Navigate(new CreatingGuestReciepe());
+            NavigationService?.Navigate(new SearchAndFilters());
         }
 
         // Кнопка "Выйти из гостевого режима"
@@ -226,49 +186,10 @@ namespace SmartKithen.Pages
             }
         }
 
-        // Клик по статусу "Гость" (контекстное меню)
-        private void GuestStatus_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (sender is FrameworkElement element)
-            {
-                var menu = new ContextMenu();
-
-                var registerItem = new MenuItem
-                {
-                    Header = "🆕 Зарегистрироваться",
-                    FontSize = 14
-                };
-                registerItem.Click += (s, args) => NavigationService?.Navigate(new Registration());
-
-                var loginItem = new MenuItem
-                {
-                    Header = "🔑 Войти",
-                    FontSize = 14
-                };
-                loginItem.Click += (s, args) => NavigationService?.Navigate(new Authorization());
-
-                var exitItem = new MenuItem
-                {
-                    Header = "🚪 Выйти",
-                    FontSize = 14
-                };
-                exitItem.Click += (s, args) => btnExitGuest_Click(s, args);
-
-                menu.Items.Add(registerItem);
-                menu.Items.Add(loginItem);
-                menu.Items.Add(new Separator());
-                menu.Items.Add(exitItem);
-
-                menu.PlacementTarget = element;
-                menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-                menu.IsOpen = true;
-            }
-        }
-
-        // Дополнительный метод для обновления данных (если нужно)
+        // Обновление данных (если нужно)
         public void RefreshData()
         {
-            LoadGuestData();
+            LoadTotalRecipesCount();
             LoadRecommendedRecipes();
         }
     }

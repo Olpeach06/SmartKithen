@@ -144,26 +144,10 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Правые элементы -->
+                    <!-- Правые элементы (убрана кнопка поиска) -->
                     <StackPanel Grid.Column="2" 
                                 Orientation="Horizontal" 
                                 VerticalAlignment="Center">
-
-                        <!-- Иконки -->
-                        <Button x:Name="btnSearch"
-                                Background="White"
-                                Padding="10"
-                                Margin="0,0,10,0"
-                                Click="btnSearch_Click"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                Cursor="Hand">
-                            <Button.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="2"/>
-                            </Button.Effect>
-                            <TextBlock Text="🔍" 
-                                       FontSize="16" 
-                                       Foreground="#1A5D34"/>
-                        </Button>
 
                         <!-- Гость -->
                         <Border Background="#1A5D34" 
@@ -210,7 +194,7 @@
                                 Click="btnSaveProgress_Click"
                                 Margin="0,0,10,0"/>
 
-                        <!-- НОВАЯ КНОПКА: Выйти из гостевого режима -->
+                        <!-- Кнопка выхода из гостевого режима -->
                         <Button x:Name="btnExitGuest"
                                 Content="🚪 Выйти" 
                                 Style="{StaticResource ExitButtonStyle}"
@@ -238,118 +222,122 @@
 
                 <!-- Основные карточки -->
                 <UniformGrid Columns="4" 
-                             Rows="1" 
-                             Margin="0,0,0,30"
-                             HorizontalAlignment="Stretch">
+             Rows="1" 
+             Margin="0,0,0,30"
+             HorizontalAlignment="Stretch">
 
-                    <!-- Рецепты (счетчик загружается из БД) -->
+                    <!-- Рецепты (переход на SearchAndFilters) -->
                     <Button x:Name="btnRecipes"
-                            Style="{StaticResource CardButtonStyle}"
-                            Click="btnRecipes_Click"
-                            Background="White" 
-                            Padding="20"
-                            Margin="5"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
+            Style="{StaticResource CardButtonStyle}"
+            Click="btnRecipes_Click"
+            Background="White" 
+            Padding="20"
+            Margin="5"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1">
                         <Button.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Button.Effect>
                         <StackPanel Orientation="Vertical" 
-                                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Center">
+                            <TextBlock Text="📖" 
+                       FontSize="28"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,5"/>
                             <TextBlock Text="Рецепты" 
-                                       FontSize="14" 
-                                       Foreground="#666"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,8"/>
+                       FontSize="14" 
+                       FontWeight="SemiBold" 
+                       Foreground="#1A5D34"
+                       HorizontalAlignment="Center"/>
                             <TextBlock x:Name="txtRecipeCount" 
-                                       Text="156" 
-                                       FontSize="28" 
-                                       FontWeight="Bold" 
-                                       Foreground="#CFA1C1"
-                                       HorizontalAlignment="Center"/>
+                       Text="0" 
+                       FontSize="16" 
+                       FontWeight="Bold" 
+                       Foreground="#CFA1C1"
+                       HorizontalAlignment="Center"
+                       Margin="0,5,0,0"/>
                         </StackPanel>
                     </Button>
 
                     <!-- Список покупок -->
                     <Border Background="White" 
-                            CornerRadius="15" 
-                            Padding="20"
-                            Margin="5"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
+            CornerRadius="15" 
+            Padding="20"
+            Margin="5"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
                         <Button x:Name="btnShoppingList"
-                                Style="{StaticResource CardButtonStyle}"
-                                Click="btnShoppingList_Click">
+                Style="{StaticResource CardButtonStyle}"
+                Click="btnShoppingList_Click">
                             <StackPanel Orientation="Vertical" 
-                                        HorizontalAlignment="Center">
+                        HorizontalAlignment="Center">
                                 <TextBlock Text="🛒" 
-                                           FontSize="28"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,0,0,8"/>
+                           FontSize="28"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,8"/>
                                 <TextBlock Text="Список покупок" 
-                                           FontSize="14" 
-                                           FontWeight="SemiBold" 
-                                           Foreground="#1A5D34"
-                                           HorizontalAlignment="Center"/>
+                           FontSize="14" 
+                           FontWeight="SemiBold" 
+                           Foreground="#1A5D34"
+                           HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <!-- ИЗМЕНЕНО: Вместо "Продукты на исходе" теперь "Добавить рецепт" -->
-                    <Border Background="White" 
-                            CornerRadius="15" 
-                            Padding="20"
-                            Margin="5"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
-                        </Border.Effect>
-                        <Button x:Name="btnAddRecipe"
-                                Style="{StaticResource CardButtonStyle}"
-                                Click="btnAddRecipe_Click">
-                            <StackPanel Orientation="Vertical" 
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="📝" 
-                                           FontSize="28"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,0,0,8"/>
-                                <TextBlock Text="Добавить рецепт" 
-                                           FontSize="14" 
-                                           FontWeight="SemiBold" 
-                                           Foreground="#1A5D34"
-                                           HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
+                    <!-- Добавить рецепт (гостю недоступно) -->
+                    <Border Background="#F5F5F5" 
+            CornerRadius="15" 
+            Padding="20"
+            Margin="5"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1">
+                        <StackPanel Orientation="Vertical" 
+                    HorizontalAlignment="Center">
+                            <TextBlock Text="📝" 
+                       FontSize="28"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,5"
+                       Opacity="0.5"/>
+                            <TextBlock Text="Добавить рецепт" 
+                       FontSize="14" 
+                       FontWeight="SemiBold" 
+                       Foreground="#999"
+                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="(доступно после входа)" 
+                       FontSize="10" 
+                       Foreground="#BBB"
+                       HorizontalAlignment="Center"
+                       Margin="0,5,0,0"/>
+                        </StackPanel>
                     </Border>
 
                     <!-- Случайный рецепт -->
                     <Border Background="White" 
-                            CornerRadius="15" 
-                            Padding="20"
-                            Margin="5"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1">
+            CornerRadius="15" 
+            Padding="20"
+            Margin="5"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
                         <Button x:Name="btnRandomRecipe"
-                                Style="{StaticResource CardButtonStyle}"
-                                Click="btnRandomRecipe_Click">
+                Style="{StaticResource CardButtonStyle}"
+                Click="btnRandomRecipe_Click">
                             <StackPanel Orientation="Vertical" 
-                                        HorizontalAlignment="Center">
+                        HorizontalAlignment="Center">
                                 <TextBlock Text="🎲" 
-                                           FontSize="28"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,0,0,8"/>
+                           FontSize="28"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,8"/>
                                 <TextBlock Text="Случайный рецепт" 
-                                           FontSize="14" 
-                                           FontWeight="SemiBold" 
-                                           Foreground="#1A5D34"
-                                           HorizontalAlignment="Center"/>
+                           FontSize="14" 
+                           FontWeight="SemiBold" 
+                           Foreground="#1A5D34"
+                           HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </Border>
@@ -379,8 +367,6 @@
                     </StackPanel>
                 </Border>
 
-                <!-- УДАЛЕН блок "Недавние рецепты" полностью -->
-
                 <!-- Рекомендуем приготовить -->
                 <Border Background="White" 
                         CornerRadius="15" 
@@ -398,17 +384,14 @@
                                    Foreground="#1A5D34"
                                    Margin="0,0,0,20"/>
 
-                        <!-- Рекомендуемые рецепты - будут загружаться случайно из БД -->
+                        <!-- Рекомендуемые рецепты -->
                         <UniformGrid Columns="3" 
                                      Rows="1" 
                                      HorizontalAlignment="Stretch"
                                      x:Name="RecommendedRecipesGrid">
-                            <!-- Сюда будут динамически добавляться рецепты из БД -->
                         </UniformGrid>
-
                     </StackPanel>
                 </Border>
-
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -283,10 +283,9 @@
 
                         <!-- Детали рецепта -->
                         <TextBlock Text="⏱ Детали рецепта:" 
-                                   Style="{StaticResource SectionHeaderStyle}"/>
+                   Style="{StaticResource SectionHeaderStyle}"/>
                         <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
@@ -300,88 +299,34 @@
                                     BorderBrush="#CFA1C1"
                                     BorderThickness="1">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="⏰ Время" 
+                                    <TextBlock Text="⏰ Время приготовления" 
                                                FontSize="13" 
                                                Foreground="#666"
                                                Margin="0,0,0,8"/>
                                     <Grid>
                                         <TextBox x:Name="TimeTextBox"
-                                                FontSize="14" 
-                                                Padding="8"
-                                                BorderBrush="#E0E0E0" 
-                                                BorderThickness="1"
-                                                Width="60"
-                                                HorizontalAlignment="Left"/>
+                                                 FontSize="14" 
+                                                 Padding="8"
+                                                 BorderBrush="#E0E0E0" 
+                                                 BorderThickness="1"
+                                                 Width="80"
+                                                 HorizontalAlignment="Left"/>
                                         <TextBlock Text="мин" 
                                                    FontSize="14" 
                                                    Foreground="#1A5D34"
                                                    HorizontalAlignment="Right"
                                                    VerticalAlignment="Center"
-                                                   Margin="0,0,30,0"/>
+                                                   Margin="0,0,10,0"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Порции -->
+                            <!-- Категория -->
                             <Border Grid.Column="1"
                                     Background="#FFF8FC" 
                                     CornerRadius="10" 
                                     Padding="15"
-                                    Margin="10,0,10,0"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="👥 Порции" 
-                                               FontSize="13" 
-                                               Foreground="#666"
-                                               Margin="0,0,0,8"/>
-                                    <TextBox x:Name="ServingsTextBox"
-                                             Text="2" 
-                                             FontSize="14" 
-                                             Padding="8"
-                                             BorderBrush="#E0E0E0" 
-                                             BorderThickness="1"
-                                             Width="60"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Сложность -->
-                            <Border Grid.Column="2"
-                                    Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15"
                                     Margin="10,0,0,0"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="📈 Сложность" 
-                                               FontSize="13" 
-                                               Foreground="#666"
-                                               Margin="0,0,0,8"/>
-                                    <ComboBox x:Name="DifficultyComboBox"
-                                              SelectedIndex="1"
-                                              Style="{StaticResource ComboBoxStyle}">
-                                        <ComboBoxItem Content="★ Легкая"/>
-                                        <ComboBoxItem Content="★ Средняя"/>
-                                        <ComboBoxItem Content="★★ Сложная"/>
-                                    </ComboBox>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-
-                        <!-- Категория и теги -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Категория -->
-                            <Border Grid.Column="0"
-                                    Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15"
-                                    Margin="0,0,10,0"
                                     BorderBrush="#CFA1C1"
                                     BorderThickness="1">
                                 <StackPanel Orientation="Vertical">
@@ -389,30 +334,11 @@
                                                FontSize="13" 
                                                Foreground="#666"
                                                Margin="0,0,0,8"/>
-                                    <ComboBox x:Name="CategoryComboBox"
+                                    <ComboBox x:Name="MealCategoryComboBox"
                                               Style="{StaticResource ComboBoxStyle}"/>
                                 </StackPanel>
                             </Border>
-
-                            <!-- Теги -->
-                            <Border Grid.Column="1"
-                                    Background="#FFF8FC" 
-                                    CornerRadius="10" 
-                                    Padding="15"
-                                    Margin="10,0,0,0"
-                                    BorderBrush="#CFA1C1"
-                                    BorderThickness="1">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="🏷 Теги" 
-                                               FontSize="13" 
-                                               Foreground="#666"
-                                               Margin="0,0,0,8"/>
-                                    <TextBox x:Name="TagsTextBox"
-                                             Style="{StaticResource InputFieldStyle}"/>
-                                </StackPanel>
-                            </Border>
                         </Grid>
-
                     </StackPanel>
                 </Border>
 
@@ -425,69 +351,66 @@
 
                     <!-- ИНГРЕДИЕНТЫ -->
                     <Border Grid.Column="0"
-            Background="White" 
-            CornerRadius="15" 
-            Padding="25"
-            Margin="0,0,10,0"
-            BorderBrush="#E0E0E0"
-            BorderThickness="1">
+                            Background="White" 
+                            CornerRadius="15" 
+                            Padding="25"
+                            Margin="0,0,10,0"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
                         <StackPanel Orientation="Vertical">
 
                             <TextBlock Text="🥦 ИНГРЕДИЕНТЫ:" 
-                       FontSize="16" FontWeight="Bold" 
-                       Foreground="#1A5D34"
-                       Margin="0,0,0,20"/>
+                                       FontSize="16" FontWeight="Bold" 
+                                       Foreground="#1A5D34"
+                                       Margin="0,0,0,20"/>
 
                             <!-- Список ингредиентов — пустой, заполняется из code-behind -->
                             <StackPanel x:Name="IngredientsPanel" 
-                        Orientation="Vertical"
-                        Margin="0,0,0,20"/>
+                                        Orientation="Vertical"
+                                        Margin="0,0,0,20"/>
 
                             <Button x:Name="AddIngredientButton"
-                    Style="{StaticResource NavigationButtonStyle}"
-                    Content="➕ Добавить ингредиент"
-                    Background="#CFA1C1"
-                    HorizontalAlignment="Left"
-                    Padding="15,10"
-                    Click="AddIngredientButton_Click"/>
-
+                                    Style="{StaticResource NavigationButtonStyle}"
+                                    Content="➕ Добавить ингредиент"
+                                    Background="#CFA1C1"
+                                    HorizontalAlignment="Left"
+                                    Padding="15,10"
+                                    Click="AddIngredientButton_Click"/>
                         </StackPanel>
                     </Border>
 
                     <!-- ШАГИ ПРИГОТОВЛЕНИЯ -->
                     <Border Grid.Column="1"
-            Background="White" 
-            CornerRadius="15" 
-            Padding="25"
-            Margin="10,0,0,0"
-            BorderBrush="#E0E0E0"
-            BorderThickness="1">
+                            Background="White" 
+                            CornerRadius="15" 
+                            Padding="25"
+                            Margin="10,0,0,0"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
                         </Border.Effect>
                         <StackPanel Orientation="Vertical">
 
                             <TextBlock Text="👨‍🍳 ШАГИ ПРИГОТОВЛЕНИЯ:" 
-                       FontSize="16" FontWeight="Bold" 
-                       Foreground="#1A5D34"
-                       Margin="0,0,0,20"/>
+                                       FontSize="16" FontWeight="Bold" 
+                                       Foreground="#1A5D34"
+                                       Margin="0,0,0,20"/>
 
                             <!-- Список шагов — пустой, заполняется из code-behind -->
                             <StackPanel x:Name="StepsPanel" 
-                        Orientation="Vertical"
-                        Margin="0,0,0,20"/>
-
+                                        Orientation="Vertical"
+                                        Margin="0,0,0,20"/>
                             <Button x:Name="AddStepButton"
-                    Style="{StaticResource NavigationButtonStyle}"
-                    Content="➕ Добавить шаг"
-                    Background="#CFA1C1"
-                    HorizontalAlignment="Left"
-                    Padding="15,10"
-                    Click="AddStepButton_Click"/>
-
+                                    Style="{StaticResource NavigationButtonStyle}"
+                                    Content="➕ Добавить шаг"
+                                    Background="#CFA1C1"
+                                    HorizontalAlignment="Left"
+                                    Padding="15,10"
+                                    Click="AddStepButton_Click"/>
                         </StackPanel>
                     </Border>
                 </Grid>

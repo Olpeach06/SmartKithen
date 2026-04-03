@@ -32,6 +32,7 @@ namespace SmartKithen.AppData
         public Nullable<int> CookingTime { get; set; }
         public Nullable<int> CategoryId { get; set; }
         public Nullable<int> MealCategoryId { get; set; }
+        public Nullable<int> UserId { get; set; }
     
         public virtual Categories Categories { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -45,5 +46,6 @@ namespace SmartKithen.AppData
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RecipeHistory> RecipeHistory { get; set; }
         public virtual MealCategories MealCategories { get; set; }
+        public virtual Users Users { get; set; }
     }
 }

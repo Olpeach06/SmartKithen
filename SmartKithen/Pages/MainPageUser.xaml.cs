@@ -54,24 +54,35 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    TotalRecipesCount.Text = context.Recipes.Count().ToString();
+                    // Количество рецептов пользователя
+                    var userRecipesCount = context.Recipes
+                        .Count(r => r.UserId == SessionManager.CurrentUserId);
+                    TotalRecipesCount.Text = userRecipesCount.ToString();
 
-                    // FavoriteRecipes и RecipeHistory раскомментируй после обновления EF модели
-                    // FavoriteRecipesCount.Text = context.FavoriteRecipes
-                    //     .Count(f => f.UserId == SessionManager.CurrentUserId).ToString();
-                    // ViewedRecipesCount.Text = context.RecipeHistory
-                    //     .Count(h => h.UserId == SessionManager.CurrentUserId).ToString();
+                    // Количество избранных рецептов
+                    var favoriteCount = context.FavoriteRecipes
+                        .Count(f => f.UserId == SessionManager.CurrentUserId);
+                    FavoriteRecipesCount.Text = favoriteCount.ToString();
 
-                    FavoriteRecipesCount.Text = "0";
-                    ViewedRecipesCount.Text = "0";
+                    // Количество просмотренных рецептов
+                    var viewedCount = context.RecipeHistory
+                        .Count(h => h.UserId == SessionManager.CurrentUserId);
+                    ViewedRecipesCount.Text = viewedCount.ToString();
 
-                    TrackedProductsCount.Text = context.FridgeItems
-                        .Count(f => f.UserId == SessionManager.CurrentUserId).ToString();
+                    // Количество продуктов в холодильнике пользователя
+                    var trackedProductsCount = context.FridgeItems
+                        .Count(f => f.UserId == SessionManager.CurrentUserId);
+                    TrackedProductsCount.Text = trackedProductsCount.ToString();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки статистики: {ex.Message}");
+                // Устанавливаем значения по умолчанию в случае ошибки
+                TotalRecipesCount.Text = "0";
+                FavoriteRecipesCount.Text = "0";
+                ViewedRecipesCount.Text = "0";
+                TrackedProductsCount.Text = "0";
             }
         }
 
@@ -84,17 +95,23 @@ namespace SmartKithen.Pages
                     var today = DateTime.Today;
                     var threeDaysLater = today.AddDays(3);
 
-                    var expiring = context.FridgeItems
-                        .Include("Products")
+                    // Загружаем продукты с истекающим сроком годности
+                    var expiringItems = context.FridgeItems
                         .Where(f => f.UserId == SessionManager.CurrentUserId
                                  && f.ExpiryDate <= threeDaysLater
                                  && f.ExpiryDate >= today)
                         .OrderBy(f => f.ExpiryDate)
                         .ToList();
 
+                    // Загружаем названия продуктов отдельно (если нужно)
+                    var productIds = expiringItems.Select(f => f.ProductId).Distinct().ToList();
+                    var products = context.Products
+                        .Where(p => productIds.Contains(p.Id))
+                        .ToDictionary(p => p.Id, p => p.Name);
+
                     NotificationsPanel.Children.Clear();
 
-                    if (expiring.Count == 0)
+                    if (expiringItems.Count == 0)
                     {
                         NotificationsPanel.Children.Add(new TextBlock
                         {
@@ -106,13 +123,18 @@ namespace SmartKithen.Pages
                         return;
                     }
 
-                    foreach (var item in expiring)
+                    foreach (var item in expiringItems)
                     {
                         var daysLeft = (item.ExpiryDate - today).Days;
+                        var productName = products.ContainsKey(item.ProductId)
+                            ? products[item.ProductId]
+                            : $"Продукт #{item.ProductId}";
 
                         var text = daysLeft == 0
-                            ? $"• {item.Products?.Name} истекает сегодня!"
-                            : $"• {item.Products?.Name} испортится через {daysLeft} дн.";
+                            ? $"• {productName} истекает сегодня!"
+                            : daysLeft == 1
+                                ? $"• {productName} испортится завтра!"
+                                : $"• {productName} испортится через {daysLeft} дн.";
 
                         NotificationsPanel.Children.Add(new TextBlock
                         {
@@ -128,6 +150,14 @@ namespace SmartKithen.Pages
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки уведомлений: {ex.Message}");
+                NotificationsPanel.Children.Clear();
+                NotificationsPanel.Children.Add(new TextBlock
+                {
+                    Text = "Не удалось загрузить уведомления",
+                    FontSize = 13,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#999"))
+                });
             }
         }
 
@@ -137,21 +167,18 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    // Раскомментируй после обновления EF модели
-                    // var recipes = context.RecipeHistory
-                    //     .Include("Recipes")
-                    //     .Where(h => h.UserId == SessionManager.CurrentUserId)
-                    //     .OrderByDescending(h => h.ViewedAt)
-                    //     .Select(h => h.Recipes)
-                    //     .Distinct()
-                    //     .Take(4)
-                    //     .ToList();
-
-                    // Пока показываем последние 4 рецепта из БД
-                    var recipes = context.Recipes
-                        .OrderByDescending(r => r.Id)
+                    // Загружаем историю просмотров пользователя
+                    var recentHistory = context.RecipeHistory
+                        .Where(h => h.UserId == SessionManager.CurrentUserId)
+                        .OrderByDescending(h => h.ViewedAt)
                         .Take(4)
                         .ToList();
+
+                    var recipeIds = recentHistory.Select(h => h.RecipeId).Distinct().ToList();
+
+                    var recipes = context.Recipes
+                        .Where(r => recipeIds.Contains(r.Id))
+                        .ToDictionary(r => r.Id, r => r.Title);
 
                     RecentRecipesPanel.Children.Clear();
 
@@ -167,16 +194,28 @@ namespace SmartKithen.Pages
                         return;
                     }
 
-                    foreach (var recipe in recipes)
+                    // Добавляем карточки в порядке просмотра (сначала самые новые)
+                    foreach (var history in recentHistory)
                     {
-                        RecentRecipesPanel.Children.Add(
-                            CreateRecipeCard(recipe.Id, recipe.Title));
+                        if (recipes.ContainsKey(history.RecipeId))
+                        {
+                            RecentRecipesPanel.Children.Add(
+                                CreateRecipeCard(history.RecipeId, recipes[history.RecipeId]));
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки недавних рецептов: {ex.Message}");
+                RecentRecipesPanel.Children.Clear();
+                RecentRecipesPanel.Children.Add(new TextBlock
+                {
+                    Text = "Не удалось загрузить недавние рецепты",
+                    FontSize = 13,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#999"))
+                });
             }
         }
 
@@ -186,22 +225,60 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    // NEWID() через EF — берём все Id и рандомим на клиенте
-                    var allIds = context.Recipes.Select(r => r.Id).ToList();
-
-                    var random = new Random();
-                    var randomIds = allIds
-                        .OrderBy(x => random.Next())
-                        .Take(3)
+                    // Получаем ID продуктов пользователя
+                    var userProductIds = context.FridgeItems
+                        .Where(f => f.UserId == SessionManager.CurrentUserId)
+                        .Select(f => f.ProductId)
+                        .Distinct()
                         .ToList();
 
-                    var recipes = context.Recipes
-                        .Where(r => randomIds.Contains(r.Id))
-                        .ToList();
+                    // Если у пользователя есть продукты, ищем рецепты с этими продуктами
+                    List<Recipes> recommendedRecipes = new List<Recipes>();
+
+                    if (userProductIds.Any())
+                    {
+                        // Находим рецепты, которые используют продукты пользователя
+                        var recipeIdsWithUserProducts = context.Ingredients
+                            .Where(i => userProductIds.Contains(i.ProductId))
+                            .Select(i => i.RecipeId)
+                            .Distinct()
+                            .ToList();
+
+                        recommendedRecipes = context.Recipes
+                            .Where(r => recipeIdsWithUserProducts.Contains(r.Id))
+                            .OrderBy(r => Guid.NewGuid())
+                            .Take(3)
+                            .ToList();
+                    }
+
+                    // Если рецептов с продуктами пользователя недостаточно, добавляем случайные
+                    if (recommendedRecipes.Count < 3)
+                    {
+                        var existingIds = recommendedRecipes.Select(r => r.Id).ToList();
+                        var additionalRecipes = context.Recipes
+                            .Where(r => !existingIds.Contains(r.Id))
+                            .OrderBy(r => Guid.NewGuid())
+                            .Take(3 - recommendedRecipes.Count)
+                            .ToList();
+
+                        recommendedRecipes.AddRange(additionalRecipes);
+                    }
 
                     RecommendationsPanel.Children.Clear();
 
-                    foreach (var recipe in recipes)
+                    if (recommendedRecipes.Count == 0)
+                    {
+                        RecommendationsPanel.Children.Add(new TextBlock
+                        {
+                            Text = "Нет рекомендаций",
+                            FontSize = 13,
+                            Foreground = new SolidColorBrush(
+                                (Color)ColorConverter.ConvertFromString("#666"))
+                        });
+                        return;
+                    }
+
+                    foreach (var recipe in recommendedRecipes)
                     {
                         RecommendationsPanel.Children.Add(
                             CreateRecipeCard(recipe.Id, recipe.Title));
@@ -211,10 +288,18 @@ namespace SmartKithen.Pages
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки рекомендаций: {ex.Message}");
+                RecommendationsPanel.Children.Clear();
+                RecommendationsPanel.Children.Add(new TextBlock
+                {
+                    Text = "Не удалось загрузить рекомендации",
+                    FontSize = 13,
+                    Foreground = new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#999"))
+                });
             }
         }
 
-        private void SwitchAccountBorder_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void SwitchAccountBorder_Click(object sender, MouseButtonEventArgs e)
         {
             var result = MessageBox.Show(
                 "Выйти из аккаунта?",
@@ -224,7 +309,9 @@ namespace SmartKithen.Pages
 
             if (result != MessageBoxResult.Yes) return;
 
+            // Очищаем данные пользователя
             App.CurrentUser = null;
+
             NavigationService?.Navigate(new HomePage());
         }
 
