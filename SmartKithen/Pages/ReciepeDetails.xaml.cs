@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SmartKithen.AppData;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using SmartKithen.AppData;
+using System.Windows.Media.Imaging;
 
 namespace SmartKithen.Pages
 {
@@ -44,6 +45,9 @@ namespace SmartKithen.Pages
                     NavigationService.GoBack();
                     return;
                 }
+
+                // Теперь, когда _recipe загружен, можно подгрузить изображение
+                LoadRecipeImage();
 
                 // Загружаем связанные данные
                 db.Entry(_recipe).Reference(r => r.MealCategories).Load();
@@ -87,6 +91,24 @@ namespace SmartKithen.Pages
                 {
                     SaveToHistory(db);
                 }
+            }
+        }
+
+        private void LoadRecipeImage()
+        {
+            try
+            {
+                if (_recipe == null) return;
+
+                // Находим Image в XAML — дай ему x:Name="RecipeImage"
+                if (RecipeImage != null)
+                {
+                    RecipeImage.Source = ImageLoader.LoadRecipeImage(_recipe.ImagePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка LoadRecipeImage: {ex.Message}");
             }
         }
 

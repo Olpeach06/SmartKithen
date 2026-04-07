@@ -36,64 +36,18 @@ namespace SmartKithen.Pages
             {
                 using (var context = new SmartKitchenEntities())
                 {
-                    // Пробуем загрузить с Include для Recipes
-                    var historyQuery = context.RecipeHistory
+                    var historyItems = context.RecipeHistory
                         .Where(h => h.UserId == SessionManager.CurrentUserId)
-                        .OrderByDescending(h => h.ViewedAt);
+                        .OrderByDescending(h => h.ViewedAt)
+                        .ToList();
 
-                    // Пытаемся использовать Include, если свойство существует
-                    try
-                    {
-                        // Вариант 1: если свойство называется "Recipes"
-                        var historyWithInclude = context.RecipeHistory
-                            .Include("Recipes")
-                            .Where(h => h.UserId == SessionManager.CurrentUserId)
-                            .OrderByDescending(h => h.ViewedAt)
-                            .ToList();
+                    // Подгружаем рецепты отдельным запросом — надёжнее Include
+                    var recipeIds = historyItems.Select(h => h.RecipeId).Distinct().ToList();
+                    var recipes = context.Recipes
+                        .Where(r => recipeIds.Contains(r.Id))
+                        .ToDictionary(r => r.Id, r => r);
 
-                        LoadHistoryFromList(historyWithInclude);
-                        return;
-                    }
-                    catch
-                    {
-                        // Если не получилось с "Recipes", пробуем "Recipe"
-                        try
-                        {
-                            var historyWithInclude = context.RecipeHistory
-                                .Include("Recipe")
-                                .Where(h => h.UserId == SessionManager.CurrentUserId)
-                                .OrderByDescending(h => h.ViewedAt)
-                                .ToList();
-
-                            LoadHistoryFromList(historyWithInclude);
-                            return;
-                        }
-                        catch
-                        {
-                            // Если Include не работает, загружаем без Include
-                            var historyWithoutInclude = context.RecipeHistory
-                                .Where(h => h.UserId == SessionManager.CurrentUserId)
-                                .OrderByDescending(h => h.ViewedAt)
-                                .ToList();
-
-                            // Подгружаем рецепты отдельно
-                            var recipeIds = historyWithoutInclude.Select(h => h.RecipeId).Distinct().ToList();
-                            var recipes = context.Recipes
-                                .Where(r => recipeIds.Contains(r.Id))
-                                .ToDictionary(r => r.Id, r => r);
-
-                            foreach (var item in historyWithoutInclude)
-                            {
-                                if (recipes.ContainsKey(item.RecipeId))
-                                {
-                                    // Устанавливаем навигационное свойство через рефлексию или просто используем словарь при отображении
-                                    // Временно сохраним в локальной переменной
-                                }
-                            }
-
-                            LoadHistoryFromList(historyWithoutInclude, recipes);
-                        }
-                    }
+                    LoadHistoryFromList(historyItems, recipes);
                 }
             }
             catch (Exception ex)
@@ -194,7 +148,7 @@ namespace SmartKithen.Pages
         {
             var row = new Border
             {
-                Padding = new Thickness(18, 14, 18, 14),
+                Padding = new Thickness(0),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#F0F0F0")),
                 BorderThickness = isLast
@@ -204,28 +158,45 @@ namespace SmartKithen.Pages
             };
 
             var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
             grid.ColumnDefinitions.Add(new ColumnDefinition
             {
                 Width = new GridLength(1, GridUnitType.Star)
             });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            // Эмодзи
-            var emoji = new TextBlock
+            // Изображение рецепта
+            var imageContainer = new Border
             {
-                Text = GetRecipeEmoji(recipe?.Title),
-                FontSize = 22,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 14, 0)
+                Height = 80,
+                Width = 80,
+                CornerRadius = new CornerRadius(10),
+                Background = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#F0F0F0")),
+                Margin = new Thickness(12, 10, 12, 10)
             };
 
+            var image = new Image
+            {
+                Source = ImageLoader.LoadRecipeImage(recipe?.ImagePath),
+                Stretch = System.Windows.Media.Stretch.UniformToFill,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            imageContainer.Child = image;
+
             // Название и время просмотра
-            var info = new StackPanel { Orientation = Orientation.Vertical };
+            var info = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 10, 10, 10)
+            };
 
             info.Children.Add(new TextBlock
             {
-                Text = recipe?.Title ?? item.Recipes?.Title ?? "Удалённый рецепт",
+                Text = recipe?.Title ?? "Удалённый рецепт",
                 FontSize = 14,
                 FontWeight = FontWeights.Medium,
                 Foreground = new SolidColorBrush(
@@ -234,7 +205,7 @@ namespace SmartKithen.Pages
 
             info.Children.Add(new TextBlock
             {
-                Text = item.ViewedAt.ToString("HH:mm"),
+                Text = $"Просмотрено {item.ViewedAt:HH:mm}",
                 FontSize = 12,
                 Foreground = Brushes.Gray,
                 Margin = new Thickness(0, 3, 0, 0)
@@ -246,14 +217,15 @@ namespace SmartKithen.Pages
                 Text = "›",
                 FontSize = 18,
                 Foreground = Brushes.LightGray,
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 0, 14, 0)
             };
 
-            Grid.SetColumn(emoji, 0);
+            Grid.SetColumn(imageContainer, 0);
             Grid.SetColumn(info, 1);
             Grid.SetColumn(arrow, 2);
 
-            grid.Children.Add(emoji);
+            grid.Children.Add(imageContainer);
             grid.Children.Add(info);
             grid.Children.Add(arrow);
 
@@ -271,28 +243,6 @@ namespace SmartKithen.Pages
             };
 
             return row;
-        }
-
-        private string GetRecipeEmoji(string title)
-        {
-            if (string.IsNullOrEmpty(title)) return "🍽️";
-
-            // Приводим к нижнему регистру для сравнения
-            string lowerTitle = title.ToLower();
-
-            // Простая эмодзи-подсказка по названию
-            if (lowerTitle.Contains("суп")) return "🥣";
-            if (lowerTitle.Contains("салат")) return "🥗";
-            if (lowerTitle.Contains("пирог")) return "🥧";
-            if (lowerTitle.Contains("торт")) return "🍰";
-            if (lowerTitle.Contains("каша")) return "🥣";
-            if (lowerTitle.Contains("макарон")) return "🍝";
-            if (lowerTitle.Contains("паста")) return "🍝";
-            if (lowerTitle.Contains("курица")) return "🍗";
-            if (lowerTitle.Contains("рыб")) return "🐟";
-            if (lowerTitle.Contains("мяс")) return "🥩";
-
-            return "🍽️";
         }
 
         private string GetDayLabel(DateTime date)

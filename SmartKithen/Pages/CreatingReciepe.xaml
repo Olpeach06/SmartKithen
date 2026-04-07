@@ -239,14 +239,11 @@
                                     Height="180"
                                     Stretch="UniformToFill"
                                     Visibility="Visible"/>
-                            <TextBlock Text="📷" 
-                                       FontSize="40" 
-                                       Foreground="#CFA1C1"
-                                       Margin="0,0,0,10" Width="53"/>
-                            <TextBlock Text="Добавить фото рецепта" 
+                            <TextBlock Text="Добавить фото рецепта 📷" 
                                        FontSize="16" 
                                        FontWeight="SemiBold" 
-                                       Foreground="#1A5D34"/>
+                                       Foreground="#1A5D34"
+                                       Margin="20"/>
                         </StackPanel>
                     </Button>
                 </Border>

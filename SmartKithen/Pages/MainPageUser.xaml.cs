@@ -379,6 +379,11 @@ namespace SmartKithen.Pages
             }
         }
 
+        private void btnShowAllRecipes_Click(object sender, MouseButtonEventArgs e)
+        {
+            NavigationService?.Navigate(new RecipeHistoryPage());
+        }
+
         private void btnSettingUser_Click(object sender, RoutedEventArgs e) =>
             NavigationService?.Navigate(new UserInformation());
 

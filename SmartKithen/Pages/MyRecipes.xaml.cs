@@ -162,7 +162,7 @@ namespace SmartKithen.Pages
                 Width = 220,
                 Background = Brushes.White,
                 CornerRadius = new CornerRadius(15),
-                Padding = new Thickness(20),
+                Padding = new Thickness(0),
                 Margin = new Thickness(0, 0, 16, 16),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
@@ -179,9 +179,37 @@ namespace SmartKithen.Pages
 
             var content = new StackPanel { Orientation = Orientation.Vertical };
 
+            // Изображение рецепта
+            var imageContainer = new Border
+            {
+                Height = 140,
+                CornerRadius = new CornerRadius(15, 15, 0, 0),
+                Background = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#F0F0F0")),
+                Margin = new Thickness(0, 0, 0, 0)
+            };
+
+            var image = new Image
+            {
+                Source = ImageLoader.LoadRecipeImage(recipe.ImagePath),
+                Stretch = System.Windows.Media.Stretch.UniformToFill,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            imageContainer.Child = image;
+            content.Children.Add(imageContainer);
+
+            // Внутреннее содержимое с отступами
+            var innerContent = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(15, 15, 15, 15)
+            };
+
             // Иконка времени в правом углу
             var topRow = new Grid();
-            topRow.Margin = new Thickness(0, 0, 0, 10);
+            topRow.Margin = new Thickness(0, 0, 0, 5);
 
             var timeBadge = new Border
             {
@@ -203,13 +231,13 @@ namespace SmartKithen.Pages
                 VerticalAlignment = VerticalAlignment.Center
             };
             topRow.Children.Add(timeBadge);
-            content.Children.Add(topRow);
+            innerContent.Children.Add(topRow);
 
             // Категория блюда (MealCategory)
             string categoryName = recipe.MealCategories?.Name ?? "Без категории";
             string categoryIcon = recipe.MealCategories?.Icon ?? "";
 
-            content.Children.Add(new TextBlock
+            innerContent.Children.Add(new TextBlock
             {
                 Text = string.IsNullOrEmpty(categoryIcon) ? categoryName : $"{categoryIcon} {categoryName}",
                 FontSize = 12,
@@ -219,7 +247,7 @@ namespace SmartKithen.Pages
             });
 
             // Название
-            content.Children.Add(new TextBlock
+            innerContent.Children.Add(new TextBlock
             {
                 Text = recipe.Title,
                 FontSize = 16,
@@ -227,7 +255,7 @@ namespace SmartKithen.Pages
                 Foreground = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#1A5D34")),
                 TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 0, 0, 15)
+                Margin = new Thickness(0, 0, 0, 10)
             });
 
             // Время
@@ -248,7 +276,7 @@ namespace SmartKithen.Pages
                 Foreground = Brushes.Gray
             });
 
-            content.Children.Add(infoRow);
+            innerContent.Children.Add(infoRow);
 
             // Плашка с информацией (убираем автора, так как нет привязки к пользователю)
             var infoBadge = new Border
@@ -277,8 +305,9 @@ namespace SmartKithen.Pages
                 Foreground = Brushes.Gray,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            content.Children.Add(infoBadge);
+            innerContent.Children.Add(infoBadge);
 
+            content.Children.Add(innerContent);
             card.Child = content;
 
             // Клик — открываем рецепт

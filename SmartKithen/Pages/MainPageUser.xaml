@@ -304,8 +304,10 @@
                         <Grid Margin="0,0,0,20">
                             <TextBlock Text="Недавние рецепты" FontSize="18" FontWeight="Bold" 
                                        Foreground="#1A5D34" VerticalAlignment="Center"/>
-                            <Border Background="#1A5D34" CornerRadius="8" Padding="12,8"
-                                    HorizontalAlignment="Right" Cursor="Hand">
+                            <Border x:Name="btnShowAllRecipes"
+                                    Background="#1A5D34" CornerRadius="8" Padding="12,8"
+                                    HorizontalAlignment="Right" Cursor="Hand"
+                                    MouseLeftButtonDown="btnShowAllRecipes_Click">
                                 <TextBlock Text="Показать все" FontSize="12" Foreground="White" FontWeight="SemiBold"/>
                             </Border>
                         </Grid>

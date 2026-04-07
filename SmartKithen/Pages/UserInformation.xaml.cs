@@ -1,6 +1,9 @@
 ﻿using SmartKithen.AppData;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -318,17 +321,227 @@ namespace SmartKithen.Pages
             }
         }
 
-        // Заглушки для кнопок данных
+        // Резервная копия данных пользователя
         private void btnBackup_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Функция резервного копирования в разработке.", "Информация",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    var recipes = context.Recipes
+                        .Where(r => r.UserId == SessionManager.CurrentUserId)
+                        .ToList();
+
+                    if (recipes.Count == 0)
+                    {
+                        MessageBox.Show("У вас нет рецептов для резервного копирования.", "Информация",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    // Получаем папку документов пользователя
+                    string documentsPath = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                        "SmartKitchen");
+
+                    if (!Directory.Exists(documentsPath))
+                        Directory.CreateDirectory(documentsPath);
+
+                    // Создаём текстовый файл с данными рецептов
+                    var backupContent = new StringBuilder();
+                    backupContent.AppendLine("=== РЕЗЕРВНАЯ КОПИЯ РЕЦЕПТОВ SmartKitchen ===");
+                    backupContent.AppendLine($"Дата создания: {DateTime.Now:dd.MM.yyyy HH:mm:ss}");
+                    backupContent.AppendLine($"Пользователь: {App.CurrentUser?.Name ?? "Unknown"}");
+                    backupContent.AppendLine($"Количество рецептов: {recipes.Count}");
+                    backupContent.AppendLine(new string('=', 50));
+                    backupContent.AppendLine();
+
+                    foreach (var recipe in recipes)
+                    {
+                        backupContent.AppendLine($"РЕЦЕПТ: {recipe.Title}");
+                        backupContent.AppendLine($"ID: {recipe.Id}");
+                        backupContent.AppendLine($"Описание: {recipe.Description ?? "—"}");
+                        backupContent.AppendLine($"Инструкции: {recipe.Instructions ?? "—"}");
+                        backupContent.AppendLine($"Время приготовления: {(recipe.CookingTime.HasValue ? recipe.CookingTime + " мин" : "—")}");
+
+                        // Добавляем ингредиенты
+                        var ingredients = context.Ingredients
+                            .Where(i => i.RecipeId == recipe.Id)
+                            .ToList();
+
+                        if (ingredients.Any())
+                        {
+                            backupContent.AppendLine("Ингредиенты:");
+                            foreach (var ingredient in ingredients)
+                            {
+                                var product = ingredient.Products;
+                                backupContent.AppendLine($"  - {product?.Name ?? "Unknown"}: {ingredient.Quantity} {ingredient.Unit}");
+                            }
+                        }
+
+                        backupContent.AppendLine(new string('-', 40));
+                        backupContent.AppendLine();
+                    }
+
+                    // Сохраняем в текстовый файл
+                    string fileName = $"SmartKitchen_Backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt";
+                    string filePath = Path.Combine(documentsPath, fileName);
+
+                    File.WriteAllText(filePath, backupContent.ToString(), Encoding.UTF8);
+
+                    MessageBox.Show(
+                        $"Резервная копия успешно создана!\n\n" +
+                        $"Файл: {fileName}\n" +
+                        $"Путь: {documentsPath}\n\n" +
+                        $"Сохранено рецептов: {recipes.Count}",
+                        "Готово",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    // Открываем папку в проводнике
+                    System.Diagnostics.Process.Start("explorer.exe", documentsPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при создании резервной копии:\n{ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
+        // Экспорт рецептов в CSV
         private void btnExport_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Функция экспорта в разработке.", "Информация",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                using (var context = new SmartKitchenEntities())
+                {
+                    var recipes = context.Recipes
+                        .Where(r => r.UserId == SessionManager.CurrentUserId)
+                        .ToList();
+
+                    if (recipes.Count == 0)
+                    {
+                        MessageBox.Show("У вас нет рецептов для экспорта.", "Информация",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    // Получаем папку документов пользователя
+                    string documentsPath = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                        "SmartKitchen");
+
+                    if (!Directory.Exists(documentsPath))
+                        Directory.CreateDirectory(documentsPath);
+
+                    // Создаём CSV файл со сводкой рецептов
+                    var csvContent = new StringBuilder();
+                    csvContent.AppendLine("ID,Название,Описание,Время приготовления (мин),Ингредиентов");
+
+                    foreach (var recipe in recipes)
+                    {
+                        string title = EscapeCsv(recipe.Title ?? "");
+                        string description = EscapeCsv((recipe.Description ?? "").Length > 100 
+                            ? (recipe.Description ?? "").Substring(0, 100) + "..." 
+                            : recipe.Description ?? "");
+                        string cookingTime = recipe.CookingTime?.ToString() ?? "—";
+
+                        // Считаем ингредиенты
+                        var ingredientCount = context.Ingredients
+                            .Where(i => i.RecipeId == recipe.Id)
+                            .Count();
+
+                        csvContent.AppendLine(
+                            $"{recipe.Id},\"{title}\",\"{description}\",{cookingTime},{ingredientCount}");
+                    }
+
+                    // Сохраняем CSV
+                    string fileName = $"SmartKitchen_Export_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
+                    string filePath = Path.Combine(documentsPath, fileName);
+
+                    File.WriteAllText(filePath, csvContent.ToString(), Encoding.UTF8);
+
+                    // Также создаём подробный файл со всеми рецептами и ингредиентами
+                    ExportDetailedRecipes(documentsPath, recipes, context);
+
+                    MessageBox.Show(
+                        $"Экспорт успешно завершен!\n\n" +
+                        $"Основной файл: {fileName}\n" +
+                        $"Путь: {documentsPath}\n\n" +
+                        $"Экспортировано рецептов: {recipes.Count}",
+                        "Готово",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    // Открываем папку в проводнике
+                    System.Diagnostics.Process.Start("explorer.exe", documentsPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при экспорте:\n{ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Экспорт подробной информации о рецептах
+        private void ExportDetailedRecipes(string folderPath, List<Recipes> recipes, SmartKitchenEntities context)
+        {
+            try
+            {
+                var detailedCsv = new StringBuilder();
+                detailedCsv.AppendLine("Название рецепта,Ингредиент,Количество,Единица измерения");
+
+                foreach (var recipe in recipes)
+                {
+                    var ingredients = context.Ingredients
+                        .Where(i => i.RecipeId == recipe.Id)
+                        .ToList();
+
+                    if (ingredients.Any())
+                    {
+                        foreach (var ingredient in ingredients)
+                        {
+                            string recipeName = EscapeCsv(recipe.Title ?? "");
+                            string productName = EscapeCsv(ingredient.Products?.Name ?? "Unknown");
+                            string quantity = ingredient.Quantity.ToString();
+                            string unit = EscapeCsv(ingredient.Unit ?? "шт");
+
+                            detailedCsv.AppendLine(
+                                $"\"{recipeName}\",\"{productName}\",{quantity},\"{unit}\"");
+                        }
+                    }
+                    else
+                    {
+                        // Если нет ингредиентов, всё равно добавляем строку с рецептом
+                        string recipeName = EscapeCsv(recipe.Title ?? "");
+                        detailedCsv.AppendLine($"\"{recipeName}\",—,—,—");
+                    }
+                }
+
+                string detailedFileName = $"SmartKitchen_Recipes_Detailed_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
+                string detailedPath = Path.Combine(folderPath, detailedFileName);
+                File.WriteAllText(detailedPath, detailedCsv.ToString(), Encoding.UTF8);
+            }
+            catch
+            {
+                // Если ошибка при создании подробного файла, игнорируем
+            }
+        }
+
+        // Вспомогательный метод для экранирования CSV
+        private string EscapeCsv(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return "";
+
+            // Если строка содержит кавычки, запятые или переводы строк, требуется экранирование
+            if (value.Contains("\"") || value.Contains(",") || value.Contains("\n"))
+            {
+                return value.Replace("\"", "\"\"");
+            }
+            return value;
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)

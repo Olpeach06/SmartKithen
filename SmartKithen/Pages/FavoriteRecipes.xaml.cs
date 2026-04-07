@@ -67,7 +67,7 @@ namespace SmartKithen.Pages
                 Width = 175,
                 Background = Brushes.White,
                 CornerRadius = new CornerRadius(15),
-                Padding = new Thickness(18, 15, 18, 15),
+                Padding = new Thickness(0),
                 Margin = new Thickness(0, 0, 15, 15),
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#E0E0E0")),
@@ -84,26 +84,44 @@ namespace SmartKithen.Pages
 
             var content = new StackPanel { Orientation = Orientation.Vertical };
 
-            // Эмодзи-заглушка картинки
-            content.Children.Add(new TextBlock
+            // Изображение рецепта
+            var imageContainer = new Border
             {
-                Text = "🍽️",
-                FontSize = 32,
+                Height = 120,
+                CornerRadius = new CornerRadius(15, 15, 0, 0),
+                Background = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#F0F0F0"))
+            };
+
+            var image = new Image
+            {
+                Source = ImageLoader.LoadRecipeImage(recipe?.ImagePath),
+                Stretch = System.Windows.Media.Stretch.UniformToFill,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 10)
-            });
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            imageContainer.Child = image;
+            content.Children.Add(imageContainer);
+
+            // Внутреннее содержимое
+            var innerContent = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(12, 10, 12, 10)
+            };
 
             // Название
-            content.Children.Add(new TextBlock
+            innerContent.Children.Add(new TextBlock
             {
                 Text = recipe?.Title ?? "Без названия",
-                FontSize = 14,
+                FontSize = 13,
                 FontWeight = FontWeights.SemiBold,
                 Foreground = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#1A5D34")),
                 TextWrapping = TextWrapping.Wrap,
                 TextAlignment = TextAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 8)
+                Margin = new Thickness(0, 0, 0, 6)
             });
 
             // Время приготовления
@@ -111,24 +129,24 @@ namespace SmartKithen.Pages
                 ? $"🕐 {recipe.CookingTime.Value} мин"
                 : "🕐 Не указано";
 
-            content.Children.Add(new TextBlock
+            innerContent.Children.Add(new TextBlock
             {
                 Text = timeText,
-                FontSize = 12,
+                FontSize = 11,
                 Foreground = Brushes.Gray,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 10)
+                Margin = new Thickness(0, 0, 0, 8)
             });
 
             // Дата добавления
-            content.Children.Add(new TextBlock
+            innerContent.Children.Add(new TextBlock
             {
                 Text = $"Добавлено {fav.AddedDate:dd.MM.yyyy}",
-                FontSize = 11,
+                FontSize = 10,
                 Foreground = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#CFA1C1")),
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 12)
+                Margin = new Thickness(0, 0, 0, 8)
             });
 
             // Кнопка удалить из избранного
@@ -137,26 +155,27 @@ namespace SmartKithen.Pages
                 BorderBrush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#CFA1C1")),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8),
+                CornerRadius = new CornerRadius(6),
                 Cursor = Cursors.Hand
             };
 
             var removeBtnInner = new Button
             {
                 Content = "✕ Убрать",
-                FontSize = 11,
+                FontSize = 10,
                 Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
                 Foreground = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString("#CFA1C1")),
-                Padding = new Thickness(10, 5, 10, 5),
+                Padding = new Thickness(8, 4, 8, 4),
                 Tag = fav.Id
             };
 
             removeBtnInner.Click += RemoveFromFavorites_Click;
             removeBtn.Child = removeBtnInner;
-            content.Children.Add(removeBtn);
+            innerContent.Children.Add(removeBtn);
 
+            content.Children.Add(innerContent);
             card.Child = content;
 
             // Клик по карточке — открываем рецепт

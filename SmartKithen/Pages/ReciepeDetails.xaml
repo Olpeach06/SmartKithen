@@ -182,14 +182,12 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Height="300" Background="#F8F9FA" CornerRadius="20" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <Border Grid.Column="0" Height="300" Background="White" CornerRadius="20" BorderBrush="#E0E0E0" BorderThickness="1">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.1" ShadowDepth="3"/>
                             </Border.Effect>
                             <Grid>
-                                <Image Height="250"
-                                       Stretch="UniformToFill"
-                                       Source="{Binding ImagePath}"/>
+                                <Image x:Name="RecipeImage" Height="270" Stretch="Uniform"/>
                             </Grid>
                         </Border>
 

@@ -89,6 +89,7 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="GuestSession.cs" />
+    <Compile Include="ImageLoader.cs" />
     <Compile Include="Pages\AddProductDialog.xaml.cs">
       <DependentUpon>AddProductDialog.xaml</DependentUpon>
     </Compile>
@@ -346,7 +347,22 @@
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
-    <Resource Include="Images\default.png" />
+    <Resource Include="Images\placeholder.jpg" />
+    <Resource Include="Images\apple_pie.jpg" />
+    <Resource Include="Images\avocado_toast.jpg" />
+    <Resource Include="Images\borsch.jpg" />
+    <Resource Include="Images\buckwheat_mushroom.jpg" />
+    <Resource Include="Images\chicken_cream.jpg" />
+    <Resource Include="Images\chicken_soup.jpg" />
+    <Resource Include="Images\macaroni_cheese.jpg" />
+    <Resource Include="Images\mashed_potato.jpg" />
+    <Resource Include="Images\oatmeal.jpg" />
+    <Resource Include="Images\olivie.jpg" />
+    <Resource Include="Images\plov.jpg" />
+    <Resource Include="Images\ragu.jpg" />
+    <Resource Include="Images\rice_veggie.jpg" />
+    <Resource Include="Images\shrimps.jpg" />
+    <Resource Include="Images\syrniki.jpg" />
     <Resource Include="iconeggs.ico" />
   </ItemGroup>
   <ItemGroup>
